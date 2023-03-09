@@ -17,7 +17,7 @@ export function defaultSetting(): UserState {
     userInfo: {
       avatar: 'https://raw.githubusercontent.com/Chanzhaoyu/chatgpt-web/main/src/assets/avatar.jpg',
       name: 'Username',
-      description: 'Authoriaztion not yet available',
+      description: 'Personal accounts not yet available',
     },
   }
 }
