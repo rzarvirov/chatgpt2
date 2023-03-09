@@ -1,8 +1,7 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
-import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
+import { NButton, NInput, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
@@ -10,7 +9,7 @@ import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { useChatStore, usePromptStore } from '@/store'
+import { useChatStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 
@@ -25,7 +24,7 @@ const chatStore = useChatStore()
 useCopyCode()
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
-const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
+const { scrollRef, scrollToBottom } = useScroll()
 
 const { uuid } = route.params as { uuid: string }
 
@@ -35,11 +34,7 @@ const conversationList = computed(() => dataSources.value.filter(item => (!item.
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
 const usingContext = ref<boolean>(true)
-
-// 添加PromptStore
-const promptStore = usePromptStore()
-// 使用storeToRefs，保证store修改后，联想部分能够重新渲染
-const { promptList: promptTemplate } = storeToRefs<any>(promptStore)
+const actionVisible = ref<boolean>(true)
 
 function handleSubmit() {
   onConversation()
@@ -120,7 +115,7 @@ async function onConversation() {
               requestOptions: { prompt: message, options: { ...options } },
             },
           )
-          scrollToBottomIfAtBottom()
+          scrollToBottom()
         }
         catch (error) {
           //
@@ -171,10 +166,10 @@ async function onConversation() {
         requestOptions: { prompt: message, options: { ...options } },
       },
     )
+    scrollToBottom()
   }
   finally {
     loading.value = false
-    scrollToBottom()
   }
 }
 
@@ -373,45 +368,20 @@ function handleStop() {
 
 function toggleUsingContext() {
   usingContext.value = !usingContext.value
-  if (usingContext.value) {
-    dialog.info({
-      title: t('chat.usingContext'),
-      content: t('chat.turnOnContext'),
-      positiveText: t('common.yes'),
-    })
-  }
-  else {
-    dialog.info({
-      title: t('chat.usingContext'),
-      content: t('chat.turnOffContext'),
-      positiveText: t('common.yes'),
-    })
-  }
+  if (usingContext.value)
+    ms.success(t('chat.turnOnContext'))
+  else
+    ms.warning(t('chat.turnOffContext'))
 }
 
-// 可优化部分
-// 搜索选项计算，这里使用value作为索引项，所以当出现重复value时渲染异常(多项同时出现选中效果)
-// 理想状态下其实应该是key作为索引项,但官方的renderOption会出现问题，所以就需要value反renderLabel实现
-const searchOptions = computed(() => {
-  if (prompt.value.startsWith('/')) {
-    return promptTemplate.value.filter((item: { key: string }) => item.key.toLowerCase().includes(prompt.value.substring(1).toLowerCase())).map((obj: { value: any }) => {
-      return {
-        label: obj.value,
-        value: obj.value,
-      }
-    })
-  }
-  else {
-    return []
-  }
-})
-// value反渲染key
-const renderOption = (option: { label: string }) => {
-  for (const i of promptTemplate.value) {
-    if (i.value === option.label)
-      return [i.key]
-  }
-  return []
+function onInputFocus() {
+  if (isMobile.value)
+    actionVisible.value = false
+}
+
+function onInputBlur() {
+  if (isMobile.value)
+    actionVisible.value = true
 }
 
 const placeholder = computed(() => {
@@ -433,7 +403,7 @@ const wrapClass = computed(() => {
 const footerClass = computed(() => {
   let classes = ['p-4']
   if (isMobile.value)
-    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'pr-4', 'overflow-hidden']
+    classes = ['sticky', 'left-0', 'bottom-0', 'right-0', 'p-2', 'overflow-hidden']
   return classes
 })
 
@@ -463,7 +433,7 @@ onUnmounted(() => {
           <template v-if="!dataSources.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <SvgIcon icon="ri:bubble-chart-fill" class="mr-2 text-3xl" />
-              <span>What if we lived in a simulation? How would we know, and what implications would this have on our understanding of reality and our place in the universe?</span>
+              <span>Aha~</span>
             </div>
           </template>
           <template v-else>
@@ -495,29 +465,32 @@ onUnmounted(() => {
     <footer :class="footerClass">
       <div class="w-full max-w-screen-xl m-auto">
         <div class="flex items-center justify-between space-x-2">
-          <HoverButton @click="handleClear">
-            <span class="text-xl text-[#4f555e] dark:text-white">
-              <SvgIcon icon="ri:delete-bin-line" />
-            </span>
-          </HoverButton>
-          <HoverButton @click="handleExport">
-            <span class="text-xl text-[#4f555e] dark:text-white">
-              <SvgIcon icon="ri:download-2-line" />
-            </span>
-          </HoverButton>
-          <HoverButton @click="toggleUsingContext">
-            <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
-              <SvgIcon icon="ri:chat-history-line" />
-            </span>
-          </HoverButton>
-          <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
-            <template #default="{ handleInput, handleBlur, handleFocus }">
-              <NInput
-                v-model:value="prompt" type="textarea" :placeholder="placeholder"
-                :autosize="{ minRows: 1, maxRows: 2 }" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keypress="handleEnter"
-              />
-            </template>
-          </NAutoComplete>
+          <div v-if="actionVisible" class="flex items-center space-x-2">
+            <HoverButton @click="handleClear">
+              <span class="text-xl text-[#4f555e] dark:text-white">
+                <SvgIcon icon="ri:delete-bin-line" />
+              </span>
+            </HoverButton>
+            <HoverButton @click="handleExport">
+              <span class="text-xl text-[#4f555e] dark:text-white">
+                <SvgIcon icon="ri:download-2-line" />
+              </span>
+            </HoverButton>
+            <HoverButton @click="toggleUsingContext">
+              <span class="text-xl" :class="{ 'text-[#4b9e5f]': usingContext, 'text-[#a8071a]': !usingContext }">
+                <SvgIcon icon="ri:chat-history-line" />
+              </span>
+            </HoverButton>
+          </div>
+          <NInput
+            v-model:value="prompt"
+            type="textarea"
+            :autosize="{ minRows: 1, maxRows: 2 }"
+            :placeholder="placeholder"
+            @focus="onInputFocus"
+            @blur="onInputBlur"
+            @keypress="handleEnter"
+          />
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
