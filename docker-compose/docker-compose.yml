@@ -5,6 +5,8 @@ services:
     image: chenzhaoyu94/chatgpt-web # 总是使用latest,更新时重新pull该tag镜像即可
     ports:
       - 3002:3002
+    depends_on:
+      - database
     environment:
       # 二选一
       OPENAI_API_KEY: xxxx
@@ -16,7 +18,7 @@ services:
       OPENAI_API_MODEL: xxxx
       # 反向代理，可选
       API_REVERSE_PROXY: xxx
-      # 访问权限密钥，可选
+      # Access jwt encryption parameters, optional If not empty, allow login and set the MONGODB_URL
       AUTH_SECRET_KEY: xxx
       # 超时，单位毫秒，可选
       TIMEOUT_MS: 60000
@@ -24,6 +26,40 @@ services:
       SOCKS_PROXY_HOST: xxxx
       # Socks代理端口，可选，和 SOCKS_PROXY_HOST 一起时生效
       SOCKS_PROXY_PORT: xxxx
+      # MongoDB's connection string
+      MONGODB_URL: xxxx
+      # Whether the website is open for registration
+      REGISTER_ENABLED: false
+      # After enabling registration, the email suffix allowed for website registration If it is empty, any suffix is allowed
+      REGISTER_MAILS: ''
+      # After opening the registration password encryption salt
+      PASSWORD_MD5_SALT: anysalt
+      # After opening registration, super manage mailbox
+      ROOT_USER: xxxx
+      # After opening the registration, the website domain name does not include / send the verification email at the time of registration
+      SITE_DOMAIN: xxxx
+      # After enabling registration, send the verification email configuration
+      SMTP_HOST: xxxx
+      SMTP_PORT: xxx
+      SMTP_TSL: true
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+    links:
+      - database
+
+  database:
+    image: mongo
+    ports:
+      - '27017:27017'
+    expose:
+      - '27017'
+    volumes:
+      - mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: chatgpt
+      MONGO_INITDB_ROOT_PASSWORD: xxxx
+      MONGO_INITDB_DATABASE: chatgpt
+
   nginx:
     image: nginx:alpine
     ports:
