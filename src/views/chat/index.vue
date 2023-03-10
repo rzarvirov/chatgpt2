@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { storeToRefs } from  ' pinia '
+import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog } from 'naive-ui'
 import html2canvas from 'html2canvas'
 import { Message } from './components'
