@@ -48,11 +48,11 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
-      fetchCreateChatRoom(history['title'], history['uuid'])
+      fetchCreateChatRoom(history.title, history.uuid)
       this.history.unshift(history)
       this.chat.unshift({ uuid: history.uuid, data: chatData })
-      this.active = history['uuid']
-      this.reloadRoute(history['uuid'])
+      this.active = history.uuid
+      this.reloadRoute(history.uuid)
     },
 
     updateHistory(uuid: number, edit: Partial<Chat.History>) {
@@ -60,7 +60,7 @@ export const useChatStore = defineStore('chat-store', {
       if (index !== -1) {
         this.history[index] = { ...this.history[index], ...edit }
         this.recordState()
-        fetchCreateChatRoom(history['title'], history['uuid'])
+        fetchCreateChatRoom(history.title, history.uuid)
       }
     },
 
