@@ -60,7 +60,7 @@ export const useChatStore = defineStore('chat-store', {
       if (index !== -1) {
         this.history[index] = { ...this.history[index], ...edit }
         this.recordState()
-        fetchCreateChatRoom(history.title, history.uuid)
+        fetchCreateChatRoom(edit.title, edit.uuid)
       }
     },
 
