@@ -8,7 +8,7 @@
     {
       "key": "awesome-chatgpt-prompts-ru",
       "desc": "ChatGPT Заросы",
-      "downloadUrl": "https://aibuddy.ru/ru-prompts.json",
+      "downloadUrl": "https://raw.githubusercontent.com/rzarvirov/chatgpt2/main/prompts_RU.json",
       "url": "https://aibuddy.ru"
     }
   ]
