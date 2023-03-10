@@ -65,16 +65,16 @@ const inputStatus = computed (() => tempPromptKey.value.trim().length < 1 || tem
 const addPromptTemplate = () => {
   for (const i of promptList.value) {
     if (i.key === tempPromptKey.value) {
-      message.error('已存在重复标题,请重新输入')
+      message.error('Duplicate title already exists, please enter a new one.')
       return
     }
     if (i.value === tempPromptValue.value) {
-      message.error(`已存在重复内容:${tempPromptKey.value},请重新输入`)
+      message.error(`Duplicate content already exists: ${tempPromptKey.value}, please enter a new one.`)
       return
     }
   }
   promptList.value.unshift({ key: tempPromptKey.value, value: tempPromptValue.value } as never)
-  message.success('添加prompt成功')
+  message.success('Successfully added prompt.')
   changeShowModal('')
 }
 const modifyPromptTemplate = () => {
@@ -86,29 +86,32 @@ const modifyPromptTemplate = () => {
     index = index + 1
   }
   const tempList = promptList.value.filter((_: any, i: number) => i !== index)
-  // 搜索有冲突的部分
-  for (const i of tempList) {
-    if (i.key === tempPromptKey.value) {
-      message.error('检测修改Prompt标题冲突，请重新修改')
-      return
-    }
-    if (i.value === tempPromptValue.value) {
-      message.error(`检测修改内容${i.key}冲突，请重新修改`)
-      return
-    }
+// Filter out the conflicting parts
+for (const i of tempList) {
+  if (i.key === tempPromptKey.value) {
+    message.error('Detected conflict in modified Prompt title, please modify again')
+    return
   }
-  promptList.value = [{ key: tempPromptKey.value, value: tempPromptValue.value }, ...tempList] as never
-  message.success('Prompt信息修改成功')
-  changeShowModal('')
+  if (i.value === tempPromptValue.value) {
+    message.error(`Detected conflict in modified ${i.key} content, please modify again`)
+    return
+  }
 }
+promptList.value = [{ key: tempPromptKey.value, value: tempPromptValue.value }, ...tempList] as never
+message.success('Prompt information modified successfully')
+changeShowModal('')
+}
+
 const deletePromptTemplate = (row: { key: string; value: string }) => {
   promptList.value = [...promptList.value.filter((item: { key: string; value: string }) => item.key !== row.key)] as never
-  message.success('删除Prompt成功')
+  message.success('Prompt deleted successfully')
 }
+
 const clearPromptTemplate = () => {
   promptList.value = []
-  message.success('清空Prompt成功')
+  message.success('Prompt cleared successfully')
 }
+
 const importPromptTemplate = () => {
   try {
     const jsonData = JSON.parse(tempPromptValue.value)
@@ -116,12 +119,12 @@ const importPromptTemplate = () => {
       let safe = true
       for (const j of promptList.value) {
         if (j.key === i.key) {
-          message.warning(`因标题重复跳过:${i.key}`)
+          message.warning(`Skipped due to duplicate title: ${i.key}`)
           safe = false
           break
         }
         if (j.value === i.value) {
-          message.warning(`因内容重复跳过:${i.key}`)
+          message.warning(`Skipped due to duplicate content: ${i.key}`)
           safe = false
           break
         }
@@ -129,15 +132,16 @@ const importPromptTemplate = () => {
       if (safe)
         promptList.value.unshift({ key: i.key, value: i.value } as never)
     }
-    message.success('导入成功')
+    message.success('Import successful')
     changeShowModal('')
   }
   catch {
-    message.error('JSON格式错误,请检查JSON格式')
+    message.error('JSON format error, please check the format')
     changeShowModal('')
   }
 }
-// 模板导出
+
+// Export template
 const exportPromptTemplate = () => {
   const jsonDataStr = JSON.stringify(promptList.value)
   const blob = new Blob([jsonDataStr], { type: 'application/json' })
@@ -148,7 +152,8 @@ const exportPromptTemplate = () => {
   link.click()
   URL.revokeObjectURL(url)
 }
-// 模板在线导入
+
+// Online template import
 const downloadPromptTemplate = async () => {
   try {
     await fetch(downloadURL.value)
@@ -160,7 +165,7 @@ const downloadPromptTemplate = async () => {
       })
   }
   catch {
-    message.error('网络导入出现问题,请检查网络状态与JSON文件有效性')
+    message.error('Network import error, please check network status and JSON file validity')
   }
 }
 // 移动端自适应相关
@@ -182,19 +187,18 @@ const pagination = computed(() => {
   }
 })
 // table相关
-const createColumns = (
-) => {
+const createColumns = () => {
   return [
     {
-      title: '标题',
+      title: 'Title',
       key: 'renderKey',
     },
     {
-      title: '内容',
+      title: 'Content',
       key: 'renderValue',
     },
     {
-      title: '操作',
+      title: 'Action',
       key: 'actions',
       render(row: { key: string; value: string }) {
         return h(NButtonGroup, { vertical: true }, {
@@ -206,7 +210,7 @@ const createColumns = (
               size: 'small',
               onClick: () => changeShowModal('modify', row),
             },
-            { default: () => '修改' },
+            { default: () => 'Modify' },
           ),
           h(
             NButton,
@@ -216,7 +220,7 @@ const createColumns = (
               size: 'small',
               onClick: () => deletePromptTemplate(row),
             },
-            { default: () => '删除' },
+            { default: () => 'Delete' },
           ),
           ],
         })
@@ -224,11 +228,12 @@ const createColumns = (
     },
   ]
 }
+
 const columns = createColumns()
+
 watch(() => promptList, () => {
   promptStore.updatePromptList(promptList.value)
 }, { deep: true })
-</script>
 
 <template>
   <NMessageProvider>
@@ -236,26 +241,26 @@ watch(() => promptList, () => {
       <NCard>
         <div class="space-y-4">
           <NTabs type="segment">
-            <NTabPane name="local" tab="本地管理">
+            <NTabPane name="local" tab="Local Management">
               <NSpace justify="end">
                 <NButton strong secondary type="default" @click="changeShowModal('add')">
-                  添加
+                  Add
                 </NButton>
                 <NButton strong secondary type="default" @click="changeShowModal('local_import')">
-                  导入
+                  Import
                 </NButton>
                 <NButton strong secondary type="default" @click="exportPromptTemplate()">
-                  导出
+                  Export
                 </NButton>
                 <NPopconfirm
                   @positive-click="clearPromptTemplate"
                 >
                   <template #trigger>
                     <NButton strong secondary type="default">
-                      清空
+                      Clear
                     </NButton>
                   </template>
-                  确认是否清空数据?
+                  Confirm whether to clear the data?
                 </NPopconfirm>
               </NSpace>
               <br>
@@ -266,15 +271,15 @@ watch(() => promptList, () => {
                 :bordered="false"
               />
             </NTabPane>
-            <NTabPane name="download" tab="在线导入">
-              注意：请检查下载JSON文件来源，恶意的JSON文件可能会破坏您的计算机!!!<br><br>
+            <NTabPane name="download" tab="Online Import">
+              Note: Please check the source of the downloaded JSON file, malicious JSON files may harm your computer!!!<br><br>
               <NGrid x-gap="12" y-gap="12" :cols="24">
                 <NGi :span="isMobile ? 18 : 22">
-                  <NInput v-model:value="downloadURL" placeholder="请输入正确的JSON地址" />
+                  <NInput v-model:value="downloadURL" placeholder="Please enter the correct JSON address" />
                 </NGi>
                 <NGi>
                   <NButton strong secondary :disabled="downloadDisabled" @click="downloadPromptTemplate()">
-                    下载
+                    Download
                   </NButton>
                 </NGi>
               </NGrid>
@@ -343,18 +348,19 @@ watch(() => promptList, () => {
         aria-modal="true"
       >
         <NSpace v-if="modalMode === 'add' || modalMode === 'modify'" vertical>
-          模板标题
-          <NInput v-model:value="tempPromptKey" placeholder="搜索" />
-          模板内容
-          <NInput v-model:value="tempPromptValue" placeholder="搜索" type="textarea" />
+          Template Title
+          <NInput v-model:value="tempPromptKey" placeholder="Search" />
+          Template Content
+          <NInput v-model:value="tempPromptValue" placeholder="Search" type="textarea" />
           <NButton strong secondary :style="{ width: '100%' }" :disabled="inputStatus" @click="() => { modalMode === 'add' ? addPromptTemplate() : modifyPromptTemplate() }">
-            确定
+            Confirm
           </NButton>
         </NSpace>
+
         <NSpace v-if="modalMode === 'local_import'" vertical>
-          <NInput v-model:value="tempPromptValue" placeholder="请粘贴json文件内容" :autosize="{ minRows: 3, maxRows: 15 }" type="textarea" />
+          <NInput v-model:value="tempPromptValue" placeholder="Please paste the content of the JSON file" :autosize="{ minRows: 3, maxRows: 15 }" type="textarea" />
           <NButton strong secondary :style="{ width: '100%' }" :disabled="inputStatus" @click="() => { importPromptTemplate() }">
-            导入
+            Import
           </NButton>
         </NSpace>
       </NCard>
