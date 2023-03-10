@@ -234,6 +234,7 @@ const columns = createColumns()
 watch(() => promptList, () => {
   promptStore.updatePromptList(promptList.value)
 }, { deep: true })
+</script>
 
 <template>
   <NMessageProvider>
