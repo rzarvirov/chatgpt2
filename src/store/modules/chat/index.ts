@@ -3,53 +3,6 @@ import { getLocalState, setLocalState } from './helper'
 import { router } from '@/router'
 import { fetchClearChat, fetchCreateChatRoom, fetchDeleteChat, fetchDeleteChatRoom, fetchGetChatHistory, fetchGetChatRooms, fetchRenameChatRoom } from '@/api'
 
-declare namespace Chat {
-
-	interface Chat {
-		uuid?: number
-		dateTime: string
-		text: string
-		inversion?: boolean
-		error?: boolean
-		loading?: boolean
-		conversationOptions?: ConversationRequest | null
-		requestOptions: { prompt: string; options?: ConversationRequest | null }
-	}
-
-	interface History {
-		title: string
-		isEdit: boolean
-		uuid: number
-	}
-
-	interface ChatState {
-		active: number | null
-		history: History[]
-		chat: { uuid: number; data: Chat[] }[]
-	}
-
-	interface ConversationRequest {
-		conversationId?: string
-		parentMessageId?: string
-	}
-
-	interface ConversationResponse {
-		conversationId: string
-		detail: {
-			choices: { finish_reason: string; index: number; logprobs: any; text: string }[]
-			created: number
-			id: string
-			model: string
-			object: string
-			usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number }
-		}
-		id: string
-		parentMessageId: string
-		role: string
-		text: string
-	}
-}
-
 export const useChatStore = defineStore('chat-store', {
   state: (): Chat.ChatState => getLocalState(),
 
@@ -95,11 +48,11 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
-      fetchCreateChatRoom(history.title, history.uuid)
+      fetchCreateChatRoom(history['title'], history['uuid'])
       this.history.unshift(history)
       this.chat.unshift({ uuid: history.uuid, data: chatData })
-      this.active = history.uuid
-      this.reloadRoute(history.uuid)
+      this.active = history['uuid']
+      this.reloadRoute(history['uuid'])
     },
 
     updateHistory(uuid: number, edit: Partial<Chat.History>) {
@@ -107,7 +60,7 @@ export const useChatStore = defineStore('chat-store', {
       if (index !== -1) {
         this.history[index] = { ...this.history[index], ...edit }
         this.recordState()
-        fetchCreateChatRoom(history.title, history.uuid)
+        fetchCreateChatRoom(history['title'], history['uuid']))
       }
     },
 
