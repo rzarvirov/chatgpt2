@@ -2,22 +2,19 @@
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
 import { NButton, NLayoutSider } from 'naive-ui'
+import { getUserBalance } from '@service/src/storage/mongo.ts'
 import List from './List.vue'
 import Footer from './Footer.vue'
-import { getUserBalance } from './storage/mongo'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore } from '@/components/common'
-</script>
-
-<script>
-// import { getUserBalance } from './storage/mongo'
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
 
 const { isMobile } = useBasicLayout()
 const show = ref(false)
+const userId = ref('640d04a5636bd106e3d57de3') // replace with the actual ObjectId of the user
 
 const collapsed = computed(() => appStore.siderCollapsed)
 
@@ -58,16 +55,13 @@ watch(
     flush: 'post',
   },
 )
+</script>
 
+<script>
 export default {
-  data() {
-    return {
-      userId: '640d04a5636bd106e3d57de3', // replace with the actual ObjectId of the user
-    }
-  },
   computed: {
     userBalance() {
-      return getUserBalance(this.userId)
+      return getUserBalance(userId.value)
     },
   },
 }
