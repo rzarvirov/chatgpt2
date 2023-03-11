@@ -13,11 +13,11 @@ const transporter = nodemailer.createTransport({
 
 export function sendMail(toMail: string, verifyUrl: string) {
   const mailOptions = {
-    from: process.env.SMTP_USERNAME, // sender address
+    from: process.env.SMTP_SENDER, // sender address
     to: toMail, // list of receivers
     subject: 'aibuddy.ru: Подтверждение регистрации', // Subject line
     // text: 'Hello world?', // plain text body
-    html: `<h1>Вы регистрируетесь на сайте aibuddy.ru, ссылка для подтверждения вашего электронного адреса: (действительна в течение 12 часов)</h1><br/><br/><a target="_blank" href="${verifyUrl}">Подтвердить регистрацию</a>`, // html body
+    html: `<h3>Вы регистрируетесь на сайте aibuddy.ru, ссылка для подтверждения вашего электронного адреса (действительна в течение 12 часов):</h3><br/><br/><h2><a target="_blank" href="${verifyUrl}">Подтвердить регистрацию</a></h2>`, // html body
   }
 
   // send mail with defined transport object
