@@ -56,6 +56,8 @@ watch(
 </script>
 
 <template>
+  <div>50</div>
+
   <NLayoutSider
     :collapsed="collapsed"
     :collapsed-width="0"
