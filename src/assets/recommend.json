@@ -1,14 +1,14 @@
 [
   {
-    "key": "awesome-chatgpt-prompts-ru",
+    "key": "RU",
     "desc": "ChatGPT Запросы",
     "downloadUrl": "https://raw.githubusercontent.com/rzarvirov/chatgpt2/main/prompts_RU.json",
     "url": "https://aibuddy.ru"
-  },  
+  },
   {
-      "key": "awesome-chatgpt-prompts-en",
-      "desc": "ChatGPT Prompts",
-      "downloadUrl": "https://raw.githubusercontent.com/Nothing1024/chatgpt-prompt-collection/main/awesome-chatgpt-prompts-en.json",
-      "url": "https://github.com/PlexPt/awesome-chatgpt-prompts"
-    }
-  ]
+    "key": "EN",
+    "desc": "ChatGPT Prompts",
+    "downloadUrl": "https://raw.githubusercontent.com/Nothing1024/chatgpt-prompt-collection/main/awesome-chatgpt-prompts-en.json",
+    "url": "https://github.com/PlexPt/awesome-chatgpt-prompts"
+  }
+]
