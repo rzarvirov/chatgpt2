@@ -32,7 +32,7 @@ onMounted(async () => {
 async function handleVerify(verifytoken: string) {
   if (!verifytoken)
     return
-const secretKey = verifytoken.trim()
+  const secretKey = verifytoken.trim()
   try {
     loading.value = true
     await fetchVerify(secretKey)
@@ -100,7 +100,7 @@ async function handleRegister() {
       <div class="space-y-4">
         <header class="space-y-2">
           <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
-            403
+            Авторизация
           </h2>
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
             {{ $t('common.unauthorizedTips') }}
@@ -139,7 +139,7 @@ async function handleRegister() {
           :loading="loading"
           @click="handleLogin"
         >
-        {{ $t('common.login') }}
+          {{ $t('common.login') }}
         </NButton>
       </div>
     </div>
