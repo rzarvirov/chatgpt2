@@ -116,17 +116,16 @@ async function handleRegister() {
             type="primary"
             :disabled="disabled"
             :loading="loading"
-            @click="handleRegister"
+            @click.prevent="handleRegister"
           >
             {{ $t('common.register') }}
           </NButton>
-          <br>
           <NButton
             block
             type="primary"
             :disabled="disabled"
             :loading="loading"
-            @click="handleLogin"
+            @click.prevent="handleLogin"
           >
             {{ $t('common.login') }}
           </NButton>
