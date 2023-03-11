@@ -87,16 +87,16 @@ const inputStatus = computed (() => tempPromptKey.value.trim().length < 1 || tem
 const addPromptTemplate = () => {
   for (const i of promptList.value) {
     if (i.key === tempPromptKey.value) {
-      message.error('已存在重复标题，请重新输入')
+      message.error('Запись с таким заголовком уже существует')
       return
     }
     if (i.value === tempPromptValue.value) {
-      message.error(`已存在重复内容：${tempPromptKey.value}，请重新输入`)
+      message.error(`Содержимое уже существует: ${tempPromptKey.value}, пожалуйста, повторно введите`)
       return
     }
   }
   promptList.value.unshift({ key: tempPromptKey.value, value: tempPromptValue.value } as never)
-  message.success('添加 prompt 成功')
+  message.success('Добавлено успешно')
   changeShowModal('')
 }
 
@@ -115,17 +115,17 @@ const modifyPromptTemplate = () => {
   // 搜索有冲突的部分
   for (const i of tempList) {
     if (i.key === tempPromptKey.value) {
-      message.error('检测修改 Prompt 标题冲突，请重新修改')
+      message.error('Чтобы обнаружить конфликт с измененным заголовком, измените его')
       return
     }
     if (i.value === tempPromptValue.value) {
-      message.error(`检测修改内容${i.key}冲突，请重新修改`)
+      message.error(`Чтобы обнаружить конфликт между содержанием модификации ${i.key}, пожалуйста, измените его`)
       return
     }
   }
 
   promptList.value = [{ key: tempPromptKey.value, value: tempPromptValue.value }, ...tempList] as never
-  message.success('Prompt 信息修改成功')
+  message.success('Изменение выполнено успешно')
   changeShowModal('')
 }
 
@@ -133,12 +133,12 @@ const deletePromptTemplate = (row: { key: string; value: string }) => {
   promptList.value = [
     ...promptList.value.filter((item: { key: string; value: string }) => item.key !== row.key),
   ] as never
-  message.success('删除 Prompt 成功')
+  message.success('Удаление выполнено успешно')
 }
 
 const clearPromptTemplate = () => {
   promptList.value = []
-  message.success('清空 Prompt 成功')
+  message.success('Удаление выполнено успешно')
 }
 
 const importPromptTemplate = () => {
@@ -148,12 +148,12 @@ const importPromptTemplate = () => {
       let safe = true
       for (const j of promptList.value) {
         if (j.key === i.key) {
-          message.warning(`因标题重复跳过：${i.key}`)
+          message.warning(`Пропустить из-за повторяющегося названия: ${i.key}`)
           safe = false
           break
         }
         if (j.value === i.value) {
-          message.warning(`因内容重复跳过：${i.key}`)
+          message.warning(`Пропустить из-за повторяющегося контента：${i.key}`)
           safe = false
           break
         }
@@ -161,11 +161,11 @@ const importPromptTemplate = () => {
       if (safe)
         promptList.value.unshift({ key: i.key, value: i.value } as never)
     }
-    message.success('导入成功')
+    message.success('Импорт выполнен успешно')
     changeShowModal('')
   }
   catch {
-    message.error('JSON 格式错误，请检查 JSON 格式')
+    message.error('Формат JSON неправильный, пожалуйста, проверьте формат файла')
     changeShowModal('')
   }
 }
@@ -194,7 +194,7 @@ const downloadPromptTemplate = async () => {
       })
   }
   catch {
-    message.error('网络导入出现问题，请检查网络状态与 JSON 文件有效性')
+    message.error('Возникла проблема с импортом, проверьте состояния сети и валидность JSON-файла')
   }
 }
 
@@ -223,12 +223,12 @@ const pagination = computed(() => {
 const createColumns = (): DataTableColumns<DataProps> => {
   return [
     {
-      title: '标题',
+      title: 'Название',
       key: 'renderKey',
       minWidth: 100,
     },
     {
-      title: '内容',
+      title: 'Содержимое',
       key: 'renderValue',
     },
     {
@@ -246,7 +246,7 @@ const createColumns = (): DataTableColumns<DataProps> => {
               type: 'info',
               onClick: () => changeShowModal('modify', row),
             },
-            { default: () => '修改' },
+            { default: () => 'Обеовить' },
           ),
           h(
             NButton,
@@ -256,7 +256,7 @@ const createColumns = (): DataTableColumns<DataProps> => {
               type: 'error',
               onClick: () => deletePromptTemplate(row),
             },
-            { default: () => '删除' },
+            { default: () => 'Удалить' },
           ),
           ],
         })
@@ -281,24 +281,24 @@ watch(
       <NCard>
         <div class="space-y-4">
           <NTabs type="segment">
-            <NTabPane name="local" tab="本地管理">
+            <NTabPane name="local" tab="Управление каталогом">
               <NSpace justify="end">
                 <NButton type="primary" @click="changeShowModal('add')">
-                  添加
+                  Добавить
                 </NButton>
                 <NButton @click="changeShowModal('local_import')">
-                  导入
+                  Импорт
                 </NButton>
                 <NButton @click="exportPromptTemplate()">
-                  导出
+                  Экспорт
                 </NButton>
                 <NPopconfirm @positive-click="clearPromptTemplate">
                   <template #trigger>
                     <NButton>
-                      清空
+                      Пусто
                     </NButton>
                   </template>
-                  确认是否清空数据?
+                  Вы хотите стереть данные?
                 </NPopconfirm>
               </NSpace>
               <br>
@@ -310,11 +310,11 @@ watch(
                 :bordered="false"
               />
             </NTabPane>
-            <NTabPane name="download" tab="在线导入">
-              注意：请检查下载 JSON 文件来源，恶意的JSON文件可能会破坏您的计算机！<br><br>
+            <NTabPane name="download" tab="Скачать">
+              Удостоверьтесь в надежности своего источника<br><br>
               <NGrid x-gap="12" y-gap="12" :cols="24">
                 <NGi :span="isMobile ? 18 : 22">
-                  <NInput v-model:value="downloadURL" placeholder="请输入正确的 JSON 地址" />
+                  <NInput v-model:value="downloadURL" placeholder="Введите ссылку на JSON файл" />
                 </NGi>
                 <NGi>
                   <NButton strong secondary :disabled="downloadDisabled" @click="downloadPromptTemplate()">
@@ -392,10 +392,10 @@ watch(
         aria-modal="true"
       >
         <NSpace v-if="modalMode === 'add' || modalMode === 'modify'" vertical>
-          模板标题
-          <NInput v-model:value="tempPromptKey" placeholder="搜索" />
-          模板内容
-          <NInput v-model:value="tempPromptValue" placeholder="搜索" type="textarea" />
+          Название шаблона
+          <NInput v-model:value="tempPromptKey" placeholder="Поиск" />
+          Содержимое шаблона
+          <NInput v-model:value="tempPromptValue" placeholder="Поиск" type="textarea" />
           <NButton
             strong
             secondary
@@ -403,13 +403,13 @@ watch(
             :disabled="inputStatus"
             @click="() => { modalMode === 'add' ? addPromptTemplate() : modifyPromptTemplate() }"
           >
-            确定
+            Вы уверены?
           </NButton>
         </NSpace>
         <NSpace v-if="modalMode === 'local_import'" vertical>
           <NInput
             v-model:value="tempPromptValue"
-            placeholder="请粘贴json文件内容"
+            placeholder="Вставьте содержимое JSON файла"
             :autosize="{ minRows: 3, maxRows: 15 }"
             type="textarea"
           />
@@ -420,7 +420,7 @@ watch(
             :disabled="inputStatus"
             @click="() => { importPromptTemplate() }"
           >
-            导入
+            Импортировать
           </NButton>
         </NSpace>
       </NCard>
