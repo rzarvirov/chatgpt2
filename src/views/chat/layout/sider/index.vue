@@ -7,6 +7,7 @@ import Footer from './Footer.vue'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore } from '@/components/common'
+// import { getUserBalance } from './storage/mongo'
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
