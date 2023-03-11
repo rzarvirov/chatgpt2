@@ -318,7 +318,7 @@ watch(
                 </NGi>
                 <NGi>
                   <NButton strong secondary :disabled="downloadDisabled" @click="downloadPromptTemplate()">
-                    下载
+                    Загрузить
                   </NButton>
                 </NGi>
               </NGrid>
