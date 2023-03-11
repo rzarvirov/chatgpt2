@@ -120,6 +120,7 @@ async function handleRegister() {
           >
             {{ $t('common.register') }}
           </NButton>
+          <br>
           <NButton
             block
             type="primary"
