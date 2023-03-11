@@ -2,7 +2,7 @@
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
 import { NButton, NLayoutSider } from 'naive-ui'
-import { getUserBalance } from '@service/src/storage/mongo.ts'
+import { getUserBalance } from './storage/mongo'
 import List from './List.vue'
 import Footer from './Footer.vue'
 import { useAppStore, useChatStore } from '@/store'
