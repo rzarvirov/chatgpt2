@@ -207,7 +207,7 @@ router.post('/user-register', async (req, res) => {
   }
   else {
     sendMail(username, getUserVerifyUrl(username))
-    res.send({ status: 'Success', message: 'Проверьте почту для окончания регистрации (возможно, наше письмо упало в Спам)', data: null })
+    res.send({ status: 'Success', message: 'Проверьте почту для окончания регистрации (возможно, наше письмо упало в спам)', data: null })
   }
 })
 
@@ -244,7 +244,7 @@ router.post('/user-login', async (req, res) => {
       || user.status !== Status.Normal
       || user.password !== md5(password)) {
       if (user != null && user.status === Status.PreVerify)
-        throw new Error('Проверьте почту для окончания верификации (возможно, письмо упалов Спам)')
+        throw new Error('Аккаунт не верифицирован. Проверьте почту для окончания регистрации (возможно, наше письмо упало в спам)')
       throw new Error('Имя или пароль не существуют или указаны не верное')
     }
 
