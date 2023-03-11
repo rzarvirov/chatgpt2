@@ -141,3 +141,8 @@ export async function verifyUser(email: string) {
   email = email.toLowerCase()
   return await userCol.updateOne({ email }, { $set: { status: Status.Normal, verifyTime: new Date().toLocaleString() } })
 }
+
+export async function getUserName(userId: ObjectId) {
+  const user = await userCol.findOne({ _id: userId })
+  return user?.name || ''
+}
