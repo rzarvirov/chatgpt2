@@ -14,11 +14,9 @@ services:
       OPENAI_ACCESS_TOKEN: xxxxxx
       # API接口地址，可选，设置 OPENAI_API_KEY 时可用
       OPENAI_API_BASE_URL: xxxx
-      # API模型，可选，设置 OPENAI_API_KEY 时可用
-      OPENAI_API_MODEL: xxxx
       # 反向代理，可选
       API_REVERSE_PROXY: xxx
-      # Access jwt encryption parameters, optional If not empty, allow login and set the MONGODB_URL
+      # 访问jwt加密参数，可选 不为空则允许登录 同时需要设置 MONGODB_URL
       AUTH_SECRET_KEY: xxx
       # 超时，单位毫秒，可选
       TIMEOUT_MS: 60000
@@ -26,21 +24,21 @@ services:
       SOCKS_PROXY_HOST: xxxx
       # Socks代理端口，可选，和 SOCKS_PROXY_HOST 一起时生效
       SOCKS_PROXY_PORT: xxxx
-      # MongoDB's connection string
-      MONGODB_URL: xxxx
-      # Whether the website is open for registration
+      # mongodb 的连接字符串
+      MONGODB_URL: 'mongodb://chatgpt:xxxx@database:27017'
+      # 网站是否开启注册
       REGISTER_ENABLED: false
-      # After enabling registration, the email suffix allowed for website registration If it is empty, any suffix is allowed
-      REGISTER_MAILS: ''
-      # After opening the registration password encryption salt
+      # 开启注册之后 网站注册允许的邮箱后缀 如果空 则允许任意后缀
+      REGISTER_MAILS: '@qq.com,@sina.com,@163.com'
+      # 开启注册之后 密码加密的盐
       PASSWORD_MD5_SALT: anysalt
-      # After opening registration, super manage mailbox
-      ROOT_USER: xxxx
-      # After opening the registration, the website domain name does not include / send the verification email at the time of registration
-      SITE_DOMAIN: xxxx
-      # After enabling registration, send the verification email configuration
-      SMTP_HOST: xxxx
-      SMTP_PORT: xxx
+      # 开启注册之后 超级管理邮箱
+      ROOT_USER: xxx@qq.com
+      # 开启注册之后 网站域名 不含 / 注册的时候发送验证邮箱使用
+      SITE_DOMAIN: http://127.0.0.1:1002
+      # 开启注册之后 发送验证邮箱配置
+      SMTP_HOST: smtp.exmail.qq.com
+      SMTP_PORT: 465
       SMTP_TSL: true
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
@@ -61,13 +59,16 @@ services:
       MONGO_INITDB_DATABASE: chatgpt
 
   nginx:
-    image: nginx:alpine
+    build: nginx
+    image: chatgpt/nginx
     ports:
       - '80:80'
     expose:
       - '80'
     volumes:
-      - ./nginx/html:/usr/share/nginx/html
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/html/:/etc/nginx/html/
     links:
       - app
+
+volumes:
+  mongodb: {}
