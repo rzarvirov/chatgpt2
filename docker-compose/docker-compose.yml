@@ -38,7 +38,7 @@ services:
       SITE_DOMAIN: xxxx
       # 开启注册之后 发送验证邮箱配置
       SMTP_HOST: xxx
-      SMTP_PORT: 465
+      SMTP_PORT: xxx
       SMTP_TSL: true
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
