@@ -232,7 +232,7 @@ const createColumns = (): DataTableColumns<DataProps> => {
       key: 'renderValue',
     },
     {
-      title: '操作',
+      title: 'Действие',
       key: 'actions',
       width: 100,
       align: 'center',
@@ -246,7 +246,7 @@ const createColumns = (): DataTableColumns<DataProps> => {
               type: 'info',
               onClick: () => changeShowModal('modify', row),
             },
-            { default: () => 'Обеовить' },
+            { default: () => 'Изменить' },
           ),
           h(
             NButton,
@@ -295,7 +295,7 @@ watch(
                 <NPopconfirm @positive-click="clearPromptTemplate">
                   <template #trigger>
                     <NButton>
-                      Пусто
+                      Очистить
                     </NButton>
                   </template>
                   Вы хотите стереть данные?
