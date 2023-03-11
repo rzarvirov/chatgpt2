@@ -104,7 +104,7 @@ async function onConversation() {
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         roomId: +uuid,
-        uuid: chatUuid,        
+        uuid: chatUuid,
         prompt: message,
         options,
         signal: controller.signal,
@@ -237,7 +237,7 @@ async function onRegenerate(index: number) {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         roomId: +uuid,
         uuid: chatUuid || Date.now(),
-        regenerate: true,        
+        regenerate: true,
         prompt: message,
         options,
         signal: controller.signal,
@@ -532,7 +532,7 @@ onUnmounted(() => {
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
                 v-model:value="prompt" type="textarea" :placeholder="placeholder"
-                :autosize="{ minRows: 1, maxRows: 5 }" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keypress="handleEnter"
+                :autosize="{ minRows: 1, maxRows: 8 }" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keypress="handleEnter"
               />
             </template>
           </NAutoComplete>
