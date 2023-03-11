@@ -71,7 +71,7 @@ watch(
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
           <h1>
-            {{ userBalance }}
+            50
           </h1>
         </div>
         <div class="p-4">
