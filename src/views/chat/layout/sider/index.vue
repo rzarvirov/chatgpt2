@@ -2,7 +2,6 @@
 import type { CSSProperties } from 'vue'
 import { computed, ref, watch } from 'vue'
 import { NButton, NLayoutSider } from 'naive-ui'
-import { getUserBalance } from './storage/mongo'
 import List from './List.vue'
 import Footer from './Footer.vue'
 import { useAppStore, useChatStore } from '@/store'
@@ -14,7 +13,6 @@ const chatStore = useChatStore()
 
 const { isMobile } = useBasicLayout()
 const show = ref(false)
-const userId = ref('640d04a5636bd106e3d57de3') // replace with the actual ObjectId of the user
 
 const collapsed = computed(() => appStore.siderCollapsed)
 
@@ -55,16 +53,6 @@ watch(
     flush: 'post',
   },
 )
-</script>
-
-<script>
-export default {
-  computed: {
-    userBalance() {
-      return getUserBalance(userId.value)
-    },
-  },
-}
 </script>
 
 <template>
