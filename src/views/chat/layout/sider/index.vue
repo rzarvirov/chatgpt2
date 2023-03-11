@@ -56,8 +56,6 @@ watch(
 </script>
 
 <template>
-  <div>50</div>
-
   <NLayoutSider
     :collapsed="collapsed"
     :collapsed-width="0"
@@ -71,6 +69,9 @@ watch(
   >
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
+        <div class="p-4">
+          <h1>50</h1>
+        </div>
         <div class="p-4">
           <NButton dashed block @click="handleAdd">
             Новый чат
