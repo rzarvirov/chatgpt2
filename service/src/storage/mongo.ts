@@ -146,3 +146,8 @@ export async function getUserName(userId: ObjectId) {
   const user = await userCol.findOne({ _id: userId })
   return user?.name || ''
 }
+
+export async function getUserBalance(userId: ObjectId) {
+  const user = await userCol.findOne({ _id: userId })
+  return user?.balance || 0
+}

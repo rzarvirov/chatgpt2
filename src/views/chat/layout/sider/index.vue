@@ -4,9 +4,14 @@ import { computed, ref, watch } from 'vue'
 import { NButton, NLayoutSider } from 'naive-ui'
 import List from './List.vue'
 import Footer from './Footer.vue'
+import { getUserBalance } from './storage/mongo'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore } from '@/components/common'
+</script>
+
+<script>
+// import { getUserBalance } from './storage/mongo'
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -53,6 +58,19 @@ watch(
     flush: 'post',
   },
 )
+
+export default {
+  data() {
+    return {
+      userId: '640d04a5636bd106e3d57de3', // replace with the actual ObjectId of the user
+    }
+  },
+  computed: {
+    userBalance() {
+      return getUserBalance(this.userId)
+    },
+  },
+}
 </script>
 
 <template>
@@ -70,7 +88,9 @@ watch(
     <div class="flex flex-col h-full" :style="mobileSafeArea">
       <main class="flex flex-col flex-1 min-h-0">
         <div class="p-4">
-          <h1>50</h1>
+          <h1>
+            {{ userBalance }}
+          </h1>
         </div>
         <div class="p-4">
           <NButton dashed block @click="handleAdd">
