@@ -27,7 +27,7 @@ services:
       # mongodb 的连接字符串
       MONGODB_URL: xxx
       # 网站是否开启注册
-      REGISTER_ENABLED: false
+      REGISTER_ENABLED: true
       # 开启注册之后 网站注册允许的邮箱后缀 如果空 则允许任意后缀
       REGISTER_MAILS: xxx
       # 开启注册之后 密码加密的盐
