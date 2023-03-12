@@ -485,6 +485,15 @@ onUnmounted(() => {
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
+            <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
+              <span>
+                этот код не работает — как починить? [код]<br>
+                объясни теорию относительности так, чтобы понял ребенок<br>
+                напиши эссе на тему "влияние свинки Пеппы на общественное сознание"<br>
+                ответь на письмо от начальника: [письмо]<br>
+                расскажи сказку про Машу, медведя и злого дракона с элементами триллера
+              </span>
+            </div>
           </template>
           <template v-else>
             <div>
