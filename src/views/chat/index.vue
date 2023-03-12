@@ -515,9 +515,16 @@ onUnmounted(() => {
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
-            <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
+            <div v-if="randomSentences.length" class="mt-4">
+              <ul>
+                <li v-for="sentence in randomSentences" :key="sentence">
+                  {{ sentence }}
+                </li>
+              </ul>
+            </div>
+            <div v-else class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <span>
-                50
+                No sentences found.
               </span>
             </div>
           </template>
