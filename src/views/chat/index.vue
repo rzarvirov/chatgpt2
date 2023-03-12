@@ -16,35 +16,12 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 
-// random sentence script
-interface SentenceData {
-  sentences: string[]
-}
-
 const props = defineProps({
   numSentences: {
     type: Number,
     default: 5,
   },
 })
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sentences: SentenceData = require('./../../sentences.json')
-
-const getRandomSentences = () => {
-  const selectedSentences = []
-
-  for (let i = 0; i < props.numSentences; i++) {
-    const randomIndex = Math.floor(Math.random() * sentences.sentences.length)
-    const sentence = sentences.sentences[randomIndex]
-    selectedSentences.push(sentence)
-  }
-
-  return selectedSentences
-}
-
-const randomSentences = getRandomSentences()
-// end
 
 let controller = new AbortController()
 
@@ -487,6 +464,29 @@ onUnmounted(() => {
   if (loading.value)
     controller.abort()
 })
+
+// random sentence script
+interface SentenceData {
+  sentences: string[]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const sentences: SentenceData = require('./../../sentences.json')
+
+const getRandomSentences = () => {
+  const selectedSentences = []
+
+  for (let i = 0; i < props.numSentences; i++) {
+    const randomIndex = Math.floor(Math.random() * sentences.sentences.length)
+    const sentence = sentences.sentences[randomIndex]
+    selectedSentences.push(sentence)
+  }
+
+  return selectedSentences
+}
+
+const randomSentences = getRandomSentences()
+// end
 </script>
 
 <template>
