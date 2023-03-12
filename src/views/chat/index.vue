@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineProps, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
@@ -15,6 +15,36 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
+
+// random sentence script
+interface SentenceData {
+  sentences: string[]
+}
+
+const props = defineProps({
+  numSentences: {
+    type: Number,
+    default: 5,
+  },
+})
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const sentences: SentenceData = require('./../../sentences.json')
+
+const getRandomSentences = () => {
+  const selectedSentences = []
+
+  for (let i = 0; i < props.numSentences; i++) {
+    const randomIndex = Math.floor(Math.random() * sentences.sentences.length)
+    const sentence = sentences.sentences[randomIndex]
+    selectedSentences.push(sentence)
+  }
+
+  return selectedSentences
+}
+
+const randomSentences = getRandomSentences()
+// end
 
 let controller = new AbortController()
 
@@ -487,13 +517,9 @@ onUnmounted(() => {
             </div>
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <span>
-                этот код не работает — как починить? [код]<br><br>
-                объясни теорию относительности так, чтобы понял ребенок<br><br>
-                напиши эссе на тему "влияние свинки Пеппы на общественное сознание"<br><br>
-                ответь на письмо от начальника: [письмо]<br><br>
-                переведи на английския язык в неформальном стиле: [текст]<br><br>
-                составь таблицу питания на неделю для вегетарианца<br><br>
-                расскажи сказку про Машу, медведя и злого дракона. Сказка должна быть с элементами триллера
+                <ul>
+                  <li v-for="sentence in randomSentences" :key="sentence">{{ sentence }}</li>
+                </ul>
               </span>
             </div>
           </template>
