@@ -534,9 +534,9 @@ const randomSentences = getRandomSentences()
             <div v-if="randomSentences.length" class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <span>
                 <ul>
-                  <li v-for="sentence in randomSentences" :key="sentence">
+                  <li v-for="sentence in randomSentences" :key="sentence" style="line-height: 30px;">
                     {{ sentence }}
-                  </li><br><br>
+                  </li>
                 </ul>
               </span>
             </div>
