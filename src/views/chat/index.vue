@@ -517,9 +517,7 @@ onUnmounted(() => {
             </div>
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <span>
-                <ul>
-                  <li v-for="sentence in randomSentences" :key="sentence">{{ sentence }}</li>
-                </ul>
+                50
               </span>
             </div>
           </template>
