@@ -7,12 +7,26 @@
 	<link rel="apple-touch-icon" href="/favicon.ico">
 	<meta name="viewport"
 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover" />
-	<title>ChatGPT API</title>
+	<title>ChatGPT - API</title>	
 </head>
 
 <body class="dark:bg-black">
 	<div id="app">
 		<style>
+			.my-list-item {
+			line-height: 1.5em;
+			height: 2.5em;
+			}
+
+			/* Media query for smaller screens */
+			@media (max-width: 768px) {
+			/* Adjust line height and height for smaller screens */
+			.my-list-item {
+				line-height: 1.2em;
+				height: 2.4em;
+			}
+			}
+
 			.loading-wrap {
 				display: flex;
 				justify-content: center;
