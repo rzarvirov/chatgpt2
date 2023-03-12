@@ -15,7 +15,7 @@ export interface UserState {
 export function defaultSetting(): UserState {
   return {
     userInfo: {
-      avatar: 'https://raw.githubusercontent.com/rzarvirov/chatgpt2/6619334efb75db93e14f32b1380890c3a9a34a24/public/astronaut.png',
+      avatar: '@/assets/astronaut.png',
       name: 'Username',
       description: 'Исследователь',
     },
