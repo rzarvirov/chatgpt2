@@ -467,25 +467,27 @@ onUnmounted(() => {
 
 // random sentence script
 const sentences = [
-  'The quick brown fox jumps over the lazy dog.',
-  'She sells seashells by the seashore.',
-  'I\'m sorry, Dave. I\'m afraid I can\'t do that.',
-  'To be or not to be, that is the question.',
-  'You shall not pass!',
-  'There\'s no place like home.',
-  'All work and no play makes Jack a dull boy.',
-  'May the Force be with you.',
-  'Life is like a box of chocolates; you never know what you\'re gonna get.',
-  'Houston, we have a problem.',
+  'этот код не работает — как починить? [код]',
+  'объясни теорию относительности так, чтобы понял ребенок',
+  'напиши эссе на тему "влияние свинки Пеппы на поп-культуру"',
+  'ответь на письмо от начальника: [письмо]',
+  'расскажи сказку про Машу, медведя, свинку Пеппу и злого дракона с элементами триллера',
+  'представь что ты диетолог. Составь меню на 5 дней для вегетарианца из расчета 2000 кал/день. Результат выдай как таблицу, в конце добавь список покупок',
+  'как тренер по фитнесу, создай детальный план интервальной тренировки на 30 минут для новичка, опиши каждое упражнение',
+  'как ученик 11 класса создай проект сочинения по "Войне и мир". Выдай 5 параграфов.',
 ]
 
 const getRandomSentences = () => {
   const selectedSentences = []
+  const usedIndices = new Set()
 
-  for (let i = 0; i < props.numSentences; i++) {
+  while (selectedSentences.length < props.numSentences) {
     const randomIndex = Math.floor(Math.random() * sentences.length)
-    const sentence = sentences[randomIndex]
-    selectedSentences.push(sentence)
+    if (!usedIndices.has(randomIndex)) {
+      const sentence = sentences[randomIndex]
+      selectedSentences.push(sentence)
+      usedIndices.add(randomIndex)
+    }
   }
 
   return selectedSentences
@@ -521,12 +523,14 @@ const randomSentences = getRandomSentences()
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
-            <div v-if="randomSentences.length" class="mt-4">
-              <ul>
-                <li v-for="sentence in randomSentences" :key="sentence">
-                  {{ sentence }}
-                </li>
-              </ul>
+            <div v-if="randomSentences.length" class="flex items-center justify-center mt-4 text-center text-neutral-300">
+              <span>
+                <ul>
+                  <li v-for="sentence in randomSentences" :key="sentence">
+                    {{ sentence }}
+                  </li><br>
+                </ul>
+              </span>
             </div>
             <div v-else class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <span>
