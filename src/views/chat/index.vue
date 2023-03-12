@@ -466,19 +466,25 @@ onUnmounted(() => {
 })
 
 // random sentence script
-interface SentenceData {
-  sentences: string[]
-}
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const sentences: SentenceData = require('./../../sentences.json')
+const sentences = [
+  'The quick brown fox jumps over the lazy dog.',
+  'She sells seashells by the seashore.',
+  'I\'m sorry, Dave. I\'m afraid I can\'t do that.',
+  'To be or not to be, that is the question.',
+  'You shall not pass!',
+  'There\'s no place like home.',
+  'All work and no play makes Jack a dull boy.',
+  'May the Force be with you.',
+  'Life is like a box of chocolates; you never know what you\'re gonna get.',
+  'Houston, we have a problem.',
+]
 
 const getRandomSentences = () => {
   const selectedSentences = []
 
   for (let i = 0; i < props.numSentences; i++) {
-    const randomIndex = Math.floor(Math.random() * sentences.sentences.length)
-    const sentence = sentences.sentences[randomIndex]
+    const randomIndex = Math.floor(Math.random() * sentences.length)
+    const sentence = sentences[randomIndex]
     selectedSentences.push(sentence)
   }
 
