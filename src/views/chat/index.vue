@@ -535,7 +535,7 @@ const randomSentences = getRandomSentences().map(sentence => `${sentence}<br>`)
               <span>
                 <ul>
                   <li v-for="sentence in randomSentences" :key="sentence">
-                    {{ sentence }}
+                    {{ sentence }}<br>
                   </li>
                 </ul>
               </span>
