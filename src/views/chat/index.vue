@@ -494,7 +494,6 @@ const getRandomSentences = () => {
     if (!usedIndices.has(randomIndex)) {
       const sentence = sentences[randomIndex]
       selectedSentences.push(sentence)
-      selectedSentences.push('')
       usedIndices.add(randomIndex)
     }
   }
@@ -502,7 +501,7 @@ const getRandomSentences = () => {
   return selectedSentences
 }
 
-const randomSentences = getRandomSentences()
+const randomSentences = getRandomSentences().map(sentence => `${sentence}<br>`)
 // end
 </script>
 
