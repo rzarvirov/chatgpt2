@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import Icon403 from '@/icons/403.vue'
+import SentencesList from '@/assets/sentences.json'
 
 interface Props {
   visible: boolean
@@ -92,6 +93,13 @@ async function handleRegister() {
     loading.value = false
   }
 }
+
+// pick one random sentence:
+const randomSentence = () => {
+  const sentences = SentencesList
+  const randomIndex = Math.floor(Math.random() * sentences.length)
+  return sentences[randomIndex]
+}
 </script>
 
 <template>
@@ -142,7 +150,10 @@ async function handleRegister() {
           {{ $t('common.login') }}
         </NButton>
         <p class="text-base text-center text-slate-500">
-          Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации
+          Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации, например:
+        </p>
+        <p class="text-base text-center text-slate-500">
+          <small>Например: {{ randomSentence }}</small>
         </p>
       </div>
     </div>
