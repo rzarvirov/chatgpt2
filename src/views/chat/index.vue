@@ -15,6 +15,7 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
+import SentencesList from '@/assets/sentences.json'
 
 const props = defineProps({
   numSentences: {
@@ -464,9 +465,9 @@ onUnmounted(() => {
   if (loading.value)
     controller.abort()
 })
-
+const sentences = SentencesList
 // random sentence script
-const sentences = [
+/* const sentences = [
   'Этот код не работает — как починить? <вставь код>',
   'Объясни теорию относительности так, чтобы понял ребенок',
   'Напиши эссе на тему "влияние свинки Пеппы на поп-культуру"',
@@ -494,7 +495,7 @@ const sentences = [
   'Выступи в качестве моего гида по путешествиям во времени. Я предоставлю исторический период, которое я хочу посетить, и вы предложите лучшие мероприятия, достопримечательности или людей, чтобы встретиться. Я хочу в 1917 год в России',
   'Действуй как астролог. Спроси нужную информация и предоставь натальную карту',
   'Действуй как таролог. Я опишу карту, а ты предоставишь интерпретацию и задашь нужные вопросы.',
-]
+] */
 
 const getRandomSentences = () => {
   const selectedSentences = []
