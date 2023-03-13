@@ -115,16 +115,15 @@ const getNextSentence = (): string => {
 
 const typeWriter = (sentence: string, index: number, speed: number) => {
   if (index < sentence.length) {
+    currentSentence.value += sentence.charAt(index)
     setTimeout(() => {
-      currentSentence.value += sentence.charAt(index)
       typeWriter(sentence, index + 1, speed)
     }, speed)
   }
   else {
     setTimeout(() => {
-      currentSentence.value = ''
+      currentSentence.value = getNextSentence()
       setTimeout(() => {
-        currentSentence.value = getNextSentence()
         typeWriter(currentSentence.value, 0, 50)
       }, 2000)
     }, 0)
