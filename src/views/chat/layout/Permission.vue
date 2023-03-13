@@ -114,12 +114,6 @@ function typeSentence(sentence: string) {
 }
 
 async function typeNextSentence() {
-  // Check if the sentences array is empty
-  if (sentences.length === 0) {
-    console.warn('The sentences array is empty!')
-    return
-  }
-
   // Randomly select the next sentence
   let nextSentenceIndex = currentSentenceIndex
   while (nextSentenceIndex === currentSentenceIndex)
@@ -129,6 +123,7 @@ async function typeNextSentence() {
 
   const sentence = sentences[currentSentenceIndex]
   await typeSentence(sentence)
+  await new Promise(resolve => setTimeout(resolve, 2000)) // Pause for 2 seconds
   await typeNextSentence()
 }
 
