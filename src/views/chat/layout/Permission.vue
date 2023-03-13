@@ -141,6 +141,9 @@ async function handleRegister() {
         >
           {{ $t('common.login') }}
         </NButton>
+        <p class="text-base text-center text-slate-500 dark:text-slate-500">
+          Вы сожете свободно использовать нейросетевого чат-бота нового поколения после прохождения регистрации
+        </p>
       </div>
     </div>
   </NModal>
