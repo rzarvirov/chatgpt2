@@ -95,8 +95,8 @@ async function handleRegister() {
 }
 
 // pick one random sentence:
+const sentences = SentencesList
 const randomSentence = () => {
-  const sentences = SentencesList
   const randomIndex = Math.floor(Math.random() * sentences.length)
   return sentences[randomIndex]
 }
