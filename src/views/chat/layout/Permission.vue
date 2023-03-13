@@ -99,6 +99,7 @@ const sentences = SentencesList
 
 const currentSentenceIndex = ref(0)
 const currentSentence = ref('')
+const showCursor = ref(true)
 
 const getNextSentenceIndex = (): number => {
   const index = Math.floor(Math.random() * sentences.length)
@@ -114,29 +115,32 @@ const getNextSentence = (): string => {
 }
 
 const typeWriter = (sentence: string, index: number, speed: number) => {
-  if (index === 0)
+  if (index === 0) {
     currentSentence.value = ''
+    showCursor.value = true
+  }
 
   if (index < sentence.length) {
     currentSentence.value += sentence.charAt(index)
+    showCursor.value = !showCursor.value
     setTimeout(() => {
       typeWriter(sentence, index + 1, speed)
     }, speed)
   }
   else {
     setTimeout(() => {
-      currentSentence.value = ''
       setTimeout(() => {
+        currentSentence.value = ''
         currentSentence.value = getNextSentence()
-        typeWriter(currentSentence.value, 0, 50)
+        typeWriter(currentSentence.value, 0, speed * 0.5)
       }, 2000)
-    }, 0)
+    }, speed * 3)
   }
 }
 
 onMounted(() => {
   currentSentence.value = getNextSentence()
-  typeWriter(currentSentence.value, 0, 50)
+  typeWriter(currentSentence.value, 0, 100)
 })
 </script>
 In this updated code, I modified the typeWriter function to first clear the currentSentence ref before typing a new sentence. I added an if statement that checks if the current index value is 0, and if so, it clears the currentSentence ref before starting to type the new sentence.
