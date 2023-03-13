@@ -96,6 +96,7 @@ async function handleRegister() {
 
 // pick and typ one random sentence:
 const sentences = SentencesList
+
 const currentSentenceIndex = ref(0)
 const currentSentence = ref('')
 
@@ -113,25 +114,20 @@ const getNextSentence = (): string => {
 }
 
 const typeWriter = (sentence: string, index: number, speed: number) => {
-  const deleteSentence = (sentence: string) => {
-    currentSentence.value = sentence
-    setTimeout(() => {
-      currentSentence.value = ''
-      currentSentence.value = getNextSentence()
-      typeWriter(currentSentence.value, 0, 50)
-    }, 0)
-  }
-
   if (index < sentence.length) {
-    currentSentence.value += sentence.charAt(index)
     setTimeout(() => {
+      currentSentence.value += sentence.charAt(index)
       typeWriter(sentence, index + 1, speed)
     }, speed)
   }
   else {
     setTimeout(() => {
-      deleteSentence(sentence)
-    }, 2000)
+      currentSentence.value = ''
+      setTimeout(() => {
+        currentSentence.value = getNextSentence()
+        typeWriter(currentSentence.value, 0, 50)
+      }, 2000)
+    }, 0)
   }
 }
 
