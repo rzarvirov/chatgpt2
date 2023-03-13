@@ -257,7 +257,6 @@ const createColumns = (): DataTableColumns<DataProps> => {
     {
       title: t('store.title'),
       key: 'renderKey',
-      width: 200,
     },
     {
       title: t('store.description'),
