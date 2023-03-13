@@ -94,18 +94,39 @@ async function handleRegister() {
   }
 }
 
-// pick one random sentence:
+// pick and typ one random sentence:
 const sentences = SentencesList
-const getRandomSentence = () => {
-  const randomIndex = Math.floor(Math.random() * sentences.length)
-  return sentences[randomIndex]
+const exampleSentence = ref('')
+let currentSentenceIndex = -1
+
+function typeSentence(sentence: string) {
+  return new Promise<void>((resolve) => {
+    let i = 0
+    const timerId = setInterval(() => {
+      exampleSentence.value = sentence.substring(0, i)
+      i++
+      if (i > sentence.length) {
+        clearInterval(timerId)
+        setTimeout(resolve, 2000)
+      }
+    }, 100)
+  })
 }
 
-const randomSentence = getRandomSentence()
-// refresh page
-const refreshPage = (): void => {
-  location.reload()
+async function typeNextSentence() {
+  // Randomly select the next sentence
+  let nextSentenceIndex = currentSentenceIndex
+  while (nextSentenceIndex === currentSentenceIndex)
+    nextSentenceIndex = Math.floor(Math.random() * sentences.length)
+
+  currentSentenceIndex = nextSentenceIndex
+
+  const sentence = sentences[currentSentenceIndex]
+  await typeSentence(sentence)
+  await typeNextSentence()
 }
+
+typeNextSentence()
 </script>
 
 <template>
@@ -158,9 +179,12 @@ const refreshPage = (): void => {
         <p class="text-base text-center text-slate-500">
           Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации
         </p>
+        <p ref="exampleSentence" class="text-base text-center text-slate-500" />
+      <!--
         <p class="text-base text-center text-slate-500" @click="refreshPage">
           <small>Пример: {{ randomSentence }}</small>
         </p>
+      -->
       </div>
     </div>
   </NModal>
