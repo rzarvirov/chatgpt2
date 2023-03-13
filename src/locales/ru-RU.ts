@@ -78,7 +78,7 @@ export default {
     importError: 'Несоответствие ключа и значения',
     importRepeatTitle: 'Повторное пропускание заголовка: {msg}',
     importRepeatContent: 'Контент повторно пропущен: {msg}',
-    onlineImportWarning: 'Примечание: Пожалуйста, проверьте источник файла JSON!',
+    onlineImportWarning: 'Выберите нужны язык, нажмите + и скачайте',
     downloadError: 'Пожалуйста, проверьте статус сети и допустимость файла JSON',
   },
 }
