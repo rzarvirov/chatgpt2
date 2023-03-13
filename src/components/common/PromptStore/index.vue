@@ -220,7 +220,7 @@ const downloadPromptTemplate = async () => {
       }).then(() => {
         importPromptTemplate()
       })
-    downloadURL.value = ''
+    downloadURL.value = 'https://raw.githubusercontent.com/rzarvirov/chatgpt2/main/prompts_RU.json'
   }
   catch {
     message.error(t('store.downloadError'))
