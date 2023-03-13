@@ -96,14 +96,14 @@ async function handleRegister() {
 
 // pick and typ one random sentence:
 const sentences = SentencesList
-const exampleSentence = ref('')
+const text = ref('')
 let currentSentenceIndex = -1
 
 function typeSentence(sentence: string) {
   return new Promise<void>((resolve) => {
     let i = 0
     const timerId = setInterval(() => {
-      exampleSentence.value = sentence.substring(0, i)
+      text.value = sentence.substring(0, i)
       i++
       if (i > sentence.length) {
         clearInterval(timerId)
@@ -114,6 +114,12 @@ function typeSentence(sentence: string) {
 }
 
 async function typeNextSentence() {
+  // Check if the sentences array is empty
+  if (sentences.length === 0) {
+    console.warn('The sentences array is empty!')
+    return
+  }
+
   // Randomly select the next sentence
   let nextSentenceIndex = currentSentenceIndex
   while (nextSentenceIndex === currentSentenceIndex)
@@ -179,7 +185,7 @@ typeNextSentence()
         <p class="text-base text-center text-slate-500">
           Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации
         </p>
-        <p ref="exampleSentence" class="text-base text-center text-slate-500" />
+        <p ref="text" class="text-base text-center text-slate-500" />
       <!--
         <p class="text-base text-center text-slate-500" @click="refreshPage">
           <small>Пример: {{ randomSentence }}</small>
