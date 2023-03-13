@@ -99,7 +99,6 @@ const sentences = SentencesList
 
 const currentSentenceIndex = ref(0)
 const currentSentence = ref('')
-const cursor = ref(false)
 
 const getNextSentenceIndex = (): number => {
   const index = Math.floor(Math.random() * sentences.length)
@@ -115,33 +114,29 @@ const getNextSentence = (): string => {
 }
 
 const typeWriter = (sentence: string, index: number, speed: number) => {
-  if (index === 0) {
+  if (index === 0)
     currentSentence.value = ''
-    cursor.value = true
-  }
 
   if (index < sentence.length) {
     currentSentence.value += sentence.charAt(index)
     setTimeout(() => {
-      cursor.value = false
-      typeWriter(sentence, index + 1, Math.floor(speed * 0.7))
+      typeWriter(sentence, index + 1, speed)
     }, speed)
   }
   else {
     setTimeout(() => {
-      cursor.value = false
       setTimeout(() => {
         currentSentence.value = ''
         currentSentence.value = getNextSentence()
-        typeWriter(currentSentence.value, 0, Math.floor(50 * 0.7))
-      }, 2000)
+        typeWriter(currentSentence.value, 0, 30)
+      }, 3000)
     }, 0)
   }
 }
 
 onMounted(() => {
   currentSentence.value = getNextSentence()
-  typeWriter(currentSentence.value, 0, Math.floor(50 * 0.7))
+  typeWriter(currentSentence.value, 0, 30)
 })
 </script>
 
@@ -207,14 +202,3 @@ onMounted(() => {
     </div>
   </NModal>
 </template>
-
-<style scoped>
-p::after {
-  content: " ";
-  animation: blink-caret 0.5s step-end infinite;
-}
-@keyframes blink-caret {
-  from, to { border-color: transparent }
-  50% { border-color: black }
-}
-</style>
