@@ -114,6 +114,9 @@ const getNextSentence = (): string => {
 }
 
 const typeWriter = (sentence: string, index: number, speed: number) => {
+  if (index === 0)
+    currentSentence.value = ''
+
   if (index < sentence.length) {
     currentSentence.value += sentence.charAt(index)
     setTimeout(() => {
@@ -122,8 +125,9 @@ const typeWriter = (sentence: string, index: number, speed: number) => {
   }
   else {
     setTimeout(() => {
-      currentSentence.value = getNextSentence()
+      currentSentence.value = ''
       setTimeout(() => {
+        currentSentence.value = getNextSentence()
         typeWriter(currentSentence.value, 0, 50)
       }, 2000)
     }, 0)
@@ -135,6 +139,9 @@ onMounted(() => {
   typeWriter(currentSentence.value, 0, 50)
 })
 </script>
+In this updated code, I modified the typeWriter function to first clear the currentSentence ref before typing a new sentence. I added an if statement that checks if the current index value is 0, and if so, it clears the currentSentence ref before starting to type the new sentence.
+
+With this change, the code should now display only the typewriter effect without duplicating the sentences.
 
 <template>
   <NModal :show="visible" style="width: 90%; max-width: 640px">
