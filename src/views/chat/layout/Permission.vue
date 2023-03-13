@@ -96,38 +96,49 @@ async function handleRegister() {
 
 // pick and typ one random sentence:
 const sentences = SentencesList
-const textElement = document.getElementById('text') as HTMLElement
-let currentSentenceIndex = -1
+const currentSentenceIndex = ref(0)
+const currentSentence = ref('')
 
-function typeSentence(sentence: string) {
-  return new Promise<void>((resolve) => {
-    let i = 0
-    const timerId = setInterval(() => {
-      textElement.textContent = sentence.substring(0, i)
-      i++
-      if (i > sentence.length) {
-        clearInterval(timerId)
-        setTimeout(resolve, 2000)
-      }
-    }, 100)
-  })
+const getNextSentenceIndex = (): number => {
+  const index = Math.floor(Math.random() * sentences.length)
+  return index === currentSentenceIndex.value
+    ? getNextSentenceIndex()
+    : index
 }
 
-async function typeNextSentence() {
-  // Randomly select the next sentence
-  let nextSentenceIndex = currentSentenceIndex
-  while (nextSentenceIndex === currentSentenceIndex)
-    nextSentenceIndex = Math.floor(Math.random() * sentences.length)
-
-  currentSentenceIndex = nextSentenceIndex
-
-  const sentence = sentences[currentSentenceIndex]
-  await typeSentence(sentence)
-  await new Promise(resolve => setTimeout(resolve, 2000)) // Pause for 2 seconds
-  await typeNextSentence()
+const getNextSentence = (): string => {
+  const index = getNextSentenceIndex()
+  currentSentenceIndex.value = index
+  return sentences[index]
 }
 
-typeNextSentence()
+const typeWriter = (sentence: string, index: number, speed: number) => {
+  const deleteSentence = (sentence: string) => {
+    currentSentence.value = sentence
+    setTimeout(() => {
+      currentSentence.value = ''
+      currentSentence.value = getNextSentence()
+      typeWriter(currentSentence.value, 0, 50)
+    }, 0)
+  }
+
+  if (index < sentence.length) {
+    currentSentence.value += sentence.charAt(index)
+    setTimeout(() => {
+      typeWriter(sentence, index + 1, speed)
+    }, speed)
+  }
+  else {
+    setTimeout(() => {
+      deleteSentence(sentence)
+    }, 2000)
+  }
+}
+
+onMounted(() => {
+  currentSentence.value = getNextSentence()
+  typeWriter(currentSentence.value, 0, 50)
+})
 </script>
 
 <template>
@@ -180,7 +191,9 @@ typeNextSentence()
         <p class="text-base text-center text-slate-500">
           Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации
         </p>
-        <p id="text" class="text-base text-center text-slate-500" />
+        <p class="text-base text-center text-slate-500">
+          <small>{{ currentSentence }}</small>
+        </p>
       <!--
         <p class="text-base text-center text-slate-500" @click="refreshPage">
           <small>Пример: {{ randomSentence }}</small>
