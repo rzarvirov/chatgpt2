@@ -205,7 +205,6 @@ export const useChatStore = defineStore('chat-store', {
         if (this.chat.length) {
           fetchClearChat(this.chat[0].uuid)
           this.chat[0].data = []
-          this.history[0].title = 'Новый чат'
           this.recordState()
         }
         return
@@ -215,7 +214,6 @@ export const useChatStore = defineStore('chat-store', {
       if (index !== -1) {
         fetchClearChat(uuid)
         this.chat[index].data = []
-        this.history[index].title = 'Новый чат'
         this.recordState()
       }
     },

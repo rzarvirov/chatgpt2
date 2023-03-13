@@ -1,9 +1,9 @@
 {
   "name": "chatgpt-web",
-  "version": "2.10.3",
+  "version": "2.10.5",
   "private": false,
   "description": "ChatGPT Web",
-  "author": "ChenZhaoYu <chenzhaoyu1994@gmail.com>",
+  "author": "zarvirovroman@gmail.com",
   "keywords": [
     "chatgpt-web",
     "chatgpt",
