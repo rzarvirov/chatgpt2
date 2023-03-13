@@ -257,6 +257,7 @@ const createColumns = (): DataTableColumns<DataProps> => {
     {
       title: t('store.title'),
       key: 'renderKey',
+      width: 200,
     },
     {
       title: t('store.description'),
@@ -266,7 +267,7 @@ const createColumns = (): DataTableColumns<DataProps> => {
       title: t('common.action'),
       key: 'actions',
       width: 100,
-      align: 'center',
+      align: 'right',
       render(row) {
         return h('div', { class: 'flex items-center flex-col gap-2' }, {
           default: () => [h(

@@ -65,8 +65,8 @@ export default {
     socks: 'Socks',
   },
   store: {
-    local: 'Локально',
-    online: 'Онлайн',
+    local: 'Доступно',
+    online: 'Скачать',
     title: 'Название',
     description: 'Описание',
     clearStoreConfirm: 'Очистить данные?',
