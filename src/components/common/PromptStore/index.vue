@@ -232,7 +232,7 @@ const downloadPromptTemplate = async () => {
 
 // 移动端自适应相关
 const renderTemplate = () => {
-  const [keyLimit, valueLimit] = isMobile.value ? [10, 15] : [15, 100]
+  const [keyLimit, valueLimit] = isMobile.value ? [10, 15] : [15, 200]
 
   return promptList.value.map((item: { key: string; value: string }) => {
     return {
@@ -322,9 +322,9 @@ const dataSource = computed(() => {
 <template>
   <NMessageProvider>
     <NModal v-model:show="show" style="width: 90%; max-width: 900px;" preset="card">
-      <div class="space-y-4">
+      <p class="mb-4">
         Чтобы использовать скачанные запросы в чате, наберите символ /
-      </div>
+      </p>
       <div class="space-y-4">
         <NTabs type="segment">
           <NTabPane name="local" :tab="$t('store.local')">
