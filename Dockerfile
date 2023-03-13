@@ -1,54 +1,30 @@
 # build front-end
-FROM node:lts-alpine AS frontend
+FROM node:lts-alpine AS builder
 
-RUN npm install pnpm -g
-#    && npm install jsonwebtoken \
+COPY ./ /app
 WORKDIR /app
 
-COPY ./package.json /app
-
-COPY ./pnpm-lock.yaml /app
-
-RUN pnpm install
-
-COPY . /app
-
-RUN pnpm run build
-
-# build backend
-FROM node:lts-alpine as backend
-
-RUN npm install pnpm -g
-
-WORKDIR /app
-
-COPY /service/package.json /app
-
-COPY /service/pnpm-lock.yaml /app
-
-RUN pnpm install
-
-COPY /service /app
-
-RUN pnpm build
+RUN apk add --no-cache git \
+    && npm install pnpm -g \
+    && pnpm install \
+    && pnpm run build \
+    && npm install jsonwebtoken \
+    && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 # service
 FROM node:lts-alpine
 
-WORKDIR /app
-
-COPY /service/package.json /app
-
-COPY /service/pnpm-lock.yaml /app
-
-RUN pnpm install --production && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
-
 COPY /service /app
+COPY --from=builder /app/dist /app/public
 
-COPY --from=frontend /app/dist /app/public
+WORKDIR /app
+RUN apk add --no-cache git \
+    && npm install pnpm -g \
+    && pnpm install --only=production \
+    && npm install jsonwebtoken \
+    && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
-COPY --from=backend /app/build /app/build
 
 EXPOSE 3002
 
-CMD ["pnpm", "run", "prod"]
+CMD ["pnpm", "run", "start"]
