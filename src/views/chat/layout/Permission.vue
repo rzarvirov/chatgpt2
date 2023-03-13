@@ -99,7 +99,7 @@ const sentences = SentencesList
 
 const currentSentenceIndex = ref(0)
 const currentSentence = ref('')
-const showCursor = ref(true)
+const cursor = ref(false)
 
 const getNextSentenceIndex = (): number => {
   const index = Math.floor(Math.random() * sentences.length)
@@ -117,35 +117,33 @@ const getNextSentence = (): string => {
 const typeWriter = (sentence: string, index: number, speed: number) => {
   if (index === 0) {
     currentSentence.value = ''
-    showCursor.value = true
+    cursor.value = true
   }
 
   if (index < sentence.length) {
     currentSentence.value += sentence.charAt(index)
-    showCursor.value = !showCursor.value
     setTimeout(() => {
-      typeWriter(sentence, index + 1, speed)
+      cursor.value = false
+      typeWriter(sentence, index + 1, Math.floor(speed * 0.7))
     }, speed)
   }
   else {
     setTimeout(() => {
+      cursor.value = false
       setTimeout(() => {
         currentSentence.value = ''
         currentSentence.value = getNextSentence()
-        typeWriter(currentSentence.value, 0, speed * 0.5)
+        typeWriter(currentSentence.value, 0, Math.floor(50 * 0.7))
       }, 2000)
-    }, speed * 3)
+    }, 0)
   }
 }
 
 onMounted(() => {
   currentSentence.value = getNextSentence()
-  typeWriter(currentSentence.value, 0, 100)
+  typeWriter(currentSentence.value, 0, Math.floor(50 * 0.7))
 })
 </script>
-In this updated code, I modified the typeWriter function to first clear the currentSentence ref before typing a new sentence. I added an if statement that checks if the current index value is 0, and if so, it clears the currentSentence ref before starting to type the new sentence.
-
-With this change, the code should now display only the typewriter effect without duplicating the sentences.
 
 <template>
   <NModal :show="visible" style="width: 90%; max-width: 640px">
@@ -209,3 +207,14 @@ With this change, the code should now display only the typewriter effect without
     </div>
   </NModal>
 </template>
+
+<style scoped>
+p::after {
+  content: " ";
+  animation: blink-caret 0.5s step-end infinite;
+}
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: black }
+}
+</style>
