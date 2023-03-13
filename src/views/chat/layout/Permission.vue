@@ -150,10 +150,10 @@ const randomSentence = () => {
           {{ $t('common.login') }}
         </NButton>
         <p class="text-base text-center text-slate-500">
-          Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации, например:
+          Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации:
         </p>
         <p class="text-base text-center text-slate-500">
-          <small>Например: {{ randomSentence }}</small>
+          <small>Пример: {{ randomSentence }}</small>
         </p>
       </div>
     </div>
