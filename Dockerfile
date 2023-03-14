@@ -8,9 +8,9 @@ RUN apk add --no-cache git \
     && npm install pnpm -g \
     && pnpm install \
     && pnpm run build \
-    && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/* \
-    && nmp install jsonwebtoken \
-    && nmp install jwt-token
+    && pnpm install jsonwebtoken \
+    && pnpm install jwt-token \
+    && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 # service
 FROM node:lts-alpine
@@ -22,10 +22,9 @@ WORKDIR /app
 RUN apk add --no-cache git \
     && npm install pnpm -g \
     && pnpm install --only=production \
-    && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/* \
-    && nmp install jsonwebtoken \
-    && nmp install jwt-token
-
+    && pnpm install jsonwebtoken \
+    && pnpm install jwt-token \
+    && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 EXPOSE 3002
 
