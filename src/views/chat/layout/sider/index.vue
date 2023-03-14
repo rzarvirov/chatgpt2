@@ -4,10 +4,13 @@ import { computed, ref, watch } from 'vue'
 import { NButton, NLayoutSider } from 'naive-ui'
 import List from './List.vue'
 import Footer from './Footer.vue'
-import { useAppStore, useChatStore } from '@/store'
+import { useAppStore, useChatStore, useUserStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { PromptStore } from '@/components/common'
 // import { getUserBalance } from './storage/mongo'
+
+const userStore = useUserStore()
+const userInfo = computed(() => userStore.userInfo)
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
@@ -77,6 +80,14 @@ watch(
         </div>
         <div class="flex-1 min-h-0 pb-4 overflow-hidden">
           <List />
+        </div>
+        <div class="p-4">
+          <h2 v-if="userInfo.name" class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
+            {{ userInfo.balance }}
+          </h2>
+          <h2 v-else class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
+            {{ $t('common.notLoggedIn') }}
+          </h2>
         </div>
         <div class="p-4">
           <NButton block @click="show = true">

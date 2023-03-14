@@ -5,6 +5,7 @@ const LOCAL_NAME = 'userStorage'
 export interface UserInfo {
   avatar: string
   name: string
+  balance: number
   description: string
 }
 
@@ -16,6 +17,7 @@ export function defaultSetting(): UserState {
   return {
     userInfo: {
       avatar: '',
+      balance: 50,
       name: '',
       description: '',
     },
