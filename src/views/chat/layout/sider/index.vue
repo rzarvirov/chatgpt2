@@ -82,7 +82,7 @@ watch(
           <List />
         </div>
         <div class="p-4">
-          <h2 v-if="userInfo.name" class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
+          <h2 v-if="userInfo.balance" class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
             {{ userInfo.balance }}
           </h2>
           <h2 v-else class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
