@@ -580,6 +580,9 @@ const randomSentences = getRandomSentences()
               />
             </template>
           </NAutoComplete>
+          <h2 class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
+            999
+          </h2>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
