@@ -70,6 +70,13 @@ export function fetchGetChatRooms<T = any>() {
   })
 }
 
+// Client-side function to fetch the user's balance
+export function fetchGetUserBalance<T = any>() {
+  return get<T>({
+    url: '/balance',
+  })
+}
+
 export function fetchCreateChatRoom<T = any>(title: string, roomId: number) {
   return post<T>({
     url: '/room-create',

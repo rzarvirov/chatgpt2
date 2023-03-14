@@ -13,7 +13,7 @@ import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess } from '@/api'
+import { fetchChatAPIProcess, fetchGetUserBalance } from '@/api'
 import { t } from '@/locales'
 import SentencesList from '@/assets/sentences.json'
 
@@ -22,7 +22,25 @@ const props = defineProps({
     type: Number,
     default: 5,
   },
-}) // Replace this with the actual ID of the current user
+})
+
+// balance script
+const balance = ref(0)
+
+async function fetchBalance() {
+  try {
+    const response = await fetchGetUserBalance()
+    balance.value = response.data.balance
+  }
+  catch (error) {
+    console.error('Error fetching user balance:', error)
+  }
+}
+
+onMounted(async () => {
+  await fetchBalance()
+})
+// end of balance script
 
 let controller = new AbortController()
 
@@ -581,7 +599,7 @@ const randomSentences = getRandomSentences()
             </template>
           </NAutoComplete>
           <h2 class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
-            999
+            {{ balance }}
           </h2>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>

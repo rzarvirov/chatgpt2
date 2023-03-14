@@ -5,7 +5,7 @@ import { chatConfig, chatReplyProcess } from './chatgpt'
 import { auth } from './middleware/auth'
 import type { ChatOptions } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, insertChat, renameChatRoom, updateChat, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserBalance, insertChat, renameChatRoom, updateChat, verifyUser } from './storage/mongo'
 import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 
@@ -35,6 +35,15 @@ router.get('/chatrooms', auth, async (req, res) => {
   })
   res.send({ status: 'Success', message: null, data: result })
 })
+
+// get balance
+router.get('/balance', auth, async (req, res) => {
+  const userId = req.headers.userId
+  const balance = await getUserBalance(userId)
+
+  res.send({ status: 'Success', message: null, data: { balance } })
+})
+// got balance
 
 router.post('/room-create', auth, async (req, res) => {
   const userId = req.headers.userId
