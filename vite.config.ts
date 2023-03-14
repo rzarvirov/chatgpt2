@@ -40,6 +40,9 @@ export default defineConfig((env) => {
     },
     build: {
       reportCompressedSize: false,
+      rollupOptions: {
+        external: ['mongodb'],
+      },
       sourcemap: false,
       commonjsOptions: {
         ignoreTryCatch: false,
