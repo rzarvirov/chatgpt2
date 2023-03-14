@@ -16,6 +16,7 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess, fetchGetUserBalance } from '@/api'
 import { t } from '@/locales'
 import SentencesList from '@/assets/sentences.json'
+import { useAuthStoreWithout } from '@/store/modules/auth'
 
 const props = defineProps({
   numSentences: {
@@ -25,6 +26,8 @@ const props = defineProps({
 })
 
 // balance script
+const authStore = useAuthStoreWithout()
+const isAuthenticated = computed(() => authStore.session && authStore.session.auth)
 const balance = ref(0)
 
 async function fetchBalance() {
@@ -38,7 +41,8 @@ async function fetchBalance() {
 }
 
 onMounted(async () => {
-  await fetchBalance()
+  if (isAuthenticated.value)
+    await fetchBalance()
 })
 // end of balance script
 
@@ -598,9 +602,9 @@ const randomSentences = getRandomSentences()
               />
             </template>
           </NAutoComplete>
-          <h2 class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
-            <!-- {{ balance }} -->
-          </h2>
+          <div v-if="isAuthenticated" class="balance-container">
+            {{ balance }}
+          </div>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
