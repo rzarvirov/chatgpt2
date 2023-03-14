@@ -28,6 +28,8 @@ export default {
     unauthorizedTips: 'Unauthorized, please verify first.',
     register: 'Register',
     login: 'Login',
+    notLoggedIn: 'Login / Register',
+    logOut: 'Log Out',
   },
   chat: {
     placeholder: 'Ask me anything...(Shift + Enter = line break)',

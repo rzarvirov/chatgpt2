@@ -26,6 +26,8 @@ export default {
     failed: 'Не удалось',
     register: 'Зарегистрироваться',
     login: 'Войти',
+    notLoggedIn: 'Войти / Зарегистрироваться',
+    logOut: 'Выйти',
     unauthorizedTips: 'Не авторизован, сначала необходимо выполнить проверку.',
   },
   chat: {

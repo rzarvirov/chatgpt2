@@ -10,8 +10,10 @@ specifiers:
   eslint: ^8.35.0
   esno: ^0.16.3
   express: ^4.18.2
+  https-proxy-agent: ^5.0.1
   isomorphic-fetch: ^3.0.0
   jsonwebtoken: ^9.0.0
+  mongodb: ^5.1.0
   node-fetch: ^3.3.0
   nodemailer: ^6.9.1
   rimraf: ^4.3.0
@@ -24,7 +26,9 @@ dependencies:
   dotenv: 16.0.3
   esno: 0.16.3
   express: 4.18.2
+  https-proxy-agent: 5.0.1
   isomorphic-fetch: 3.0.0
+  mongodb: 5.1.0
   node-fetch: 3.3.0
   nodemailer: 6.9.1
   socks-proxy-agent: 7.0.0
@@ -491,7 +495,6 @@ packages:
 
   /@types/node/18.14.6:
     resolution: {integrity: sha512-93+VvleD3mXwlLI/xASjw0FzKcwzl3OdTCzm1LaRfqgS21gfFtK3zDXM5Op9TeeMsJVOaJ2VRDpT9q4Y3d0AvA==}
-    dev: true
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -521,14 +524,12 @@ packages:
 
   /@types/webidl-conversions/7.0.0:
     resolution: {integrity: sha512-xTE1E+YF4aWPJJeUzaZI5DRntlkY3+BCVJi0axFptnjGmAoWxkyREIh/XMrfxVLejwQxMCfDXdICo0VLxThrog==}
-    dev: true
 
   /@types/whatwg-url/8.2.2:
     resolution: {integrity: sha512-FtQu10RWgn3D9U4aazdwIE2yzphmTJREDqNdODHrbrZmmMqI0vMheC/6NE/J1Yveaj8H+ela+YwWTjq5PGmuhA==}
     dependencies:
       '@types/node': 18.14.6
       '@types/webidl-conversions': 7.0.0
-    dev: true
 
   /@typescript-eslint/eslint-plugin/5.54.0_6mj2wypvdnknez7kws2nfdgupi:
     resolution: {integrity: sha512-+hSN9BdSr629RF02d7mMtXhAJvDTyCbprNYJKrXETlul/Aml6YZwd90XioVbjejQeHbb3R8Dg0CkRgoJDxo8aw==}
@@ -860,7 +861,6 @@ packages:
   /bson/5.0.1:
     resolution: {integrity: sha512-y09gBGusgHtinMon/GVbv1J6FrXhnr/+6hqLlSmEFzkz6PodqF6TxjyvfvY3AfO+oG1mgUtbC86xSbOlwvM62Q==}
     engines: {node: '>=14.20.1'}
-    dev: true
 
   /buffer-equal-constant-time/1.0.1:
     resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
@@ -939,7 +939,7 @@ packages:
     resolution: {integrity: sha512-mKKUkUbhPpQlCOfIuZkvSEgktjPFIsZKRRbC6KWVEMvlzblj3i3asQv5ODsrwt0N3pHAEvjP8KTQPHkp0+6jOg==}
     dev: true
 
-    /chatgpt/5.0.10:
+  /chatgpt/5.0.10:
     resolution: {integrity: sha512-R3vtPlhCapFLkDXED0Cnt1DBcOZAXygr0M5U5kbSI0Fwm4uDQmc7qoIOnr17rd8eaa0JO/UDOevJdEWvd079qA==}
     engines: {node: '>=14'}
     hasBin: true
@@ -2122,6 +2122,16 @@ packages:
       toidentifier: 1.0.1
     dev: false
 
+  /https-proxy-agent/5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
+    dependencies:
+      agent-base: 6.0.2
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /human-signals/2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
     engines: {node: '>=10.17.0'}
@@ -2550,7 +2560,6 @@ packages:
 
   /memory-pager/1.5.0:
     resolution: {integrity: sha512-ZS4Bp4r/Zoeq6+NLJpP+0Zzm0pR8whtGPf1XExKLJBAczGMnSi3It14OiNCStjQjM6NU1okjQGSxgEZN8eBYKg==}
-    dev: true
     optional: true
 
   /merge-descriptors/1.0.1:
@@ -2648,7 +2657,6 @@ packages:
     dependencies:
       '@types/whatwg-url': 8.2.2
       whatwg-url: 11.0.0
-    dev: true
 
   /mongodb/5.1.0:
     resolution: {integrity: sha512-qgKb7y+EI90y4weY3z5+lIgm8wmexbonz0GalHkSElQXVKtRuwqXuhXKccyvIjXCJVy9qPV82zsinY0W1FBnJw==}
@@ -2670,7 +2678,6 @@ packages:
       socks: 2.7.1
     optionalDependencies:
       saslprep: 1.0.3
-    dev: true
 
   /ms/2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -3203,7 +3210,6 @@ packages:
     requiresBuild: true
     dependencies:
       sparse-bitfield: 3.0.3
-    dev: true
     optional: true
 
   /semver/5.7.1:
@@ -3333,7 +3339,6 @@ packages:
     resolution: {integrity: sha512-kvzhi7vqKTfkh0PZU+2D2PIllw2ymqJKujUcyPMd9Y75Nv4nPbGJZXNhxsgdQab2BmlDct1YnfQCguEvHr7VsQ==}
     dependencies:
       memory-pager: 1.5.0
-    dev: true
     optional: true
 
   /spdx-correct/3.1.1:
@@ -3483,7 +3488,6 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       punycode: 2.3.0
-    dev: true
 
   /tree-kill/1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
@@ -3697,7 +3701,6 @@ packages:
   /webidl-conversions/7.0.0:
     resolution: {integrity: sha512-VwddBukDzu71offAQR975unBIGqfKZpM+8ZX6ySk8nYhVoo5CYaZyzt3YBvYtRtO+aoGlqxPg/B87NGVZ/fu6g==}
     engines: {node: '>=12'}
-    dev: true
 
   /whatwg-fetch/3.6.2:
     resolution: {integrity: sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==}
@@ -3709,7 +3712,6 @@ packages:
     dependencies:
       tr46: 3.0.0
       webidl-conversions: 7.0.0
-    dev: true
 
   /whatwg-url/5.0.0:
     resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}

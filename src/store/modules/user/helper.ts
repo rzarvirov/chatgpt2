@@ -15,9 +15,9 @@ export interface UserState {
 export function defaultSetting(): UserState {
   return {
     userInfo: {
-      avatar: '@/assets/astronaut.png',
-      name: 'Username',
-      description: 'Исследователь',
+      avatar: '',
+      name: '',
+      description: '',
     },
   }
 }

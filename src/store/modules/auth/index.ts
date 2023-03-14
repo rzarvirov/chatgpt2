@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
+import jwt_decode from 'jwt-decode'
 import { getToken, removeToken, setToken } from './helper'
-import { store } from '@/store'
+import { store, useUserStore } from '@/store'
 import { fetchSession } from '@/api'
 
 export interface AuthState {
@@ -28,11 +29,20 @@ export const useAuthStore = defineStore('auth-store', {
 
     setToken(token: string) {
       this.token = token
+      const decoded = jwt_decode(token) as { email: string }
+      const userStore = useUserStore()
+      userStore.updateUserInfo({
+        avatar: '',
+        name: decoded.email,
+        description: '',
+      })
       setToken(token)
     },
 
     removeToken() {
       this.token = undefined
+      const userStore = useUserStore()
+      userStore.resetUserInfo()
       removeToken()
     },
   },
