@@ -599,7 +599,7 @@ const randomSentences = getRandomSentences()
             </template>
           </NAutoComplete>
           <h2 class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
-            {{ balance }}
+            <!-- {{ balance }} -->
           </h2>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
