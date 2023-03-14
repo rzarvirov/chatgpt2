@@ -8,7 +8,6 @@ RUN apk add --no-cache git \
     && npm install pnpm -g \
     && pnpm install \
     && pnpm run build \
-    && npm install jsonwebtoken \
     && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 # service
@@ -21,7 +20,6 @@ WORKDIR /app
 RUN apk add --no-cache git \
     && npm install pnpm -g \
     && pnpm install --only=production \
-    && npm install jsonwebtoken \
     && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 
