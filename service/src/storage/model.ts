@@ -17,12 +17,12 @@ class UserInfo {
   balance: number
   createTime: string
   verifyTime?: string
-  constructor(email: string, password: string) {
+  constructor(email: string, password: string, balance: number) {
     this.name = email
     this.email = email
     this.password = password
     this.status = Status.PreVerify
-    this.balance = 50
+    this.balance = balance
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
   }
