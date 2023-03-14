@@ -14,17 +14,17 @@ class UserInfo {
   email: string
   password: string
   status: Status
-  balance: number
   createTime: string
   verifyTime?: string
-  constructor(email: string, password: string, balance: number) {
+  balance: number
+  constructor(email: string, password: string) {
     this.name = email
     this.email = email
     this.password = password
     this.status = Status.PreVerify
-    this.balance = balance
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
+    this.balance = 0 // Initialize the balance to 0 or any default value you want
   }
 }
 

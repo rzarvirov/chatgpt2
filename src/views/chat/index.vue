@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
+import { getUserBalance } from '@mongo'
+import type { ObjectId } from 'mongodb'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -16,14 +18,24 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess } from '@/api'
 import { t } from '@/locales'
 import SentencesList from '@/assets/sentences.json'
+// balance start
+
+// balance end
 
 const props = defineProps({
   numSentences: {
     type: Number,
     default: 5,
   },
-})
+}) // Replace this with the actual ID of the current user
 
+const userId: ObjectId = '640d04a5636bd106e3d57de3' /* the ObjectId of the current user */
+
+const balance = ref<number>(0)
+
+onMounted(async () => {
+  balance.value = await getUserBalance(userId)
+})
 let controller = new AbortController()
 
 const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
@@ -581,7 +593,7 @@ const randomSentences = getRandomSentences()
             </template>
           </NAutoComplete>
           <h2 class="overflow-hidden font-bold text-md text-ellipsis whitespace-nowrap">
-            999
+            {{ balance }}
           </h2>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
