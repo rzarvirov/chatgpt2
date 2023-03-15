@@ -429,6 +429,14 @@ function handleClear() {
 }
 
 function handleEnter(event: KeyboardEvent) {
+  // Add a check for isBalanceZero
+  if (isBalanceZero.value) {
+    // Display an error message
+    // Replace `errorMessage` with the method or variable you use to display error messages
+    ms.warning('Баланс запросов исчерпан')
+    return
+  }
+
   if (!isMobile.value) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
@@ -616,7 +624,7 @@ const handleHashtagClick = (key: string) => {
             </template>
           </NAutoComplete>
           <div v-if="isAuthenticated" class="text-[#4f555e] dark:text-white">
-            {{ balance }}
+            {{ balance === 0 ? 'Пополнить баланс' : balance }}
           </div>
           <NButton type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
             <template #icon>
