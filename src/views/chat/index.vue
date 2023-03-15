@@ -543,13 +543,24 @@ const handleHashtagClick = (key: string) => {
             </div>
             <br>
             <div style="text-align: center;">
-              <div
-                v-for="(key, index) in getAllKeys()"
-                :key="index"
-                style="display: inline-block; background-color: lightblue; border: 1px solid #00f; border-radius: 5px; padding: 5px; margin: 5px;"
-                @click="handleHashtagClick(key)"
-              >
-                {{ key }}
+              <div style="text-align: center;">
+                <div
+                  v-for="(key, index) in getAllKeys()"
+                  :key="index"
+                  :style="{
+                    display: 'inline-block',
+                    backgroundColor: '#ADD8E6',
+                    border: '1px solid #ADD8E6',
+                    borderRadius: isMobile ? '10px' : '20px',
+                    padding: isMobile ? '3px 6px' : '5px 10px',
+                    margin: isMobile ? '2px' : '5px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                  }"
+                  @click="handleHashtagClick(key)"
+                >
+                  {{ key }}
+                </div>
               </div>
             </div>
           </template>
