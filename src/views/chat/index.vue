@@ -509,20 +509,8 @@ interface Prompt {
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 
-const getRandomKeys = () => {
-  const selectedKeys = []
-  const usedIndices = new Set()
-
-  while (selectedKeys.length < props.numKeys) {
-    const randomIndex = Math.floor(Math.random() * keys.length)
-    if (!usedIndices.has(randomIndex)) {
-      const key = keys[randomIndex]
-      selectedKeys.push(key)
-      usedIndices.add(randomIndex)
-    }
-  }
-
-  return selectedKeys
+const getAllKeys = () => {
+  return keys
 }
 
 const handleHashtagClick = (key: string) => {
@@ -560,13 +548,15 @@ const handleHashtagClick = (key: string) => {
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
-            <div
-              v-for="(key, index) in getRandomKeys()"
-              :key="index"
-              style="display: inline-block; background-color: #2196f3; border: 1px solid #2196f3; border-radius: 15px; padding: 5px 10px; margin: 5px; font-size: 14px; color: white; cursor: pointer;"
-              @click="handleHashtagClick(key)"
-            >
-              {{ key }}
+            <div style="text-align: center;">
+              <div
+                v-for="(key, index) in getAllKeys()"
+                :key="index"
+                style="display: inline-block; background-color: lightblue; border: 1px solid #00f; border-radius: 5px; padding: 5px; margin: 5px;"
+                @click="handleHashtagClick(key)"
+              >
+                {{ key }}
+              </div>
             </div>
           </template>
           <template v-else>
