@@ -1,9 +1,7 @@
 <script setup lang='ts'>
 import type { DataTableColumns } from 'naive-ui'
-import { computed, h, ref, watch } from 'vue'
-import { NButton, NCard, NDataTable, NDivider, NInput, NLayoutContent, NMessageProvider, NModal, NPopconfirm, NSpace, NTabPane, NTabs, useMessage } from 'naive-ui'
-import PromptRecommend from '../../../assets/recommend.json'
-import { SvgIcon } from '..'
+import { computed, h, onMounted, ref, watch } from 'vue'
+import { NButton, NDataTable, NInput, NMessageProvider, NModal, NPopconfirm, NSpace, useMessage } from 'naive-ui'
 import { usePromptStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
@@ -36,7 +34,6 @@ const show = computed({
 
 const showModal = ref(false)
 
-const importLoading = ref(false)
 const exportLoading = ref(false)
 
 const searchValue = ref<string>('')
@@ -47,7 +44,6 @@ const { isMobile } = useBasicLayout()
 const promptStore = usePromptStore()
 
 // Prompt在线导入推荐List,根据部署者喜好进行修改(assets/recommend.json)
-const promptRecommendList = PromptRecommend
 const promptList = ref<any>(promptStore.promptList)
 
 // 用于添加修改的临时prompt参数
@@ -79,62 +75,6 @@ const changeShowModal = (mode: 'add' | 'modify' | 'local_import', selected = { k
   modalMode.value = mode
 }
 
-// 在线导入相关
-const downloadURL = ref('')
-const downloadDisabled = computed(() => downloadURL.value.trim().length < 1)
-const setDownloadURL = (url: string) => {
-  downloadURL.value = url
-}
-
-// 控制 input 按钮
-const inputStatus = computed (() => tempPromptKey.value.trim().length < 1 || tempPromptValue.value.trim().length < 1)
-
-// Prompt模板相关操作
-const addPromptTemplate = () => {
-  for (const i of promptList.value) {
-    if (i.key === tempPromptKey.value) {
-      message.error(t('store.addRepeatTitleTips'))
-      return
-    }
-    if (i.value === tempPromptValue.value) {
-      message.error(t('store.addRepeatContentTips', { msg: tempPromptKey.value }))
-      return
-    }
-  }
-  promptList.value.unshift({ key: tempPromptKey.value, value: tempPromptValue.value } as never)
-  message.success(t('common.addSuccess'))
-  changeShowModal('add')
-}
-
-const modifyPromptTemplate = () => {
-  let index = 0
-
-  // 通过临时索引把待修改项摘出来
-  for (const i of promptList.value) {
-    if (i.key === tempModifiedItem.value.key && i.value === tempModifiedItem.value.value)
-      break
-    index = index + 1
-  }
-
-  const tempList = promptList.value.filter((_: any, i: number) => i !== index)
-
-  // 搜索有冲突的部分
-  for (const i of tempList) {
-    if (i.key === tempPromptKey.value) {
-      message.error(t('store.editRepeatTitleTips'))
-      return
-    }
-    if (i.value === tempPromptValue.value) {
-      message.error(t('store.editRepeatContentTips', { msg: i.key }))
-      return
-    }
-  }
-
-  promptList.value = [{ key: tempPromptKey.value, value: tempPromptValue.value }, ...tempList] as never
-  message.success(t('common.editSuccess'))
-  changeShowModal('modify')
-}
-
 const deletePromptTemplate = (row: { key: string; value: string }) => {
   promptList.value = [
     ...promptList.value.filter((item: { key: string; value: string }) => item.key !== row.key),
@@ -145,52 +85,6 @@ const deletePromptTemplate = (row: { key: string; value: string }) => {
 const clearPromptTemplate = () => {
   promptList.value = []
   message.success(t('common.clearSuccess'))
-}
-
-const importPromptTemplate = () => {
-  try {
-    const jsonData = JSON.parse(tempPromptValue.value)
-    let key = ''
-    let value = ''
-    // 可以扩展加入更多模板字典的key
-    if ('key' in jsonData[0]) {
-      key = 'key'
-      value = 'value'
-    }
-    else if ('act' in jsonData[0]) {
-      key = 'act'
-      value = 'prompt'
-    }
-    else {
-      // 不支持的字典的key防止导入 以免破坏prompt商店打开
-      message.warning('prompt key not supported.')
-      throw new Error('prompt key not supported.')
-    }
-
-    for (const i of jsonData) {
-      if (!('key' in i) || !('value' in i))
-        throw new Error(t('store.importError'))
-      let safe = true
-      for (const j of promptList.value) {
-        if (j.key === i[key]) {
-          message.warning(t('store.importRepeatTitle', { msg: i[key] }))
-          safe = false
-          break
-        }
-        if (j.value === i[value]) {
-          message.warning(t('store.importRepeatContent', { msg: i[key] }))
-          safe = false
-          break
-        }
-      }
-      if (safe)
-        promptList.value.unshift({ key: i[key], value: i[value] } as never)
-    }
-    message.success(t('common.importSuccess'))
-  }
-  catch {
-    message.error('JSON 格式错误，请检查 JSON 格式')
-  }
 }
 
 // 模板导出
@@ -205,35 +99,6 @@ const exportPromptTemplate = () => {
   link.click()
   URL.revokeObjectURL(url)
   exportLoading.value = false
-}
-
-// 模板在线导入
-const downloadPromptTemplate = async () => {
-  try {
-    importLoading.value = true
-    const response = await fetch(downloadURL.value)
-    const jsonData = await response.json()
-    if ('key' in jsonData[0] && 'value' in jsonData[0])
-      tempPromptValue.value = JSON.stringify(jsonData)
-    if ('act' in jsonData[0] && 'prompt' in jsonData[0]) {
-      const newJsonData = jsonData.map((item: { act: string; prompt: string }) => {
-        return {
-          key: item.act,
-          value: item.prompt,
-        }
-      })
-      tempPromptValue.value = JSON.stringify(newJsonData)
-    }
-    importPromptTemplate()
-    downloadURL.value = ''
-  }
-  catch {
-    message.error(t('store.downloadError'))
-    downloadURL.value = ''
-  }
-  finally {
-    importLoading.value = false
-  }
 }
 
 // 移动端自适应相关
@@ -322,6 +187,17 @@ const dataSource = computed(() => {
   }
   return data
 })
+
+const fetchData = async () => {
+  const response = await fetch('/prompts_RU.json')
+  const jsonData = await response.json()
+  promptList.value = jsonData
+}
+
+// Add this lifecycle hook at the end of the <script setup lang='ts'> section
+onMounted(async () => {
+  await fetchData()
+})
 </script>
 
 <template>
@@ -331,141 +207,51 @@ const dataSource = computed(() => {
         Чтобы использовать скачанные запросы в чате, наберите символ /
       </p>
       <div class="space-y-4">
-        <NTabs type="segment">
-          <NTabPane name="local" :tab="$t('store.local')">
-            <div
-              class="flex gap-3"
-              :class="[isMobile ? 'flex-col' : 'flex-row justify-between']"
+        <div
+          class="flex gap-3"
+          :class="[isMobile ? 'flex-col' : 'flex-row justify-between']"
+        >
+          <div class="flex items-center space-x-4">
+            <NButton
+              type="primary"
+              size="small"
+              @click="changeShowModal('add')"
             >
-              <div class="flex items-center space-x-4">
-                <NButton
-                  type="primary"
-                  size="small"
-                  @click="changeShowModal('add')"
-                >
-                  {{ $t('common.add') }}
-                </NButton>
-                <NButton
-                  size="small"
-                  @click="changeShowModal('local_import')"
-                >
-                  {{ $t('common.import') }}
-                </NButton>
-                <NButton
-                  size="small"
-                  :loading="exportLoading"
-                  @click="exportPromptTemplate()"
-                >
-                  {{ $t('common.export') }}
-                </NButton>
-                <NPopconfirm @positive-click="clearPromptTemplate">
-                  <template #trigger>
-                    <NButton size="small">
-                      {{ $t('common.clear') }}
-                    </NButton>
-                  </template>
-                  {{ $t('store.clearStoreConfirm') }}
-                </NPopconfirm>
-              </div>
-              <div class="flex items-center">
-                <NInput v-model:value="searchValue" style="width: 100%" />
-              </div>
-            </div>
-            <br>
-            <NDataTable
-              :max-height="400"
-              :columns="columns"
-              :data="dataSource"
-              :pagination="pagination"
-              :bordered="false"
-            />
-          </NTabPane>
-          <NTabPane name="download" :tab="$t('store.online')">
-            <p class="mb-4">
-              {{ $t('store.onlineImportWarning') }}
-            </p>
-            <div class="flex items-center gap-4">
-              <NInput v-model:value="downloadURL" placeholder="" />
-              <NButton
-                strong
-                secondary
-                :disabled="downloadDisabled"
-                :loading="importLoading"
-                @click="downloadPromptTemplate()"
-              >
-                {{ $t('common.download') }}
-              </NButton>
-            </div>
-            <NDivider />
-            <NLayoutContent
-              style="height: 360px"
-              content-style="background: none;"
-              :native-scrollbar="false"
+              {{ $t('common.add') }}
+            </NButton>
+            <NButton
+              size="small"
+              :loading="exportLoading"
+              @click="exportPromptTemplate()"
             >
-              <NCard
-                v-for="info in promptRecommendList"
-                :key="info.key" :title="info.key"
-                style="margin: 5px;"
-                embedded
-                :bordered="true"
-              >
-                <p
-                  class="overflow-hidden text-ellipsis whitespace-nowrap"
-                  :title="info.desc"
-                >
-                  {{ info.desc }}
-                </p>
-                <template #footer>
-                  <div class="flex items-center justify-end space-x-4">
-                    <NButton text>
-                      <a
-                        :href="info.url"
-                        target="_blank"
-                      >
-                        <SvgIcon class="text-xl" icon="ri:link" />
-                      </a>
-                    </NButton>
-                    <NButton text @click="setDownloadURL(info.downloadUrl) ">
-                      <SvgIcon class="text-xl" icon="ri:add-fill" />
-                    </NButton>
-                  </div>
-                </template>
-              </NCard>
-            </NLayoutContent>
-          </NTabPane>
-        </NTabs>
+              {{ $t('common.export') }}
+            </NButton>
+            <NPopconfirm @positive-click="clearPromptTemplate">
+              <template #trigger>
+                <NButton size="small">
+                  {{ $t('common.clear') }}
+                </NButton>
+              </template>
+              {{ $t('store.clearStoreConfirm') }}
+            </NPopconfirm>
+          </div>
+          <div class="flex items-center">
+            <NInput v-model:value="searchValue" style="width: 100%" />
+          </div>
+        </div>
+        <br>
+        <NDataTable
+          :max-height="400"
+          :columns="columns"
+          :data="dataSource"
+          :pagination="pagination"
+          :bordered="false"
+        />
       </div>
     </NModal>
     <NModal v-model:show="showModal" style="width: 90%; max-width: 600px;" preset="card">
       <NSpace v-if="modalMode === 'add' || modalMode === 'modify'" vertical>
-        {{ t('store.title') }}
-        <NInput v-model:value="tempPromptKey" />
-        {{ t('store.description') }}
-        <NInput v-model:value="tempPromptValue" type="textarea" />
-        <NButton
-          block
-          type="primary"
-          :disabled="inputStatus"
-          @click="() => { modalMode === 'add' ? addPromptTemplate() : modifyPromptTemplate() }"
-        >
-          {{ t('common.confirm') }}
-        </NButton>
-      </NSpace>
-      <NSpace v-if="modalMode === 'local_import'" vertical>
-        <NInput
-          v-model:value="tempPromptValue"
-          :placeholder="t('store.importPlaceholder')"
-          :autosize="{ minRows: 3, maxRows: 15 }"
-          type="textarea"
-        />
-        <NButton
-          block
-          type="primary"
-          :disabled="inputStatus"
-          @click="() => { importPromptTemplate() }"
-        >
-          {{ t('common.import') }}
-        </NButton>
+        ...
       </NSpace>
     </NModal>
   </NMessageProvider>
