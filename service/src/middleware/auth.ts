@@ -7,6 +7,7 @@ const auth = async (req, res, next) => {
       const token = req.header('Authorization').replace('Bearer ', '')
       const info = jwt.verify(token, AUTH_SECRET_KEY.trim())
       req.headers.userId = info.userId
+      console.log('Auth Middleware: User ID:', req.headers.userId) // Add this line
       next()
     }
     catch (error) {

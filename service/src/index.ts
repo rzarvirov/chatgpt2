@@ -39,7 +39,9 @@ router.get('/chatrooms', auth, async (req, res) => {
 // get balance
 router.get('/balance', auth, async (req, res) => {
   const userId = req.headers.userId
+  console.log('Balance Route: User ID:', userId) // Add this line
   const balance = await getUserBalance(userId)
+  console.log('Balance Route: Balance:', balance) // Add this line
 
   res.send({ status: 'Success', message: null, data: { balance } })
 })

@@ -33,6 +33,7 @@ const balance = ref(0)
 async function fetchBalance() {
   try {
     const response = await fetchGetUserBalance()
+    console.log('fetchBalance: Response:', response)
     balance.value = response.data.balance
   }
   catch (error) {
