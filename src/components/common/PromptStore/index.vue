@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import type { DataTableColumns } from 'naive-ui'
-import { computed, h, onMounted, ref, watch } from 'vue'
-import { NButton, NDataTable, NInput, NMessageProvider, NModal, NPopconfirm, NSpace, useMessage } from 'naive-ui'
+import { computed, onMounted, ref, watch } from 'vue'
+import { NDataTable, NInput, NMessageProvider, NModal } from 'naive-ui'
 import { usePromptStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
@@ -25,16 +25,10 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<Emit>()
 
-const message = useMessage()
-
 const show = computed({
   get: () => props.visible,
   set: (visible: boolean) => emit('update:visible', visible),
 })
-
-const showModal = ref(false)
-
-const exportLoading = ref(false)
 
 const searchValue = ref<string>('')
 
@@ -45,61 +39,6 @@ const promptStore = usePromptStore()
 
 // Prompt在线导入推荐List,根据部署者喜好进行修改(assets/recommend.json)
 const promptList = ref<any>(promptStore.promptList)
-
-// 用于添加修改的临时prompt参数
-const tempPromptKey = ref('')
-const tempPromptValue = ref('')
-
-// Modal模式，根据不同模式渲染不同的Modal内容
-const modalMode = ref('')
-
-// 这个是为了后期的修改Prompt内容考虑，因为要针对无uuid的list进行修改，且考虑到不能出现标题和内容的冲突，所以就需要一个临时item来记录一下
-const tempModifiedItem = ref<any>({})
-
-// 添加修改导入都使用一个Modal, 临时修改内容占用tempPromptKey,切换状态前先将内容都清楚
-const changeShowModal = (mode: 'add' | 'modify' | 'local_import', selected = { key: '', value: '' }) => {
-  if (mode === 'add') {
-    tempPromptKey.value = ''
-    tempPromptValue.value = ''
-  }
-  else if (mode === 'modify') {
-    tempModifiedItem.value = { ...selected }
-    tempPromptKey.value = selected.key
-    tempPromptValue.value = selected.value
-  }
-  else if (mode === 'local_import') {
-    tempPromptKey.value = 'local_import'
-    tempPromptValue.value = ''
-  }
-  showModal.value = !showModal.value
-  modalMode.value = mode
-}
-
-const deletePromptTemplate = (row: { key: string; value: string }) => {
-  promptList.value = [
-    ...promptList.value.filter((item: { key: string; value: string }) => item.key !== row.key),
-  ] as never
-  message.success(t('common.deleteSuccess'))
-}
-
-const clearPromptTemplate = () => {
-  promptList.value = []
-  message.success(t('common.clearSuccess'))
-}
-
-// 模板导出
-const exportPromptTemplate = () => {
-  exportLoading.value = true
-  const jsonDataStr = JSON.stringify(promptList.value)
-  const blob = new Blob([jsonDataStr], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = 'ChatGPTPromptTemplate.json'
-  link.click()
-  URL.revokeObjectURL(url)
-  exportLoading.value = false
-}
 
 // 移动端自适应相关
 const renderTemplate = () => {
@@ -132,37 +71,6 @@ const createColumns = (): DataTableColumns<DataProps> => {
     {
       title: t('store.description'),
       key: 'renderValue',
-    },
-    {
-      title: t('common.action'),
-      key: 'actions',
-      width: 100,
-      align: 'right',
-      render(row) {
-        return h('div', { class: 'flex items-center flex-col gap-2' }, {
-          default: () => [h(
-            NButton,
-            {
-              tertiary: true,
-              size: 'small',
-              type: 'info',
-              onClick: () => changeShowModal('modify', row),
-            },
-            { default: () => t('common.edit') },
-          ),
-          h(
-            NButton,
-            {
-              tertiary: true,
-              size: 'small',
-              type: 'error',
-              onClick: () => deletePromptTemplate(row),
-            },
-            { default: () => t('common.delete') },
-          ),
-          ],
-        })
-      },
     },
   ]
 }
@@ -211,30 +119,6 @@ onMounted(async () => {
           class="flex gap-3"
           :class="[isMobile ? 'flex-col' : 'flex-row justify-between']"
         >
-          <div class="flex items-center space-x-4">
-            <NButton
-              type="primary"
-              size="small"
-              @click="changeShowModal('add')"
-            >
-              {{ $t('common.add') }}
-            </NButton>
-            <NButton
-              size="small"
-              :loading="exportLoading"
-              @click="exportPromptTemplate()"
-            >
-              {{ $t('common.export') }}
-            </NButton>
-            <NPopconfirm @positive-click="clearPromptTemplate">
-              <template #trigger>
-                <NButton size="small">
-                  {{ $t('common.clear') }}
-                </NButton>
-              </template>
-              {{ $t('store.clearStoreConfirm') }}
-            </NPopconfirm>
-          </div>
           <div class="flex items-center">
             <NInput v-model:value="searchValue" style="width: 100%" />
           </div>
@@ -248,11 +132,6 @@ onMounted(async () => {
           :bordered="false"
         />
       </div>
-    </NModal>
-    <NModal v-model:show="showModal" style="width: 90%; max-width: 600px;" preset="card">
-      <NSpace v-if="modalMode === 'add' || modalMode === 'modify'" vertical>
-        ...
-      </NSpace>
     </NModal>
   </NMessageProvider>
 </template>
