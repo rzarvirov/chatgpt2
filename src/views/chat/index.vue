@@ -616,7 +616,7 @@ const randomSentences = getRandomSentences()
             </template>
           </NAutoComplete>
           <div v-if="isAuthenticated">
-            {{ balance }}
+          <!-- {{ balance }} -->
           </div>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
