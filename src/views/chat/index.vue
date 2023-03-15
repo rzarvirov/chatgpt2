@@ -545,13 +545,13 @@ const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 
 const ITEMS_PER_PAGE = 35
 
-const getPages = () => {
-  const pages = []
+const pages = computed(() => {
+  const pagesArray = []
   for (let i = 0; i < keys.length; i += ITEMS_PER_PAGE)
-    pages.push(keys.slice(i, i + ITEMS_PER_PAGE))
+    pagesArray.push(keys.slice(i, i + ITEMS_PER_PAGE))
 
-  return pages
-}
+  return pagesArray
+})
 
 const handleHashtagClick = (key: string) => {
   const clickedPrompt = PromptsList.find(prompt => prompt.key === key)
@@ -597,7 +597,7 @@ const handleHashtagClick = (key: string) => {
                 :space-between="30"
                 css-mode="true"
               >
-                <swiper-slide v-for="(page, pageIndex) in getPages()" :key="pageIndex">
+                <swiper-slide v-for="(page, pageIndex) in pages" :key="pageIndex">
                   <div style="text-align: center;">
                     <div
                       v-for="(key, index) in page"
@@ -689,12 +689,3 @@ const handleHashtagClick = (key: string) => {
     </footer>
   </div>
 </template>
-
-<style scoped>
-.swiper-pagination {
-  position: absolute;
-  bottom: 10px;
-  width: 100%;
-  text-align: center;
-}
-</style>
