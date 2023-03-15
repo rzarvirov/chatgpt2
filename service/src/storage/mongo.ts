@@ -142,7 +142,7 @@ export async function verifyUser(email: string) {
   return await userCol.updateOne({ email }, { $set: { status: Status.Normal, verifyTime: new Date().toLocaleString() } })
 }
 
-export async function getUserBalance(userId: ObjectId) {
-  const user = await userCol.findOne({ _id: userId }, { projection: { balance: 1 } })
+export async function getUserBalance(userId: string) {
+  const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { balance: 1 } })
   return user ? user.balance : null
 }
