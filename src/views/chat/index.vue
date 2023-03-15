@@ -638,7 +638,7 @@ const handleHashtagClick = (key: string) => {
           <div v-if="isAuthenticated" :style="{ color: balanceColor }" class="dark:text-white">
             <a href=""><b>{{ balance === 0 ? 'Пополнить баланс' : balance }}</b></a>
           </div>
-          <NButton type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
+          <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
                 <SvgIcon icon="ri:send-plane-fill" />
