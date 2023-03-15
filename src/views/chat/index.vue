@@ -594,10 +594,9 @@ const handleHashtagClick = (key: string) => {
               <Swiper
                 :slides-per-view="1"
                 :space-between="0"
-                :pagination="{ clickable: true }"
-                :navigation="{ enabled: !isMobile }"
-                :allow-slide-next="false"
-                :allow-slide-prev="false"
+                :pagination="{ clickable: true, type: 'bullets' }"
+                :allow-slide-next="true"
+                :allow-slide-prev="true"
               >
                 <SwiperSlide
                   v-for="(keyGroup, index) in getAllKeyGroups()"
