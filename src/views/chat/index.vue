@@ -505,8 +505,7 @@ const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 
 const getAllKeys = () => {
   if (isMobile)
-    return keys.slice(0, 30) // Return the first 20 keys for mobile devices
-
+    return keys.slice(0, 35) // Return the first 20 keys for mobile devices
   else
     return keys // Return all keys for non-mobile devices
 }
@@ -551,7 +550,7 @@ const handleHashtagClick = (key: string) => {
               <div
                 v-for="(key, index) in getAllKeys()"
                 :key="index"
-                :style="`display: inline-block; background-color: #ADD8E6; border: 1px solid #ADD8E6; border-radius: 20px; padding: 5px 10px; margin: 5px; font-weight: 500; cursor: pointer; font-size: ${isMobile ? '14px' : '16px'};`"
+                :style="`display: inline-block; background-color: #ADD8E6; border: 1px solid #ADD8E6; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
                 @click="handleHashtagClick(key)"
               >
                 {{ key }}
