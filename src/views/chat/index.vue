@@ -417,6 +417,7 @@ function handleClear() {
     negativeText: t('common.no'),
     onPositiveClick: () => {
       chatStore.clearChatByUuid(+uuid)
+      prompt.value = '' // Clear the textarea
     },
   })
 }
