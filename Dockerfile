@@ -10,7 +10,6 @@ RUN apk add --no-cache git \
     && pnpm run build \
     && pnpm install jsonwebtoken \
     && pnpm install jwt-token \
-    && pnpm install mongodb \
     && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 # service

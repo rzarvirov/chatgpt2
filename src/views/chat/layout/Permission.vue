@@ -19,11 +19,12 @@ const authStore = useAuthStore()
 
 const ms = useMessage()
 
-const loading = ref(false)
+const loginLoading = ref(false)
+const registerLoading = ref(false)
 const username = ref('')
 const password = ref('')
 
-const disabled = computed(() => !username.value.trim() || !password.value.trim() || loading.value)
+const disabled = computed(() => !username.value.trim() || !password.value.trim() || (loginLoading.value || registerLoading.value))
 
 onMounted(async () => {
   const verifytoken = route.query.verifytoken as string
@@ -35,7 +36,7 @@ async function handleVerify(verifytoken: string) {
     return
   const secretKey = verifytoken.trim()
   try {
-    loading.value = true
+    loginLoading.value = true
     await fetchVerify(secretKey)
     ms.success('Verify success')
     router.replace('/')
@@ -45,7 +46,7 @@ async function handleVerify(verifytoken: string) {
     authStore.removeToken()
   }
   finally {
-    loading.value = false
+    registerLoading.value = false
   }
 }
 
@@ -62,7 +63,7 @@ async function handleLogin() {
   if (!name || !pwd)
     return
   try {
-    loading.value = true
+    loginLoading.value = true
     const result = await fetchLogin(name, pwd)
     authStore.setToken(result.data.token)
     ms.success('success')
@@ -74,7 +75,7 @@ async function handleLogin() {
     password.value = ''
   }
   finally {
-    loading.value = false
+    loginLoading.value = false
   }
 }
 async function handleRegister() {
@@ -83,7 +84,7 @@ async function handleRegister() {
   if (!name || !pwd)
     return
   try {
-    loading.value = true
+    registerLoading.value = true
     const result = await fetchRegister(name, pwd)
     ms.success(result.message as string)
   }
@@ -91,7 +92,7 @@ async function handleRegister() {
     ms.error(error.message ?? 'error')
   }
   finally {
-    loading.value = false
+    registerLoading.value = false
   }
 }
 
@@ -162,7 +163,7 @@ onMounted(() => {
             block
             type="primary"
             :disabled="disabled"
-            :loading="loading"
+            :loading="registerLoading"
             @click.prevent="handleRegister"
           >
             {{ $t('common.register') }}
@@ -171,7 +172,7 @@ onMounted(() => {
             block
             type="primary"
             :disabled="disabled"
-            :loading="loading"
+            :loading="loginLoading"
             @click.prevent="handleLogin"
           >
             {{ $t('common.login') }}
@@ -183,7 +184,7 @@ onMounted(() => {
           block
           type="primary"
           :disabled="disabled"
-          :loading="loading"
+          :loading="loginLoading"
           @click="handleLogin"
         >
           {{ $t('common.login') }}
