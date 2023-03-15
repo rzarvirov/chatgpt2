@@ -525,6 +525,12 @@ const getRandomKeys = () => {
   return selectedKeys
 }
 
+const handleHashtagClick = (key: string) => {
+  const clickedPrompt = PromptsList.find(prompt => prompt.key === key)
+  if (clickedPrompt)
+    prompt.value = clickedPrompt.value
+}
+
 // end
 </script>
 
@@ -554,14 +560,13 @@ const getRandomKeys = () => {
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
-            <div id="app">
-              <div
-                v-for="(key, index) in getRandomKeys()"
-                :key="index"
-                style="display: inline-block; background-color: lightblue; border: 1px solid #00f; border-radius: 5px; padding: 5px; margin: 5px;"
-              >
-                {{ key }}
-              </div>
+            <div
+              v-for="(key, index) in getRandomKeys()"
+              :key="index"
+              style="display: inline-block; background-color: #2196f3; border: 1px solid #2196f3; border-radius: 15px; padding: 5px 10px; margin: 5px; font-size: 14px; color: white; cursor: pointer;"
+              @click="handleHashtagClick(key)"
+            >
+              {{ key }}
             </div>
           </template>
           <template v-else>
