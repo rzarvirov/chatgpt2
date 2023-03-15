@@ -18,6 +18,16 @@ import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
+let controller = new AbortController()
+
+const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
+
+const route = useRoute()
+const dialog = useDialog()
+const ms = useMessage()
+
+const chatStore = useChatStore()
+
 // balance script
 
 const authStore = useAuthStoreWithout()
@@ -56,28 +66,22 @@ async function reduceBalance() {
 }
 
 const balanceColor = computed(() => {
-  if (balance.value < 5)
+  if (balance.value > 0 && balance.value < 6)
     return 'darkred'
 
-  else if (balance.value >= 5 && balance.value < 10)
-    return 'amber'
+  else if (balance.value >= 6 && balance.value < 10)
+    return 'FFBF00'
 
   else
     return '#4f555e' // Default color
 })
 
+function handleRecharge() {
+  // Add your recharge logic here
+  ms.warning('Пополнение временно недоступно')
+}
+
 // end of balance script
-
-let controller = new AbortController()
-
-const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
-
-const route = useRoute()
-const dialog = useDialog()
-const ms = useMessage()
-
-const chatStore = useChatStore()
-
 useCopyCode()
 
 const { isMobile } = useBasicLayout()
@@ -635,9 +639,19 @@ const handleHashtagClick = (key: string) => {
               />
             </template>
           </NAutoComplete>
-          <div v-if="isAuthenticated" :style="{ color: balanceColor }" class="dark:text-white">
-            <a href=""><b>{{ balance === 0 ? 'Пополнить баланс' : balance }}</b></a>
+          <div v-if="isAuthenticated">
+            <NButton
+              v-if="balance === 0"
+              style="display: inline-block; background-color: #ADD8E6; border: 1px solid #ADD8E6; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'}"
+              @click="handleRecharge"
+            >
+              Пополнить
+            </NButton>
+            <div v-else :style="{ color: balanceColor }" class="dark:text-white">
+              {{ balance }}
+            </div>
           </div>
+
           <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
