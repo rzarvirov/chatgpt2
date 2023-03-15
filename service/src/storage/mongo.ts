@@ -146,3 +146,7 @@ export async function getUserBalance(userId: string) {
   const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { balance: 1 } })
   return user ? user.balance : null
 }
+
+export async function updateUserBalance(userId: string, newBalance: number) {
+  await userCol.updateOne({ _id: new ObjectId(userId) }, { $set: { balance: newBalance } })
+}

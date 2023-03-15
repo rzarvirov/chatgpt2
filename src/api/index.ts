@@ -81,9 +81,6 @@ export function fetchGetUserBalance<T = any>() {
     headers: {
       Authorization: `Bearer ${token}`,
     },
-  }).then((response) => {
-    console.log('fetchGetUserBalance: Response:', response) // Add this line
-    return response
   })
 }
 

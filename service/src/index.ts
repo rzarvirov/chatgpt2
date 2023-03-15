@@ -5,7 +5,7 @@ import { chatConfig, chatReplyProcess } from './chatgpt'
 import { auth } from './middleware/auth'
 import type { ChatOptions } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserBalance, insertChat, renameChatRoom, updateChat, userCol, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserBalance, insertChat, renameChatRoom, updateChat, updateUserBalance, verifyUser } from './storage/mongo'
 import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 
@@ -46,10 +46,6 @@ router.get('/balance', auth, async (req, res) => {
 // got balance
 
 // update balance
-async function updateUserBalance(userId: string, newBalance: number) {
-  await userCol.updateOne({ _id: new ObjectId(userId) }, { $set: { balance: newBalance } })
-}
-
 router.post('/update-balance', auth, async (req, res) => {
   const userId = req.headers.userId
   const newBalance = req.body.newBalance
