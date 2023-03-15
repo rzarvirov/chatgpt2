@@ -503,7 +503,11 @@ interface Prompt {
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 
 const getAllKeys = () => {
-  return keys
+  if (isMobile)
+    return keys.slice(0, 30) // Return the first 20 keys for mobile devices
+
+  else
+    return keys // Return all keys for non-mobile devices
 }
 
 const handleHashtagClick = (key: string) => {
@@ -543,24 +547,13 @@ const handleHashtagClick = (key: string) => {
             </div>
             <br>
             <div style="text-align: center;">
-              <div style="text-align: center;">
-                <div
-                  v-for="(key, index) in getAllKeys()"
-                  :key="index"
-                  :style="{
-                    display: 'inline-block',
-                    backgroundColor: '#ADD8E6',
-                    border: '1px solid #ADD8E6',
-                    borderRadius: isMobile ? '10px' : '20px',
-                    padding: isMobile ? '3px 6px' : '5px 10px',
-                    margin: isMobile ? '2px' : '5px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                  }"
-                  @click="handleHashtagClick(key)"
-                >
-                  {{ key }}
-                </div>
+              <div
+                v-for="(key, index) in getAllKeys()"
+                :key="index"
+                :style="`display: inline-block; background-color: #ADD8E6; border: 1px solid #ADD8E6; border-radius: 20px; padding: 5px 10px; margin: 5px; font-weight: 500; cursor: pointer; font-size: ${isMobile ? '14px' : '16px'};`"
+                @click="handleHashtagClick(key)"
+              >
+                {{ key }}
               </div>
             </div>
           </template>
