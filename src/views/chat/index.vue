@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
-import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -18,7 +17,6 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
-import 'swiper/swiper-bundle.css'
 
 let controller = new AbortController()
 
@@ -545,13 +543,14 @@ interface Prompt {
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 
-const chunkSize = 35
-const keyGroups: string[][] = []
-for (let i = 0; i < keys.length; i += chunkSize)
-  keyGroups.push(keys.slice(i, i + chunkSize))
+const ITEMS_PER_PAGE = 35
 
-const getAllKeyGroups = () => {
-  return keyGroups
+const getPages = () => {
+  const pages = []
+  for (let i = 0; i < keys.length; i += ITEMS_PER_PAGE)
+    pages.push(keys.slice(i, i + ITEMS_PER_PAGE))
+
+  return pages
 }
 
 const handleHashtagClick = (key: string) => {
@@ -591,20 +590,17 @@ const handleHashtagClick = (key: string) => {
             </div>
             <br>
             <div style="text-align: center;">
-              <Swiper
-                :slides-per-view="1"
-                :space-between="0"
-                :pagination="{ clickable: true, type: 'bullets', el: '.swiper-pagination' }"
-                :allow-slide-next="true"
-                :allow-slide-prev="true"
+              <swiper-container
+                slides-per-view="1"
+                pagination="true"
+                pagination-type="bullets"
+                :space-between="30"
+                css-mode="true"
               >
-                <SwiperSlide
-                  v-for="(keyGroup, index) in getAllKeyGroups()"
-                  :key="index"
-                >
+                <swiper-slide v-for="(page, pageIndex) in getPages()" :key="pageIndex">
                   <div style="text-align: center;">
                     <div
-                      v-for="(key, index) in keyGroup"
+                      v-for="(key, index) in page"
                       :key="index"
                       :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
                       @click="handleHashtagClick(key)"
@@ -612,10 +608,8 @@ const handleHashtagClick = (key: string) => {
                       {{ key }}
                     </div>
                   </div>
-                </SwiperSlide>
-
-                <div class="swiper-pagination" />
-              </Swiper>
+                </swiper-slide>
+              </swiper-container>
             </div>
           </template>
           <template v-else>
