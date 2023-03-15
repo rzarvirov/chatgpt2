@@ -1,5 +1,6 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { get, post } from '@/utils/request'
+import { useAuthStoreWithout } from '@/store/modules/auth'
 
 export function fetchChatAPI<T = any>(
   prompt: string,
@@ -72,8 +73,14 @@ export function fetchGetChatRooms<T = any>() {
 
 // Client-side function to fetch the user's balance
 export function fetchGetUserBalance<T = any>() {
+  const authStore = useAuthStoreWithout()
+  const token = authStore.token
+
   return get<T>({
     url: '/balance',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   })
 }
 
