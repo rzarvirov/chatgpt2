@@ -85,7 +85,7 @@ async function handleRegister() {
   const name = username.value.trim()
   const pwd = password.value.trim()
   if (!name || !pwd) {
-    ms.warning('Введите вышу Почту и Пароль выше для начала регистрации') // Change this message to match the style of other messages on the page.
+    ms.warning('Введите почту и пароль для начала регистрации') // Change this message to match the style of other messages on the page.
     return
   }
   try {
