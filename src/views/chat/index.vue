@@ -542,7 +542,6 @@ interface Prompt {
 }
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
-
 const ITEMS_PER_PAGE = 35
 
 const pages = computed(() => {
@@ -558,8 +557,6 @@ const handleHashtagClick = (key: string) => {
   if (clickedPrompt)
     prompt.value = clickedPrompt.value
 }
-
-// end
 </script>
 
 <template>
