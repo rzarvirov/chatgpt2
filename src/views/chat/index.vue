@@ -54,6 +54,18 @@ async function reduceBalance() {
     console.error('Error updating user balance:', error)
   }
 }
+
+const balanceColor = computed(() => {
+  if (balance.value < 5)
+    return 'darkred'
+
+  else if (balance.value >= 5 && balance.value < 10)
+    return 'amber'
+
+  else
+    return '#4f555e' // Default color
+})
+
 // end of balance script
 
 let controller = new AbortController()
@@ -623,8 +635,8 @@ const handleHashtagClick = (key: string) => {
               />
             </template>
           </NAutoComplete>
-          <div v-if="isAuthenticated" class="text-[#4f555e] dark:text-white">
-            {{ balance === 0 ? 'Пополнить баланс' : balance }}
+          <div v-if="isAuthenticated" :style="{ color: balanceColor }" class="dark:text-white">
+            <a href=""><b>{{ balance === 0 ? 'Пополнить баланс' : balance }}</b></a>
           </div>
           <NButton type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
             <template #icon>
