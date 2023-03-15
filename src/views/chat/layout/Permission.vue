@@ -24,7 +24,10 @@ const registerLoading = ref(false)
 const username = ref('')
 const password = ref('')
 
-const disabled = computed(() => !username.value.trim() || !password.value.trim() || (loginLoading.value || registerLoading.value))
+// ...
+const loginDisabled = computed(() => !username.value.trim() || !password.value.trim() || loginLoading.value)
+const registerDisabled = computed(() => registerLoading.value)
+// ...
 
 onMounted(async () => {
   const verifytoken = route.query.verifytoken as string
@@ -81,8 +84,10 @@ async function handleLogin() {
 async function handleRegister() {
   const name = username.value.trim()
   const pwd = password.value.trim()
-  if (!name || !pwd)
+  if (!name || !pwd) {
+    ms.warning('Введите вышу Почту и Пароль выше для начала регистрации') // Change this message to match the style of other messages on the page.
     return
+  }
   try {
     registerLoading.value = true
     const result = await fetchRegister(name, pwd)
@@ -162,7 +167,7 @@ onMounted(() => {
           <NButton
             block
             type="primary"
-            :disabled="disabled"
+            :disabled="registerDisabled"
             :loading="registerLoading"
             @click.prevent="handleRegister"
           >
@@ -171,7 +176,7 @@ onMounted(() => {
           <NButton
             block
             type="primary"
-            :disabled="disabled"
+            :disabled="loginDisabled"
             :loading="loginLoading"
             @click.prevent="handleLogin"
           >
@@ -183,7 +188,7 @@ onMounted(() => {
           v-if="!(authStore.session && authStore.session.allowRegister)"
           block
           type="primary"
-          :disabled="disabled"
+          :disabled="loginDisabled"
           :loading="loginLoading"
           @click="handleLogin"
         >
