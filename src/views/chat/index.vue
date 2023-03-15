@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
+import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -17,6 +18,7 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
+import 'swiper/swiper-bundle.css'
 
 let controller = new AbortController()
 
@@ -543,11 +545,13 @@ interface Prompt {
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 
-const getAllKeys = () => {
-  if (isMobile)
-    return keys.slice(0, 35) // Return the first 20 keys for mobile devices
-  else
-    return keys // Return all keys for non-mobile devices
+const chunkSize = 35
+const keyGroups: string[][] = []
+for (let i = 0; i < keys.length; i += chunkSize)
+  keyGroups.push(keys.slice(i, i + chunkSize))
+
+const getAllKeyGroups = () => {
+  return keyGroups
 }
 
 const handleHashtagClick = (key: string) => {
@@ -587,14 +591,34 @@ const handleHashtagClick = (key: string) => {
             </div>
             <br>
             <div style="text-align: center;">
-              <div
-                v-for="(key, index) in getAllKeys()"
-                :key="index"
-                :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
-                @click="handleHashtagClick(key)"
+              <Swiper
+                :slides-per-view="1"
+                :space-between="0"
+                :pagination="{ clickable: true }"
+                :navigation="{ enabled: !isMobile }"
+                :allow-slide-next="false"
+                :allow-slide-prev="false"
               >
-                {{ key }}
-              </div>
+                <SwiperSlide
+                  v-for="(keyGroup, index) in getAllKeyGroups()"
+                  :key="index"
+                >
+                  <div style="text-align: center;">
+                    <div
+                      v-for="(key, index) in keyGroup"
+                      :key="index"
+                      :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
+                      @click="handleHashtagClick(key)"
+                    >
+                      {{ key }}
+                    </div>
+                  </div>
+                </SwiperSlide>
+
+                <template #pagination>
+                  <div class="swiper-pagination" />
+                </template>
+              </Swiper>
             </div>
           </template>
           <template v-else>
