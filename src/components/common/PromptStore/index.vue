@@ -42,7 +42,7 @@ const promptList = ref<any>(promptStore.promptList)
 
 // 移动端自适应相关
 const renderTemplate = () => {
-  const [keyLimit, valueLimit] = isMobile.value ? [20, 50] : [50, 200]
+  const [keyLimit, valueLimit] = isMobile.value ? [20, 200] : [50, 400]
 
   return promptList.value.map((item: { key: string; value: string }) => {
     return {
