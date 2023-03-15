@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
 import html2canvas from 'html2canvas'
-import { register } from 'swiper/element/bundle'
 import { Message } from './components'
 import { useScroll } from './hooks/useScroll'
 import { useChat } from './hooks/useChat'
@@ -18,8 +17,6 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
-import 'swiper/swiper-bundle.min.css'
-register()
 
 let controller = new AbortController()
 
@@ -592,7 +589,7 @@ const handleHashtagClick = (key: string) => {
             <div style="text-align: center;">
               <swiper-container
                 slides-per-view="1"
-                pagination="true"
+                :pagination="{ clickable: true }"
                 pagination-type="bullets"
                 :space-between="30"
                 css-mode="true"
