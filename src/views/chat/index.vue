@@ -78,6 +78,7 @@ const balanceColor = computed(() => {
 
 function handleRecharge() {
   // Add your recharge logic here
+  ms.warning('Лимит запросов исчерпан')
   dialog.warning({
     title: 'Пополнение недоступно',
     content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы автоматически зачислим вам 500 запросов. Просто укажите ваш e-mail в комментарии. Хотите поддержать?',
