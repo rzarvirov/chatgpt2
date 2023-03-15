@@ -70,7 +70,7 @@ const balanceColor = computed(() => {
     return 'darkred'
 
   else if (balance.value >= 6 && balance.value < 10)
-    return 'FFBF00'
+    return 'peru'
 
   else
     return '#4f555e' // Default color
@@ -78,7 +78,16 @@ const balanceColor = computed(() => {
 
 function handleRecharge() {
   // Add your recharge logic here
-  ms.warning('Пополнение временно недоступно')
+  dialog.warning({
+    title: 'Пополнение недоступно',
+    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы автоматически зачислим вам 500 запросов. Просто укажите ваш e-mail в комментарии. Хотите поддержать?',
+    positiveText: t('common.yes'),
+    negativeText: t('common.no'),
+    onPositiveClick: () => {
+      // Replace 'https://example.com' with the URL you want to open
+      window.open('https://pay.cloudtips.ru/p/99817dfa', '_blank')
+    },
+  })
 }
 
 // end of balance script
@@ -580,7 +589,7 @@ const handleHashtagClick = (key: string) => {
               <div
                 v-for="(key, index) in getAllKeys()"
                 :key="index"
-                :style="`display: inline-block; background-color: #ADD8E6; border: 1px solid #ADD8E6; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
+                :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
                 @click="handleHashtagClick(key)"
               >
                 {{ key }}
@@ -642,7 +651,7 @@ const handleHashtagClick = (key: string) => {
           <div v-if="isAuthenticated">
             <NButton
               v-if="balance === 0"
-              style="display: inline-block; background-color: #ADD8E6; border: 1px solid #ADD8E6; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'}"
+              style="display: inline-block; background-color: #72BCD4; border: 0px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'}"
               @click="handleRecharge"
             >
               Пополнить
