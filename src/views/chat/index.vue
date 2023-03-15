@@ -542,7 +542,7 @@ interface Prompt {
 }
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
-const ITEMS_PER_PAGE = 35
+const ITEMS_PER_PAGE = 30
 
 const pages = computed(() => {
   const pagesArray = []
@@ -593,13 +593,14 @@ const handleHashtagClick = (key: string) => {
                 pagination-type="bullets"
                 :space-between="30"
                 css-mode="true"
+                :mousewheel="true"
               >
                 <swiper-slide v-for="(page, pageIndex) in pages" :key="pageIndex">
                   <div style="text-align: center;">
                     <div
                       v-for="(key, index) in page"
                       :key="index"
-                      :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};`"
+                      :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '14px'};`"
                       @click="handleHashtagClick(key)"
                     >
                       {{ key }}
