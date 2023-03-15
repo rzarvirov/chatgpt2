@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, defineProps, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { NAutoComplete, NButton, NInput, useDialog, useMessage } from 'naive-ui'
@@ -17,13 +17,6 @@ import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
-
-const props = defineProps({
-  numKeys: {
-    type: Number,
-    default: 10,
-  },
-})
 
 // balance script
 const authStore = useAuthStoreWithout()
