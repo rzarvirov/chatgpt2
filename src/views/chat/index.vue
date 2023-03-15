@@ -13,7 +13,7 @@ import HeaderComponent from './components/Header/index.vue'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess, fetchGetUserBalance } from '@/api'
+import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
 import { t } from '@/locales'
 import SentencesList from '@/assets/sentences.json'
 import { useAuthStoreWithout } from '@/store/modules/auth'
@@ -44,6 +44,17 @@ onMounted(async () => {
   if (authStore.session == null || !authStore.session.auth || authStore.token)
     await fetchBalance()
 })
+
+async function reduceBalance() {
+  const newBalance = Math.max(0, balance.value - 1)
+  try {
+    await fetchUpdateUserBalance(newBalance)
+    balance.value = newBalance
+  }
+  catch (error) {
+    console.error('Error updating user balance:', error)
+  }
+}
 // end of balance script
 
 let controller = new AbortController()
@@ -228,6 +239,7 @@ async function onConversation() {
   finally {
     loading.value = false
   }
+  await reduceBalance()
 }
 
 async function onRegenerate(index: number) {
@@ -341,6 +353,7 @@ async function onRegenerate(index: number) {
   finally {
     loading.value = false
   }
+  await reduceBalance()
 }
 
 function handleExport() {

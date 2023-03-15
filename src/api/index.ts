@@ -87,6 +87,16 @@ export function fetchGetUserBalance<T = any>() {
   })
 }
 
+// Update user balance
+export function fetchUpdateUserBalance<T = any>(newBalance: number) {
+  return post<T>({
+    url: '/update-balance',
+    data: {
+      newBalance,
+    },
+  })
+}
+
 export function fetchCreateChatRoom<T = any>(title: string, roomId: number) {
   return post<T>({
     url: '/room-create',
