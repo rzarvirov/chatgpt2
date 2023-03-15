@@ -6,7 +6,6 @@ import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import Icon403 from '@/icons/403.vue'
 import SentencesList from '@/assets/sentences.json'
-import { downloadPromptTemplate } from '@/utils/prompts'
 
 interface Props {
   visible: boolean
@@ -66,10 +65,6 @@ async function handleLogin() {
     loading.value = true
     const result = await fetchLogin(name, pwd)
     authStore.setToken(result.data.token)
-
-    // Call the download function after successful login
-    await downloadPromptTemplate('https://raw.githubusercontent.com/rzarvirov/chatgpt2/main/prompts_RU.json')
-
     ms.success('success')
     router.go(0)
   }
