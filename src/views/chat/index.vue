@@ -15,13 +15,13 @@ import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
 import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
 import { t } from '@/locales'
-import SentencesList from '@/assets/sentences.json'
+import PromptsList from '/public/prompts_RU.json'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
 const props = defineProps({
-  numSentences: {
+  numKeys: {
     type: Number,
-    default: 5,
+    default: 10,
   },
 })
 
@@ -500,25 +500,31 @@ onUnmounted(() => {
   if (loading.value)
     controller.abort()
 })
-const sentences = SentencesList
 
-const getRandomSentences = () => {
-  const selectedSentences = []
+// random keys
+interface Prompt {
+  key: string
+  value: string
+}
+
+const keys = PromptsList.map((prompt: Prompt) => prompt.key)
+
+const getRandomKeys = () => {
+  const selectedKeys = []
   const usedIndices = new Set()
 
-  while (selectedSentences.length < props.numSentences) {
-    const randomIndex = Math.floor(Math.random() * sentences.length)
+  while (selectedKeys.length < props.numKeys) {
+    const randomIndex = Math.floor(Math.random() * keys.length)
     if (!usedIndices.has(randomIndex)) {
-      const sentence = sentences[randomIndex]
-      selectedSentences.push(sentence)
+      const key = keys[randomIndex]
+      selectedKeys.push(key)
       usedIndices.add(randomIndex)
     }
   }
 
-  return selectedSentences
+  return selectedKeys
 }
 
-const randomSentences = getRandomSentences()
 // end
 </script>
 
@@ -548,19 +554,14 @@ const randomSentences = getRandomSentences()
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
-            <div v-if="randomSentences.length" class="flex items-center justify-center mt-4 text-center text-neutral-300">
-              <span>
-                <ul>
-                  <li v-for="sentence in randomSentences" :key="sentence">
-                    {{ sentence }}<br><br>
-                  </li>
-                </ul>
-              </span>
-            </div>
-            <div v-else class="flex items-center justify-center mt-4 text-center text-neutral-300">
-              <span>
-                No sentences found.
-              </span>
+            <div id="app">
+              <div
+                v-for="(key, index) in getRandomKeys()"
+                :key="index"
+                style="display: inline-block; background-color: lightblue; border: 1px solid #00f; border-radius: 5px; padding: 5px; margin: 5px;"
+              >
+                {{ key }}
+              </div>
             </div>
           </template>
           <template v-else>
