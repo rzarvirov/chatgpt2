@@ -19,9 +19,15 @@ import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
 // balance script
+
 const authStore = useAuthStoreWithout()
 const isAuthenticated = computed(() => authStore.session && authStore.session.auth)
 const balance = ref(0)
+
+const isBalanceZero = computed(() => {
+  // Replace `balance` with the variable or getter you use to track the balance
+  return balance.value === 0
+})
 
 async function fetchBalance() {
   try {
@@ -609,10 +615,10 @@ const handleHashtagClick = (key: string) => {
               />
             </template>
           </NAutoComplete>
-          <div v-if="isAuthenticated">
-          <!-- {{ balance }} -->
+          <div v-if="isAuthenticated" class="text-[#4f555e] dark:text-white">
+            {{ balance }}
           </div>
-          <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+          <NButton type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
                 <SvgIcon icon="ri:send-plane-fill" />

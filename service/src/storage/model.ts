@@ -24,7 +24,7 @@ class UserInfo {
     this.status = Status.PreVerify
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
-    this.balance = 0 // Initialize the balance to 0 or any default value you want
+    this.balance = 100 // Initialize the balance to 0 or any default value you want
   }
 }
 
