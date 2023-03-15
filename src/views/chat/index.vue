@@ -614,9 +614,7 @@ const handleHashtagClick = (key: string) => {
                   </div>
                 </SwiperSlide>
 
-                <template #pagination>
-                  <div class="swiper-pagination" />
-                </template>
+                <div class="swiper-pagination" />
               </Swiper>
             </div>
           </template>
@@ -697,3 +695,12 @@ const handleHashtagClick = (key: string) => {
     </footer>
   </div>
 </template>
+
+<style scoped>
+.swiper-pagination {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+</style>
