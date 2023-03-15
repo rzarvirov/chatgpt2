@@ -541,6 +541,7 @@ const handleHashtagClick = (key: string) => {
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
+            <br>
             <div style="text-align: center;">
               <div
                 v-for="(key, index) in getAllKeys()"
