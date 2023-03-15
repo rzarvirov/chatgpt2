@@ -594,7 +594,7 @@ const handleHashtagClick = (key: string) => {
               <Swiper
                 :slides-per-view="1"
                 :space-between="0"
-                :pagination="{ clickable: true, type: 'bullets' }"
+                :pagination="{ clickable: true, type: 'bullets', el: '.swiper-pagination' }"
                 :allow-slide-next="true"
                 :allow-slide-prev="true"
               >
