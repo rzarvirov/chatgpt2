@@ -41,7 +41,7 @@ async function fetchBalance() {
 }
 
 onMounted(async () => {
-  if (isAuthenticated.value)
+  if (authStore.session == null || !authStore.session.auth || authStore.token)
     await fetchBalance()
 })
 // end of balance script
@@ -602,7 +602,7 @@ const randomSentences = getRandomSentences()
               />
             </template>
           </NAutoComplete>
-          <div v-if="isAuthenticated" class="balance-container">
+          <div v-if="isAuthenticated">
             {{ balance }}
           </div>
           <NButton type="primary" :disabled="buttonDisabled" @click="handleSubmit">
