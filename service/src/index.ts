@@ -5,7 +5,7 @@ import { chatConfig, chatReplyProcess } from './chatgpt'
 import { auth } from './middleware/auth'
 import type { ChatOptions } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserBalance, insertChat, renameChatRoom, updateChat, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserBalance, insertChat, renameChatRoom, updateChat, userCol, verifyUser } from './storage/mongo'
 import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 

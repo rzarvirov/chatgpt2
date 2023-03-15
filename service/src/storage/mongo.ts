@@ -6,7 +6,7 @@ const url = process.env.MONGODB_URL
 const client = new MongoClient(url)
 const chatCol = client.db('chatgpt').collection('chat')
 const roomCol = client.db('chatgpt').collection('chat_room')
-const userCol = client.db('chatgpt').collection('user')
+export const userCol = client.db('chatgpt').collection('user')
 
 /**
  * 插入聊天信息
