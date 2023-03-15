@@ -80,7 +80,7 @@ function handleRecharge() {
   // Add your recharge logic here
   ms.warning('Лимит запросов исчерпан')
   dialog.warning({
-    title: 'Пополнение недоступно',
+    title: 'Пополнение баланса',
     content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы автоматически зачислим вам 500 запросов. Просто укажите ваш e-mail в комментарии. Хотите поддержать?',
     positiveText: t('common.yes'),
     negativeText: t('common.no'),
