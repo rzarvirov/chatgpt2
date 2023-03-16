@@ -539,6 +539,7 @@ onUnmounted(() => {
 interface Prompt {
   key: string
   value: string
+  colour: string
 }
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
@@ -556,6 +557,11 @@ const handleHashtagClick = (key: string) => {
   const clickedPrompt = PromptsList.find(prompt => prompt.key === key)
   if (clickedPrompt)
     prompt.value = clickedPrompt.value
+}
+
+const getColourForKey = (key: string) => {
+  const prompt = PromptsList.find(prompt => prompt.key === key)
+  return prompt ? prompt.colour : '#72BCD4' // Fallback color if not found
 }
 </script>
 
@@ -601,7 +607,7 @@ const handleHashtagClick = (key: string) => {
                     <div
                       v-for="(key, index) in page"
                       :key="index"
-                      :style="`display: inline-block; background-color: #72BCD4; border: 1px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '14px'};`"
+                      :style="`display: inline-block; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '14px'};`"
                       @click="handleHashtagClick(key)"
                     >
                       {{ key }}
