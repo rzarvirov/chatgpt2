@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchLogin, fetchVerify } from '@/api'
+import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
 
@@ -25,8 +25,6 @@ const showLoginForm = ref(false)
 const showRegisterForm = ref(false)
 const registerLoading = ref(false)
 const loginLoading = ref(false)
-
-const loggedIn = ref(false)
 
 // ...
 const loginDisabled = computed(() => !username.value.trim() || !password.value.trim() || loginLoading.value)
@@ -87,16 +85,18 @@ async function handleLogin() {
     loginLoading.value = true
     const result = await fetchLogin(name, pwd)
     authStore.setToken(result.data.token)
-    ms.success('Вход выполнен успешно')
-    loggedIn.value = true
+    ms.success('success')
     visible.value = false
     router.go(0)
   }
   catch (error: any) {
-    // ... existing code
+    ms.error(error.message ?? 'error')
+    authStore.removeToken()
+    password.value = ''
   }
   finally {
     loginLoading.value = false
+    visible.value = false
   }
 }
 async function handleRegister() {
@@ -107,19 +107,17 @@ async function handleRegister() {
     return
   }
   try {
-    loginLoading.value = true
-    const result = await fetchLogin(name, pwd)
-    authStore.setToken(result.data.token)
-    ms.success('Вход выполнен успешно')
-    loggedIn.value = true
-    visible.value = false
-    router.go(0)
+    registerLoading.value = true
+    const result = await fetchRegister(name, pwd)
+    ms.success(result.message as string)
+    showRegisterForm.value = false // Hide the registration form
+    showLogin() // Show the login form after successful registration
   }
   catch (error: any) {
-    // ... existing code
+    ms.error(error.message ?? 'error')
   }
   finally {
-    loginLoading.value = false
+    registerLoading.value = false
   }
 }
 
@@ -170,7 +168,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <NModal :show="visible && !loggedIn" style="width: 90%; max-width: 640px;">
+  <NModal :show="visible" style="width: 90%; max-width: 640px;">
     <div class="p-10 bg-white rounded dark:bg-slate-800">
       <div v-if="!showLoginForm && !showRegisterForm" class="space-y-4">
         <header class="space-y-2">
