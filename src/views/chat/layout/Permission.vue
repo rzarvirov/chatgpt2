@@ -86,6 +86,7 @@ async function handleLogin() {
     const result = await fetchLogin(name, pwd)
     authStore.setToken(result.data.token)
     ms.success('success')
+    visible.value = false
     router.go(0)
   }
   catch (error: any) {
@@ -108,6 +109,8 @@ async function handleRegister() {
     registerLoading.value = true
     const result = await fetchRegister(name, pwd)
     ms.success(result.message as string)
+    showRegisterForm.value = false // Hide the registration form
+    showLogin() // Show the login form after successful registration
   }
   catch (error: any) {
     ms.error(error.message ?? 'error')
@@ -164,60 +167,65 @@ onMounted(() => {
 </script>
 
 <template>
-  <NModal :show="visible" style="width: 90%; max-width: 640px;">
-    <div class="p-10 bg-white rounded dark:bg-slate-800">
-      <div v-if="!showLoginForm && !showRegisterForm" class="space-y-4">
-        <header class="space-y-2">
-          <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
-            Добро пожаловать
-          </h2>
-          <p class="text-base text-center text-slate-500 dark:text-slate-500">
-            Получите доступ к удивительным возможностям ChatGPT после короткой регистрации или входа.
+  <template>
+    <NModal :show="visible" style="width: 90%; max-width: 640px;">
+      <div class="p-10 bg-white rounded dark:bg-slate-800">
+        <div v-if="!showLoginForm && !showRegisterForm" class="space-y-4">
+          <header class="space-y-2">
+            <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
+              Добро пожаловать
+            </h2>
+            <p class="text-base text-center text-slate-500 dark:text-slate-500">
+              Зарегистрируйтесь бесплатно* и получите доступ к удивительным возможностям ChatGPT (*ограничение по количсеству запросов в день).
+            </p>
+            <p class="text-base text-center text-slate-500">
+              <small>{{ currentSentence }}</small>
+            </p>
+          </header>
+          <NSpace justify="space-around">
+            <NButton block type="primary" @click="showRegister">
+              Регистрация
+            </NButton>
+            <NButton block type="info" @click="showLogin">
+              Вход
+            </NButton>
+          </NSpace>
+        </div>
+        <div v-if="showLoginForm || showRegisterForm" class="space-y-4">
+          <header class="space-y-2">
+            <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
+              {{ showLoginForm ? 'Авторизация' : 'Регистрация' }}
+            </h2>
+          </header>
+          <NInput v-model:value="username" type="text" placeholder="Email" />
+          <NInput v-model:value="password" type="password" placeholder="Password" @keypress="handlePress" />
+          <NSpace v-if="showLoginForm" justify="space-around">
+            <NButton
+              block
+              type="primary"
+              :disabled="loginDisabled"
+              :loading="loginLoading"
+              @click.prevent="handleLogin"
+            >
+              Вход
+            </NButton>
+          </NSpace>
+          <NSpace v-if="showRegisterForm" justify="space-around">
+            <NButton
+              block
+              type="primary"
+              :disabled="registerDisabled"
+              :loading="registerLoading"
+              @click.prevent="handleRegister"
+            >
+              Регистрация
+            </NButton>
+          </NSpace>
+          <p class="text-base text-center text-slate-500">
+            <small>{{ currentSentence }}</small>
           </p>
-        </header>
-        <NSpace justify="space-around">
-          <NButton block type="primary" @click="showRegister">
-            Регистрация
-          </NButton>
-          <NButton block type="info" @click="showLogin">
-            Вход
-          </NButton>
-        </NSpace>
+        </div>
       </div>
-      <div v-if="showLoginForm || showRegisterForm" class="space-y-4">
-        <header class="space-y-2">
-          <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
-            {{ showLoginForm ? 'Авторизация' : 'Регистрация' }}
-          </h2>
-        </header>
-        <NInput v-model:value="username" type="text" placeholder="Email" />
-        <NInput v-model:value="password" type="password" placeholder="Password" @keypress="handlePress" />
-        <NSpace v-if="showLoginForm" justify="space-around">
-          <NButton
-            block
-            type="primary"
-            :disabled="loginDisabled"
-            :loading="loginLoading"
-            @click.prevent="handleLogin"
-          >
-            Вход
-          </NButton>
-        </NSpace>
-        <NSpace v-if="showRegisterForm" justify="space-around">
-          <NButton
-            block
-            type="primary"
-            :disabled="registerDisabled"
-            :loading="registerLoading"
-            @click.prevent="handleRegister"
-          >
-            Регистрация
-          </NButton>
-        </NSpace>
-        <p class="text-base text-center text-slate-500">
-          <small>{{ currentSentence }}</small>
-        </p>
-      </div>
-    </div>
-  </NModal>
+    </NModal>
+  </template>
 </template>
