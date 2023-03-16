@@ -179,7 +179,7 @@ onMounted(() => {
           <NButton block type="primary" @click="showRegister">
             Регистрация
           </NButton>
-          <NButton block type="secondary" @click="showLogin">
+          <NButton block type="info" @click="showLogin">
             Вход
           </NButton>
         </NSpace>
