@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
@@ -10,7 +10,7 @@ interface Props {
   visible: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const route = useRoute()
 const router = useRouter()
@@ -18,7 +18,7 @@ const authStore = useAuthStore()
 
 const ms = useMessage()
 
-const visible = ref(true)
+const visible = ref(props.visible) // Change this line
 const username = ref('')
 const password = ref('')
 const showLoginForm = ref(false)
@@ -30,6 +30,13 @@ const loginLoading = ref(false)
 const loginDisabled = computed(() => !username.value.trim() || !password.value.trim() || loginLoading.value)
 const registerDisabled = computed(() => registerLoading.value)
 // ...
+
+watch(
+  () => props.visible,
+  (newValue) => {
+    visible.value = newValue
+  },
+)
 
 function showLogin() {
   showLoginForm.value = true
