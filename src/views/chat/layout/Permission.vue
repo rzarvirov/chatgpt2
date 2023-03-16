@@ -172,6 +172,11 @@ onMounted(() => {
   currentSentence.value = getNextSentence()
   typeWriter(currentSentence.value, 0, 30)
 })
+
+function goBackToWelcome() {
+  showLoginForm.value = false
+  showRegisterForm.value = false
+}
 </script>
 
 <template>
@@ -206,7 +211,8 @@ onMounted(() => {
         </header>
         <NInput v-model:value="username" type="text" placeholder="Email" />
         <NInput v-model:value="password" type="password" placeholder="Password" @keypress="handlePress" />
-        <NSpace v-if="showLoginForm" justify="space-around">
+        <div v-if="showLoginForm" class="flex justify-between items-center">
+          <span class="text-blue-600 cursor-pointer" @click="goBackToWelcome">Назад</span>
           <NButton
             block
             type="primary"
@@ -216,8 +222,9 @@ onMounted(() => {
           >
             Вход
           </NButton>
-        </NSpace>
-        <NSpace v-if="showRegisterForm" justify="space-around">
+        </div>
+        <div v-if="showRegisterForm" class="flex justify-between items-center">
+          <span class="text-blue-600 cursor-pointer" @click="goBackToWelcome">Назад</span>
           <NButton
             block
             type="primary"
@@ -227,7 +234,7 @@ onMounted(() => {
           >
             Регистрация
           </NButton>
-        </NSpace>
+        </div>
         <p class="text-sm text-center text-slate-500 mt-3">
           Мы не собираем персональные данные, сообщения отправляются на сервер OpenAI в зашифрованном виде.
         </p>
