@@ -172,11 +172,6 @@ onMounted(() => {
   currentSentence.value = getNextSentence()
   typeWriter(currentSentence.value, 0, 30)
 })
-
-function goBackToWelcome() {
-  showLoginForm.value = false
-  showRegisterForm.value = false
-}
 </script>
 
 <template>
@@ -188,7 +183,7 @@ function goBackToWelcome() {
             Добро пожаловать
           </h2>
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
-            Зарегистрируйтесь бесплатно* и получите доступ к удивительным возможностям ChatGPT (*ограничение по количеству запросов в день).
+            Зарегистрируйтесь и получите доступ* к удивительным возможностям ChatGPT (*бесплатно, ограничение по количеству запросов в день).
           </p>
           <p class="text-base text-center text-slate-500">
             <small>{{ currentSentence }}</small>
@@ -234,7 +229,7 @@ function goBackToWelcome() {
           </NButton>
         </NSpace>
         <p class="text-sm text-center text-slate-500 mt-3">
-          Мы не собираем персональные данные, сообщения отправляются на сервер OpenAI в зашифрованном виде.
+          Мы не собираем никакие персональные данные, сообщения отправляются на сервер OpenAI в зашифрованном виде.
         </p>
       </div>
     </div>
