@@ -221,9 +221,6 @@ onMounted(() => {
               Регистрация
             </NButton>
           </NSpace>
-          <p class="text-base text-center text-slate-500">
-            <small>{{ currentSentence }}</small>
-          </p>
         </div>
       </div>
     </NModal>
