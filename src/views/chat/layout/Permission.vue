@@ -211,30 +211,32 @@ function goBackToWelcome() {
         </header>
         <NInput v-model:value="username" type="text" placeholder="Email" />
         <NInput v-model:value="password" type="password" placeholder="Password" @keypress="handlePress" />
-        <div v-if="showLoginForm" class="flex justify-between items-center">
+        <div v-if="showLoginForm" class="flex justify-between">
           <span class="text-blue-600 cursor-pointer" @click="goBackToWelcome">Назад</span>
-          <NButton
-            block
-            type="primary"
-            :disabled="loginDisabled"
-            :loading="loginLoading"
-            @click.prevent="handleLogin"
-          >
-            Вход
-          </NButton>
         </div>
-        <div v-if="showRegisterForm" class="flex justify-between items-center">
+        <NButton
+          block
+          type="primary"
+          :disabled="loginDisabled"
+          :loading="loginLoading"
+          @click.prevent="handleLogin"
+        >
+          Вход
+        </NButton>
+        >
+        <div v-if="showRegisterForm" class="flex justify-between">
           <span class="text-blue-600 cursor-pointer" @click="goBackToWelcome">Назад</span>
-          <NButton
-            block
-            type="primary"
-            :disabled="registerDisabled"
-            :loading="registerLoading"
-            @click.prevent="handleRegister"
-          >
-            Регистрация
-          </NButton>
         </div>
+        <NButton
+          block
+          type="primary"
+          :disabled="registerDisabled"
+          :loading="registerLoading"
+          @click.prevent="handleRegister"
+        >
+          Регистрация
+        </NButton>
+
         <p class="text-sm text-center text-slate-500 mt-3">
           Мы не собираем персональные данные, сообщения отправляются на сервер OpenAI в зашифрованном виде.
         </p>
