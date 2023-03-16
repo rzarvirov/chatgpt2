@@ -228,6 +228,9 @@ onMounted(() => {
             Регистрация
           </NButton>
         </NSpace>
+        <p class="text-sm text-center text-slate-500 mt-3">
+          Мы не собираем персональные данные, сообщения отправляются на сервер OpenAI в зашифрованном виде.
+        </p>
       </div>
     </div>
   </NModal>
