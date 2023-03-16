@@ -697,6 +697,6 @@ const getColourForKey = (key: string) => {
 
 <style>
   .swiper-container-custom {
-    padding-bottom: 20px;
+    padding-bottom: 40px;
   }
 </style>
