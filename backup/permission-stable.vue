@@ -4,6 +4,7 @@ import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
+import Icon403 from '@/icons/403.vue'
 import SentencesList from '@/assets/sentences.json'
 
 interface Props {
@@ -18,28 +19,15 @@ const authStore = useAuthStore()
 
 const ms = useMessage()
 
-const visible = ref(true)
+const loginLoading = ref(false)
+const registerLoading = ref(false)
 const username = ref('')
 const password = ref('')
-const showLoginForm = ref(false)
-const showRegisterForm = ref(false)
-const registerLoading = ref(false)
-const loginLoading = ref(false)
 
 // ...
 const loginDisabled = computed(() => !username.value.trim() || !password.value.trim() || loginLoading.value)
 const registerDisabled = computed(() => registerLoading.value)
 // ...
-
-function showLogin() {
-  showLoginForm.value = true
-  showRegisterForm.value = false
-}
-
-function showRegister() {
-  showLoginForm.value = false
-  showRegisterForm.value = true
-}
 
 onMounted(async () => {
   const verifytoken = route.query.verifytoken as string
@@ -68,11 +56,7 @@ async function handleVerify(verifytoken: string) {
 function handlePress(event: KeyboardEvent) {
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault()
-    if (showLoginForm.value)
-      handleLogin()
-
-    else if (showRegisterForm.value)
-      handleRegister()
+    handleLogin()
   }
 }
 
@@ -166,44 +150,20 @@ onMounted(() => {
 <template>
   <NModal :show="visible" style="width: 90%; max-width: 640px;">
     <div class="p-10 bg-white rounded dark:bg-slate-800">
-      <div v-if="!showLoginForm && !showRegisterForm" class="space-y-4">
+      <div class="space-y-4">
         <header class="space-y-2">
           <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
-            Добро пожаловать
+            Авторизация
           </h2>
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
-            Получите доступ к удивительным возможностям ChatGPT после короткой регистрации или входа.
+            {{ $t('common.unauthorizedTips') }}
           </p>
-        </header>
-        <NSpace justify="space-around">
-          <NButton block type="primary" @click="showRegister">
-            Регистрация
-          </NButton>
-          <NButton block type="secondary" @click="showLogin">
-            Вход
-          </NButton>
-        </NSpace>
-      </div>
-      <div v-if="showLoginForm || showRegisterForm" class="space-y-4">
-        <header class="space-y-2">
-          <h2 class="text-2xl font-bold text-center text-slate-800 dark:text-neutral-200">
-            {{ showLoginForm ? 'Авторизация' : 'Регистрация' }}
-          </h2>
+          <Icon403 class="w-[200px] m-auto" />
         </header>
         <NInput v-model:value="username" type="text" placeholder="Email" />
         <NInput v-model:value="password" type="password" placeholder="Password" @keypress="handlePress" />
-        <NSpace v-if="showLoginForm" justify="space-around">
-          <NButton
-            block
-            type="primary"
-            :disabled="loginDisabled"
-            :loading="loginLoading"
-            @click.prevent="handleLogin"
-          >
-            Вход
-          </NButton>
-        </NSpace>
-        <NSpace v-if="showRegisterForm" justify="space-around">
+
+        <NSpace v-if="authStore.session && authStore.session.allowRegister" justify="space-around">
           <NButton
             block
             type="primary"
@@ -211,12 +171,40 @@ onMounted(() => {
             :loading="registerLoading"
             @click.prevent="handleRegister"
           >
-            Регистрация
+            {{ $t('common.register') }}
+          </NButton>
+          <NButton
+            block
+            type="primary"
+            :disabled="loginDisabled"
+            :loading="loginLoading"
+            @click.prevent="handleLogin"
+          >
+            {{ $t('common.login') }}
           </NButton>
         </NSpace>
+
+        <NButton
+          v-if="!(authStore.session && authStore.session.allowRegister)"
+          block
+          type="primary"
+          :disabled="loginDisabled"
+          :loading="loginLoading"
+          @click="handleLogin"
+        >
+          {{ $t('common.login') }}
+        </NButton>
+        <p class="text-base text-center text-slate-500">
+          Вы сможете свободно использовать нейросетевого чат-бота нового поколения после прохождения короткой регистрации
+        </p>
         <p class="text-base text-center text-slate-500">
           <small>{{ currentSentence }}</small>
         </p>
+      <!--
+        <p class="text-base text-center text-slate-500" @click="refreshPage">
+          <small>Пример: {{ randomSentence }}</small>
+        </p>
+      -->
       </div>
     </div>
   </NModal>
