@@ -588,6 +588,7 @@ const handleHashtagClick = (key: string) => {
             <br>
             <div style="text-align: center;">
               <swiper-container
+                class="swiper-container-custom"
                 slides-per-view="1"
                 :pagination="{ clickable: true }"
                 pagination-type="bullets"
@@ -687,3 +688,9 @@ const handleHashtagClick = (key: string) => {
     </footer>
   </div>
 </template>
+
+<style>
+  .swiper-container-custom {
+    padding-bottom: 20px;
+  }
+</style>
