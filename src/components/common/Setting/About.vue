@@ -36,7 +36,7 @@ onMounted(() => {
       <h2 class="text-xl font-bold">
         Version - 0.1 Beta - <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
       </h2>
-      <p>{{ $t("setting.api") }}：gpt-3.5-turbo</p>
+      <p>{{ $t("setting.api") }}：gpt-4</p>
     </div>
   </NSpin>
 </template>
