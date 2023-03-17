@@ -88,6 +88,9 @@ async function handleLogin() {
   const pwd = password.value.trim()
   if (!name || !pwd)
     return
+
+  let loginSuccessful = false
+
   try {
     loginLoading.value = true
     const result = await fetchLogin(name, pwd)
@@ -95,15 +98,20 @@ async function handleLogin() {
     ms.success('success')
     visible.value = false
     router.go(0)
+    loginSuccessful = true
   }
   catch (error: any) {
     ms.error(error.message ?? 'error')
     authStore.removeToken()
     password.value = ''
+    // Remove the line that sets loginLoading.value to false
   }
   finally {
-    loginLoading.value = false
-    visible.value = false
+    // Set loginLoading.value to false only if the login was successful
+    if (loginSuccessful) {
+      loginLoading.value = false
+      visible.value = false
+    }
   }
 }
 
