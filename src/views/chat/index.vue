@@ -585,7 +585,7 @@ const getColourForKey = (key: string) => {
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
           <template v-if="!dataSources.length">
-            <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
+            <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
               <SvgIcon icon="ri:service-fill" class="mr-2 text-3xl" />
               <span>
                 Модель: gpt-4 (OpenAI) | <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
