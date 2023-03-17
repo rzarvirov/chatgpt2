@@ -607,7 +607,7 @@ const getColourForKey = (key: string) => {
                     <div
                       v-for="(key, index) in page"
                       :key="index"
-                      :style="`display: inline-block; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '14px'};`"
+                      :style="`display: inline-block; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; color: black; font-size: ${isMobile ? '12px' : '14px'};`"
                       @click="handleHashtagClick(key)"
                     >
                       {{ key }}
