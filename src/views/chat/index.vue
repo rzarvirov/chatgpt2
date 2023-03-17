@@ -588,7 +588,7 @@ const getColourForKey = (key: string) => {
             <div class="flex items-center justify-center mt-4 text-center text-neutral-300">
               <SvgIcon icon="ri:service-fill" class="mr-2 text-3xl" />
               <span>
-                <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
+                Модель: gpt-4 (OpenAI) | <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
             <br>
