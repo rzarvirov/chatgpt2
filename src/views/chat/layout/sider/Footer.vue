@@ -27,7 +27,7 @@ async function handleLogout() {
       </span>
     </HoverButton>
 
-    <HoverButton :tooltip="$t('setting.setting')" @click="show = true">
+    <HoverButton @click="show = true">
       <span class="text-xl text-[#4f555e] dark:text-white">
         <SvgIcon icon="ri:settings-4-line" />
       </span>

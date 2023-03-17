@@ -47,6 +47,11 @@ export const useChatStore = defineStore('chat-store', {
       this.reloadRoute(uuid)
     },
 
+    setUsingContext(context: boolean) {
+      this.usingContext = context
+      this.recordState()
+    },
+
     addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
       fetchCreateChatRoom(history.title, history.uuid)
       this.history.unshift(history)
