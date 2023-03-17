@@ -106,11 +106,22 @@ async function handleLogin() {
     visible.value = false
   }
 }
+
+function isValidPassword(pwd: string) {
+  // Require at least 8 characters, including an uppercase letter, a lowercase letter, and a number
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+  return regex.test(pwd)
+}
+
 async function handleRegister() {
   const name = username.value.trim()
   const pwd = password.value.trim()
   if (!name || !pwd) {
     ms.warning('Введите почту и пароль для начала регистрации') // Change this message to match the style of other messages on the page.
+    return
+  }
+  if (!isValidPassword(pwd)) {
+    ms.warning('Пароль должен содержать не менее 8 символов, включая заглавную букву, строчную букву и цифру')
     return
   }
   try {
