@@ -27,12 +27,20 @@ export function fetchChatAPIProcess<T = any>(
     regenerate?: boolean
     prompt: string
     options?: { conversationId?: string; parentMessageId?: string }
+    userSelectedModel?: string // Add this line
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
 ) {
   return post<T>({
     url: '/chat-process',
-    data: { roomId: params.roomId, uuid: params.uuid, regenerate: params.regenerate || false, prompt: params.prompt, options: params.options },
+    data: {
+      roomId: params.roomId,
+      uuid: params.uuid,
+      regenerate: params.regenerate || false,
+      prompt: params.prompt,
+      options: params.options,
+      userSelectedModel: params.userSelectedModel, // Add this line
+    },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })
