@@ -18,8 +18,6 @@ import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
-const userSelectedModel = ref('gpt-3.5-turbo')
-
 let controller = new AbortController()
 
 const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
@@ -83,7 +81,7 @@ function handleRecharge() {
   ms.warning('Лимит запросов исчерпан')
   dialog.warning({
     title: 'Пополнение баланса',
-    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы пополним ваш баланс. Текущая средняя стоимость запроса к gpt-4 ~ 0.1$ за сообщение. Возможность выбирать модель для использования (включая гораздо более доступную gpt-3.5) появится в следующем релизе. Не забудьте указать ваш e-mail в комментарии к переводу. Хотите поддержать?',
+    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы пополним ваш баланс. Текущая средняя стоимость запроса к gpt-4 ~ 0.1$ за сообщение. Возможность выбирать модель для использования (включая более доступную gpt-3.5) появится в следующем релизе. Не забудьте указать ваш e-mail в комментарии к переводу. Хотите поддержать?',
     positiveText: t('common.yes'),
     negativeText: t('common.no'),
     onPositiveClick: () => {
@@ -590,19 +588,8 @@ const getColourForKey = (key: string) => {
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
               <SvgIcon icon="ri:service-fill" class="mr-2 text-3xl" />
               <span>
-                <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
+                Модель: gpt-4 (OpenAI) | <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
-              <div>
-                <label for="model-selector">Model:</label>
-                <select id="model-selector" v-model="userSelectedModel">
-                  <option value="gpt-3.5-turbo">
-                    gpt-3.5-turbo
-                  </option>
-                  <option value="gpt-4">
-                    gpt-4
-                  </option>
-                </select>
-              </div>
             </div>
             <br>
             <div style="text-align: center;">
