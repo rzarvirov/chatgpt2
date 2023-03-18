@@ -1,5 +1,6 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
+import { OAuth2Client } from 'google-auth-library'
 import type { ChatContext, ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess } from './chatgpt'
 import { auth } from './middleware/auth'
@@ -12,6 +13,9 @@ import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 const app = express()
 const router = express.Router()
 
+const googleClientId = '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'
+const googleClient = new OAuth2Client(googleClientId)
+
 app.use(express.static('public'))
 app.use(express.json())
 
@@ -20,6 +24,36 @@ app.all('*', (_, res, next) => {
   res.header('Access-Control-Allow-Headers', 'authorization, Content-Type')
   res.header('Access-Control-Allow-Methods', '*')
   next()
+})
+
+router.post('/google-login-or-register', async (req, res) => {
+  try {
+    const { googleToken } = req.body
+    const ticket = await googleClient.verifyIdToken({
+      idToken: googleToken,
+      audience: googleClientId,
+    })
+
+    const payload = ticket.getPayload()
+    const googleEmail = payload.email
+    const googleName = payload.name
+
+    // Check if the user already exists
+    let user = await getUser(googleEmail)
+
+    // If the user doesn't exist, create a new user
+    if (!user) {
+      await createUser(googleEmail, null, googleName)
+      user = await getUser(googleEmail)
+    }
+
+    // Generate a JWT token for the user
+    const token = jwt.sign({ email: googleEmail, userId: user._id }, process.env.AUTH_SECRET_KEY)
+    res.send({ status: 'Success', message: 'Добро пожаловать!', data: { token } })
+  }
+  catch (error) {
+    res.send({ status: 'Fail', message: error.message, data: null })
+  }
 })
 
 router.get('/chatrooms', auth, async (req, res) => {

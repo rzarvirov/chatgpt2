@@ -17,8 +17,8 @@ class UserInfo {
   createTime: string
   verifyTime?: string
   balance: number
-  constructor(email: string, password: string) {
-    this.name = email
+  constructor(email: string, password: string, name?: string) {
+    this.name = name ?? email
     this.email = email
     this.password = password
     this.status = Status.PreVerify

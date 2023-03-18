@@ -2,7 +2,8 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
+import type { GoogleUser } from 'gapi.auth2'
+import { fetchGoogleLoginOrRegister, fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
 
@@ -166,6 +167,11 @@ const getNextSentence = (): string => {
   return sentences[index]
 }
 
+function onSignIn(googleUser: GoogleUser) {
+  const idToken = googleUser.getAuthResponse().id_token
+  handleGoogleLoginOrRegister(idToken)
+}
+
 const typeWriter = (sentence: string, index: number, speed: number) => {
   if (index === 0)
     currentSentence.value = ''
@@ -191,6 +197,25 @@ onMounted(() => {
   currentSentence.value = getNextSentence()
   typeWriter(currentSentence.value, 0, 30)
 })
+
+async function handleGoogleLoginOrRegister(idToken: string) {
+  try {
+    const result = await fetchGoogleLoginOrRegister(idToken)
+    authStore.setToken(result.data.token)
+    ms.success('success')
+    visible.value = false
+    router.go(0)
+  }
+  catch (error) {
+    if (error !== null && typeof error === 'object' && 'message' in error)
+      ms.error(String(error.message))
+
+    else
+      ms.error('error')
+
+    authStore.removeToken()
+  }
+}
 </script>
 
 <template>
@@ -214,6 +239,9 @@ onMounted(() => {
           </NButton>
           <NButton block type="info" @click="showLogin">
             Вход
+          </NButton>
+          <NButton block type="success" @click="onSignIn">
+            Войти с Google
           </NButton>
         </NSpace>
       </div>
