@@ -117,9 +117,9 @@ export async function deleteChat(roomId: number, uuid: number, inversion: boolea
   chatCol.updateOne(query, update)
 }
 
-export async function createUser(email: string, password: string, name?: string) {
+export async function createUser(email: string, password: string) {
   email = email.toLowerCase()
-  const userInfo = new UserInfo(email, password, name)
+  const userInfo = new UserInfo(email, password)
   if (email === process.env.ROOT_USER)
     userInfo.status = Status.Normal
 

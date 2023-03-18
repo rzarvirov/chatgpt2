@@ -44,13 +44,6 @@ export function fetchSession<T>() {
   })
 }
 
-export function fetchGoogleLoginOrRegister<T = any>(googleToken: string) {
-  return post<T>({
-    url: '/google-login-or-register',
-    data: { googleToken },
-  })
-}
-
 export function fetchVerify<T>(token: string) {
   return post<T>({
     url: '/verify',
