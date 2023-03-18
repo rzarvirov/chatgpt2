@@ -2,7 +2,6 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
-import type { GoogleUser } from 'googleapis'
 import { fetchGoogleLoginOrRegister, fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
@@ -48,6 +47,14 @@ function showRegister() {
   showLoginForm.value = false
   showRegisterForm.value = true
 }
+
+onMounted(() => {
+  gapi.load('auth2', () => {
+    gapi.auth2.init({
+      client_id: '474493346119-5o0f10gmqbr1ecdj8is1igk74jp65422.apps.googleusercontent.com',
+    })
+  })
+})
 
 onMounted(async () => {
   const verifytoken = route.query.verifytoken as string
@@ -167,8 +174,9 @@ const getNextSentence = (): string => {
   return sentences[index]
 }
 
-function onSignIn(googleUser: GoogleUser) {
-  const idToken = googleUser.getAuthResponse().id_token
+function onSignIn() {
+  const user = gapi.auth2.getAuthInstance().currentUser.get()
+  const idToken = user.getAuthResponse().id_token
   handleGoogleLoginOrRegister(idToken)
 }
 
@@ -200,8 +208,8 @@ onMounted(() => {
 
 async function handleGoogleLoginOrRegister(idToken: string) {
   try {
-    const result = await fetchGoogleLoginOrRegister(idToken)
-    authStore.setToken(result.data.token)
+    const response = await fetchGoogleLoginOrRegister(idToken)
+    authStore.setToken(response.data.token)
     ms.success('success')
     visible.value = false
     router.go(0)
