@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
-import type { GoogleUser } from 'gapi.auth2'
+import type { GoogleUser } from 'googleapis'
 import { fetchGoogleLoginOrRegister, fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
