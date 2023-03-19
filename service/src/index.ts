@@ -171,8 +171,8 @@ router.post('/chat-process', auth, async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
-    const { roomId, uuid, regenerate, prompt, options = {} } = req.body as
-      { roomId: number; uuid: number; regenerate: boolean; prompt: string; options?: ChatContext }
+    const { roomId, uuid, regenerate, prompt, options = {}, model } = req.body as
+      { roomId: number; uuid: number; regenerate: boolean; prompt: string; options?: ChatContext; model?: string }
     const message = regenerate
       ? await getChat(roomId, uuid)
       : await insertChat(uuid, prompt, roomId, options as ChatOptions)
@@ -180,7 +180,7 @@ router.post('/chat-process', auth, async (req, res) => {
     const result = await chatReplyProcess(prompt, options, (chat: ChatMessage) => {
       res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
       firstChunk = false
-    })
+    }, model)
     if (result.status === 'Success')
       await updateChat(message._id, result.data.text, result.data.id)
   }

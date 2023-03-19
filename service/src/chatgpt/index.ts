@@ -89,18 +89,22 @@ async function chatReplyProcess(
   message: string,
   lastContext?: { conversationId?: string; parentMessageId?: string },
   process?: (chat: ChatMessage) => void,
+  model?: string,
 ) {
   // if (!message)
   //   return sendResponse({ type: 'Fail', message: 'Message is empty' })
 
   try {
-    let options: SendMessageOptions = { timeoutMs }
+    let options: SendMessageOptions & { model?: string } = { timeoutMs }
+
+    if (model)
+      options.model = model
 
     if (lastContext) {
       if (apiModel === 'ChatGPTAPI')
-        options = { parentMessageId: lastContext.parentMessageId }
+        options = { ...options, parentMessageId: lastContext.parentMessageId }
       else
-        options = { ...lastContext }
+        options = { ...options, ...lastContext }
     }
 
     const response = await api.sendMessage(message, {

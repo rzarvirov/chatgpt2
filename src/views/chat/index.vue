@@ -98,6 +98,8 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
+const selectedModel = ref('gpt-3.5-turbo')
+const chatStarted = ref(false)
 
 const { uuid } = route.params as { uuid: string }
 
@@ -179,6 +181,7 @@ async function onConversation() {
         uuid: chatUuid,
         prompt: message,
         options,
+        model: selectedModel.value,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -219,6 +222,8 @@ async function onConversation() {
         },
       })
     }
+    if (!chatStarted.value)
+      chatStarted.value = true
 
     await fetchChatAPIOnce()
   }
@@ -351,6 +356,9 @@ async function onRegenerate(index: number) {
         },
       })
     }
+    if (!chatStarted.value)
+      chatStarted.value = true
+
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -580,6 +588,15 @@ const getColourForKey = (key: string) => {
       @toggle-using-context="toggleUsingContext"
     />
     <main class="flex-1 overflow-hidden">
+      <select v-model="selectedModel" :disabled="chatStarted.valueOf">
+        <option value="gpt-3.5-turbo">
+          Базовая: gpt-3.5-turbo
+        </option>
+        <option value="gpt-4">
+          PRO: gpt-4
+        </option>
+      </select>
+
       <div
         id="scrollRef"
         ref="scrollRef"
@@ -594,7 +611,7 @@ const getColourForKey = (key: string) => {
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
               <SvgIcon icon="ri:service-fill" class="mr-2 text-3xl" />
               <span>
-                Модель: gpt-4 (OpenAI) | <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
+                <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
               </span>
             </div>
             <br>

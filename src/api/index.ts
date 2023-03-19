@@ -27,6 +27,7 @@ export function fetchChatAPIProcess<T = any>(
     regenerate?: boolean
     prompt: string
     options?: { conversationId?: string; parentMessageId?: string }
+    model?: string
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
 ) {
@@ -38,6 +39,7 @@ export function fetchChatAPIProcess<T = any>(
       regenerate: params.regenerate || false,
       prompt: params.prompt,
       options: params.options,
+      model: params.model,
     },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
