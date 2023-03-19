@@ -588,17 +588,17 @@ const getColourForKey = (key: string) => {
       @export="handleExport"
       @toggle-using-context="toggleUsingContext"
     />
-    <div class="dropdown-container">
-      <select v-model="selectedModel">
-        <option value="gpt-3.5-turbo">
-          Базовая: gpt-3.5-turbo
-        </option>
-        <option value="gpt-4">
-          PRO: gpt-4
-        </option>
-      </select>
-    </div>
     <main class="flex-1 overflow-hidden">
+      <div class="dropdown-container">
+        <select v-model="selectedModel">
+          <option value="gpt-3.5-turbo">
+            Базовая: gpt-3.5-turbo
+          </option>
+          <option value="gpt-4">
+            PRO: gpt-4
+          </option>
+        </select>
+      </div>
       <div
         id="scrollRef"
         ref="scrollRef"
@@ -729,7 +729,6 @@ const getColourForKey = (key: string) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
 }
 
 .select {
