@@ -125,6 +125,7 @@ function handleSubmit() {
 }
 
 async function onConversation() {
+  console.log(selectedModel.value)
   let message = prompt.value
 
   if (loading.value)
@@ -224,7 +225,7 @@ async function onConversation() {
     }
     if (!chatStarted.value)
       chatStarted.value = true
-    console.error(selectedModel.value)
+    console.log(selectedModel.value)
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -279,6 +280,7 @@ async function onConversation() {
 }
 
 async function onRegenerate(index: number) {
+  console.log(selectedModel.value)
   if (loading.value)
     return
 
@@ -358,7 +360,8 @@ async function onRegenerate(index: number) {
     }
     if (!chatStarted.value)
       chatStarted.value = true
-    console.error(selectedModel.value)
+
+    console.log(selectedModel.value)
 
     await fetchChatAPIOnce()
   }
