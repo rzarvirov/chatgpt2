@@ -731,7 +731,7 @@ const getColourForKey = (key: string) => {
   align-items: center;
 }
 
-.select {
+select {
   appearance: none;
   background-color: transparent;
   border: none;
