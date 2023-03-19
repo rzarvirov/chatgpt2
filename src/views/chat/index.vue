@@ -224,7 +224,7 @@ async function onConversation() {
     }
     if (!chatStarted.value)
       chatStarted.value = true
-
+    console.log(selectedModel.value)
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -358,6 +358,7 @@ async function onRegenerate(index: number) {
     }
     if (!chatStarted.value)
       chatStarted.value = true
+    console.log(selectedModel.value)
 
     await fetchChatAPIOnce()
   }
