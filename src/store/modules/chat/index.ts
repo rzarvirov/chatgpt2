@@ -40,7 +40,7 @@ export const useChatStore = defineStore('chat-store', {
 
       if (uuid == null) {
         uuid = Date.now()
-        this.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+        this.addHistory({ title: 'Новый Чат', uuid: Date.now(), isEdit: false })
       }
 
       this.active = uuid
