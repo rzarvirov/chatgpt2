@@ -3,6 +3,7 @@ import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
 import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 import fetch from 'node-fetch'
 import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
@@ -120,9 +121,12 @@ async function chatReplyProcess(
 }
 
 async function chatConfig() {
+  const reverseProxy = process.env.API_REVERSE_PROXY ?? '-'
+  const socksProxy = (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) ? (`${process.env.SOCKS_PROXY_HOST}:${process.env.SOCKS_PROXY_PORT}`) : '-'
+  const httpsProxy = (process.env.HTTPS_PROXY || process.env.ALL_PROXY) ?? '-'
   return sendResponse<ModelConfig>({
     type: 'Success',
-    return sendResponse<ModelConfig>({
+    data: { apiModel, reverseProxy, timeoutMs, socksProxy, httpsProxy },
   })
 }
 
