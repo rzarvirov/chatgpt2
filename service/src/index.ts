@@ -2,7 +2,7 @@ import express from 'express'
 import jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import type { ChatContext, ChatMessage } from './chatgpt'
-import { chatConfig, chatReplyProcess } from './chatgpt'
+import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import type { ChatOptions, UserInfo } from './storage/model'
 import { Status } from './storage/model'
@@ -246,7 +246,7 @@ router.post('/session', async (req, res) => {
     const AUTH_SECRET_KEY = process.env.AUTH_SECRET_KEY
     const hasAuth = isNotEmptyString(AUTH_SECRET_KEY)
     const allowRegister = process.env.REGISTER_ENABLED === 'true'
-    res.send({ status: 'Success', message: '', data: { auth: hasAuth, allowRegister } })
+    res.send({ status: 'Success', message: '', data: { auth: hasAuth, allowRegister, model: currentModel() } })
   }
   catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null })
