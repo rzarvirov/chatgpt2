@@ -112,6 +112,12 @@ const promptStore = usePromptStore()
 // Use storeToRefs to ensure that after the store is modified, the Lenovo part can be re-rendered
 const { promptList: promptTemplate } = storeToRefs<any>(promptStore)
 
+// 未知原因刷新页面，loading 状态不会重置，手动重置
+dataSources.value.forEach((item, index) => {
+  if (item.loading)
+    updateChatSome(+uuid, index, { loading: false })
+})
+
 function handleSubmit() {
   onConversation()
 }
