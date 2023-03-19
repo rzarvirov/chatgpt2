@@ -588,7 +588,8 @@ const getColourForKey = (key: string) => {
       @toggle-using-context="toggleUsingContext"
     />
     <main class="flex-1 overflow-hidden">
-      <select v-model="selectedModel" :disabled="chatStarted.valueOf">
+      <select v-model="selectedModel">
+        <!-- <select v-model="selectedModel" :disabled="chatStarted.valueOf"></select> -->
         <option value="gpt-3.5-turbo">
           Базовая: gpt-3.5-turbo
         </option>
