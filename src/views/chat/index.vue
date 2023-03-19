@@ -224,7 +224,7 @@ async function onConversation() {
     }
     if (!chatStarted.value)
       chatStarted.value = true
-    console.log(selectedModel.value)
+    console.error(selectedModel.value)
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -358,7 +358,7 @@ async function onRegenerate(index: number) {
     }
     if (!chatStarted.value)
       chatStarted.value = true
-    console.log(selectedModel.value)
+    console.error(selectedModel.value)
 
     await fetchChatAPIOnce()
   }
@@ -589,16 +589,14 @@ const getColourForKey = (key: string) => {
       @toggle-using-context="toggleUsingContext"
     />
     <main class="flex-1 overflow-hidden">
-      <div class="dropdown-container">
-        <select v-model="selectedModel">
-          <option value="gpt-3.5-turbo">
-            Базовая: gpt-3.5-turbo
-          </option>
-          <option value="gpt-4">
-            PRO: gpt-4
-          </option>
-        </select>
-      </div>
+      <select v-model="selectedModel">
+        <option value="gpt-3.5-turbo">
+          Базовая: gpt-3.5-turbo
+        </option>
+        <option value="gpt-4">
+          PRO: gpt-4
+        </option>
+      </select>
       <div
         id="scrollRef"
         ref="scrollRef"
