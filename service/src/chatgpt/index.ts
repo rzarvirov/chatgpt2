@@ -5,6 +5,7 @@ import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 import fetch from 'node-fetch'
 import { sendResponse } from '../utils'
+import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
 
 const ErrorCodeMessage: Record<string, string> = {
@@ -32,17 +33,15 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 
   if (process.env.OPENAI_API_KEY) {
     const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
-    const model = (typeof OPENAI_API_MODEL === 'string' && OPENAI_API_MODEL.length > 0)
-      ? OPENAI_API_MODEL
-      : 'gpt-4'
+    const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-4'
 
     const options: ChatGPTAPIOptions = {
       apiKey: process.env.OPENAI_API_KEY,
       completionParams: { model },
-      debug: false,
+      debug: true,
     }
 
-    if (process.env.OPENAI_API_BASE_URL && process.env.OPENAI_API_BASE_URL.trim().length > 0)
+    if (isNotEmptyString(process.env.OPENAI_API_BASE_URL))
       options.apiBaseUrl = process.env.OPENAI_API_BASE_URL
 
     if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
@@ -61,7 +60,7 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
   else {
     const options: ChatGPTUnofficialProxyAPIOptions = {
       accessToken: process.env.OPENAI_ACCESS_TOKEN,
-      debug: false,
+      debug: true,
     }
 
     if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
@@ -74,8 +73,10 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
       }
     }
 
-    if (process.env.API_REVERSE_PROXY)
+    if (isNotEmptyString(process.env.API_REVERSE_PROXY))
       options.apiReverseProxyUrl = process.env.API_REVERSE_PROXY
+
+    setupProxy(options)
 
     api = new ChatGPTUnofficialProxyAPI({ ...options })
     apiModel = 'ChatGPTUnofficialProxyAPI'
@@ -119,15 +120,33 @@ async function chatReplyProcess(
 }
 
 async function chatConfig() {
-  return sendResponse({
+  return sendResponse<ModelConfig>({
     type: 'Success',
-    data: {
-      apiModel,
-      reverseProxy: process.env.API_REVERSE_PROXY,
-      timeoutMs,
-      socksProxy: (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) ? (`${process.env.SOCKS_PROXY_HOST}:${process.env.SOCKS_PROXY_PORT}`) : '-',
-    } as ModelConfig,
+    return sendResponse<ModelConfig>({
   })
+}
+
+function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOptions) {
+  if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
+    const agent = new SocksProxyAgent({
+      hostname: process.env.SOCKS_PROXY_HOST,
+      port: process.env.SOCKS_PROXY_PORT,
+    })
+    options.fetch = (url, options) => {
+      return fetch(url, { agent, ...options })
+    }
+  }
+  else {
+    if (process.env.HTTPS_PROXY || process.env.ALL_PROXY) {
+      const httpsProxy = process.env.HTTPS_PROXY || process.env.ALL_PROXY
+      if (httpsProxy) {
+        const agent = new HttpsProxyAgent(httpsProxy)
+        options.fetch = (url, options) => {
+          return fetch(url, { agent, ...options })
+        }
+      }
+    }
+  }
 }
 
 export type { ChatContext, ChatMessage }
