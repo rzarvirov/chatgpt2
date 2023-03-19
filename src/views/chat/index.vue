@@ -588,16 +588,16 @@ const getColourForKey = (key: string) => {
       @toggle-using-context="toggleUsingContext"
     />
     <main class="flex-1 overflow-hidden">
-      <select v-model="selectedModel">
-        <!-- <select v-model="selectedModel" :disabled="chatStarted.valueOf"></select> -->
-        <option value="gpt-3.5-turbo">
-          Базовая: gpt-3.5-turbo
-        </option>
-        <option value="gpt-4">
-          PRO: gpt-4
-        </option>
-      </select>
-
+      <div class="dropdown-container">
+        <select v-model="selectedModel">
+          <option value="gpt-3.5-turbo">
+            Базовая: gpt-3.5-turbo
+          </option>
+          <option value="gpt-4">
+            PRO: gpt-4
+          </option>
+        </select>
+      </div>
       <div
         id="scrollRef"
         ref="scrollRef"
@@ -723,4 +723,33 @@ const getColourForKey = (key: string) => {
   .swiper-container-custom {
     padding-bottom: 40px;
   }
+
+.dropdown-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+select {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
+  outline: none;
+  cursor: pointer;
+  color: #333;
+}
+
+select:focus {
+  box-shadow: 0 0 0.5rem rgba(0,0,0,0.2);
+}
+
+select option {
+  background-color: white;
+  color: #333;
+}
 </style>
