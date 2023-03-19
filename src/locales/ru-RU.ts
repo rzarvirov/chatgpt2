@@ -57,7 +57,7 @@ export default {
     avatarLink: 'Ссылка на аватар',
     name: 'Имя',
     description: 'Описание',
-    resetUserInfo: 'Сбросить информацию о пользователе',
+    saveUserInfo: 'Сохранить',
     chatHistory: 'История чата',
     theme: 'Тема',
     language: 'Язык',
