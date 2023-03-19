@@ -8,6 +8,7 @@ interface ConfigState {
   reverseProxy?: string
   apiModel?: string
   socksProxy?: string
+  apibalance?: string
 }
 
 const loading = ref(false)
