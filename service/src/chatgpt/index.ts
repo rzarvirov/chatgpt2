@@ -126,7 +126,7 @@ async function chatConfig() {
   const httpsProxy = (process.env.HTTPS_PROXY || process.env.ALL_PROXY) ?? '-'
   return sendResponse<ModelConfig>({
     type: 'Success',
-    data: { apiModel, reverseProxy, timeoutMs, socksProxy, httpsProxy },
+    data: { apiModel, reverseProxy, timeoutMs, socksProxy },
   })
 }
 
