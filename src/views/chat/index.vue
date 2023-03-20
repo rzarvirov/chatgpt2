@@ -65,17 +65,6 @@ async function reduceBalance() {
   }
 }
 
-const balanceColor = computed(() => {
-  if (balance.value > 0 && balance.value < 6)
-    return 'darkred'
-
-  else if (balance.value >= 6 && balance.value < 10)
-    return 'peru'
-
-  else
-    return '#4f555e' // Default color
-})
-
 function handleRecharge() {
   // Add your recharge logic here
   ms.warning('Лимит запросов исчерпан')
@@ -104,6 +93,7 @@ const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
+const showModelSelection = computed(() => !dataSources.value.length)
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
@@ -593,9 +583,12 @@ const getColourForKey = (key: string) => {
           class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
-          <template v-if="!dataSources.length">
+          <template v-if="showModelSelection">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
-              <select v-model="selectedModel">
+              <select
+                v-model="selectedModel"
+                class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white"
+              >
                 <option value="gpt-3.5-turbo">
                   Базовая: gpt-3.5-turbo
                 </option>
@@ -603,10 +596,6 @@ const getColourForKey = (key: string) => {
                   PRO: gpt-4
                 </option>
               </select>
-              <SvgIcon icon="ri:service-fill" class="mr-2 text-3xl" />
-              <span>
-                <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
-              </span>
             </div>
             <br>
             <div style="text-align: center;">
@@ -635,6 +624,9 @@ const getColourForKey = (key: string) => {
             </div>
           </template>
           <template v-else>
+            <div class="text-center mb-4 text-neutral-500">
+              Выбранная модель: {{ selectedModel }}
+            </div>
             <div>
               <Message
                 v-for="(item, index) of dataSources"
@@ -686,6 +678,13 @@ const getColourForKey = (key: string) => {
               />
             </template>
           </NAutoComplete>
+          <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
+            <template #icon>
+              <span class="dark:text-black">
+                <SvgIcon icon="ri:send-plane-fill" />
+              </span>
+            </template>
+          </NButton>
           <div v-if="isAuthenticated">
             <NButton
               v-if="balance === 0"
@@ -694,18 +693,17 @@ const getColourForKey = (key: string) => {
             >
               Пополнить
             </NButton>
-            <div v-else :style="{ color: balanceColor }" class="dark:text-white">
-              {{ balance }}
+            <div v-else>
+              <div class="circle-container">
+                <div class="gold-circle flex items-center justify-center w-8 h-8 rounded-full bg-gold text-white">
+                  <span>10</span>
+                </div>
+                <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white">
+                  <span>{{ balance }}</span>
+                </div>
+              </div>
             </div>
           </div>
-
-          <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
-            <template #icon>
-              <span class="dark:text-black">
-                <SvgIcon icon="ri:send-plane-fill" />
-              </span>
-            </template>
-          </NButton>
         </div>
       </div>
     </footer>
@@ -716,4 +714,23 @@ const getColourForKey = (key: string) => {
   .swiper-container-custom {
     padding-bottom: 40px;
   }
+
+  .bg-gold {
+  background-color: gold;
+}
+.circle-container {
+  position: relative;
+  display: inline-flex;
+  margin-left: -35px; /* Add a negative margin to reduce space */
+}
+
+.blue-circle {
+  z-index: 1;
+}
+
+.gold-circle {
+  position: relative;
+  right: -40px;
+  z-index: 0;
+}
 </style>
