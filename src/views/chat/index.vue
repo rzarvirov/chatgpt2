@@ -98,7 +98,7 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
-const selectedModel = ref('gpt-3.5-turbo')
+const selectedModel = ref<string>('gpt-3.5-turbo')
 const chatStarted = ref(false)
 
 const { uuid } = route.params as { uuid: string }
@@ -125,7 +125,7 @@ function handleSubmit() {
 }
 
 async function onConversation() {
-  console.log(selectedModel.value)
+  console.log(selectedModel)
   let message = prompt.value
 
   if (loading.value)
@@ -361,7 +361,7 @@ async function onRegenerate(index: number) {
     if (!chatStarted.value)
       chatStarted.value = true
 
-    console.log(selectedModel.value)
+    console.log(selectedModel)
 
     await fetchChatAPIOnce()
   }

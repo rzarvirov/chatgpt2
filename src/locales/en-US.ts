@@ -58,7 +58,7 @@ export default {
     avatarLink: 'Avatar Link',
     name: 'Name',
     description: 'Description',
-    resetUserInfo: 'Reset UserInfo',
+    saveUserInfo: 'Save User Info',
     chatHistory: 'ChatHistory',
     theme: 'Theme',
     language: 'Language',

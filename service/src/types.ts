@@ -20,6 +20,7 @@ export interface ModelConfig {
   timeoutMs?: number
   socksProxy?: string
   allowRegister?: boolean
+  apibalance?: string
 }
 
 export type ApiModel = 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined
