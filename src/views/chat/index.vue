@@ -597,14 +597,6 @@ const getColourForKey = (key: string) => {
       @toggle-using-context="toggleUsingContext"
     />
     <main class="flex-1 overflow-hidden">
-      <select v-model="selectedModel">
-        <option value="gpt-3.5-turbo">
-          Базовая: gpt-3.5-turbo
-        </option>
-        <option value="gpt-4">
-          PRO: gpt-4
-        </option>
-      </select>
       <div
         id="scrollRef"
         ref="scrollRef"
@@ -617,6 +609,14 @@ const getColourForKey = (key: string) => {
         >
           <template v-if="!dataSources.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
+              <select v-model="selectedModel">
+                <option value="gpt-3.5-turbo">
+                  Базовая: gpt-3.5-turbo
+                </option>
+                <option value="gpt-4">
+                  PRO: gpt-4
+                </option>
+              </select>
               <SvgIcon icon="ri:service-fill" class="mr-2 text-3xl" />
               <span>
                 <b><u><a href="https://pay.cloudtips.ru/p/99817dfa" target="_blank">Поддержать проект</a></u></b>
