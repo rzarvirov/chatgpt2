@@ -25,6 +25,8 @@ const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
 const route = useRoute()
 const dialog = useDialog()
 const ms = useMessage()
+const selectedModel = ref<string>('gpt-3.5-turbo')
+const sendbuttonClicked = ref(false)
 
 const chatStore = useChatStore()
 
@@ -87,8 +89,6 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
-const selectedModel = ref<string>('gpt-3.5-turbo')
-
 const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
@@ -109,6 +109,7 @@ dataSources.value.forEach((item, index) => {
 })
 
 function handleSubmit() {
+  sendbuttonClicked.value = true
   onConversation()
 }
 
@@ -134,6 +135,7 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: null },
     },
+    selectedModel.value,
   )
   scrollToBottom()
 
@@ -158,6 +160,7 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: { ...options } },
     },
+    selectedModel.value,
   )
   scrollToBottom()
 
@@ -579,7 +582,7 @@ const getColourForKey = (key: string) => {
           class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
-          <template v-if="!dataSources.length">
+          <template v-if="!dataSources.length && !sendbuttonClicked">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
               <select
                 v-model="selectedModel"

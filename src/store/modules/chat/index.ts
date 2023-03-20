@@ -40,7 +40,7 @@ export const useChatStore = defineStore('chat-store', {
 
       if (uuid == null) {
         uuid = Date.now()
-        this.addHistory({ title: 'Новый Чат', uuid: Date.now(), isEdit: false })
+        this.addHistory({ title: 'Новый Чат', uuid: Date.now(), isEdit: false, model: 'bad model' })
       }
 
       this.active = uuid
@@ -56,7 +56,7 @@ export const useChatStore = defineStore('chat-store', {
     },
 
     addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
-      fetchCreateChatRoom(history.title, history.uuid)
+      fetchCreateChatRoom(history.title, history.uuid, '')
       this.history.unshift(history)
       this.chat.unshift({ uuid: history.uuid, data: chatData })
       this.active = history.uuid
@@ -69,7 +69,7 @@ export const useChatStore = defineStore('chat-store', {
         this.history[index] = { ...this.history[index], ...edit }
         this.recordState()
         if (!edit.isEdit)
-          fetchRenameChatRoom(this.history[index].title, this.history[index].uuid)
+          fetchRenameChatRoom(this.history[index].title, this.history[index].uuid, this.history[index].model)
       }
     },
 
@@ -123,12 +123,12 @@ export const useChatStore = defineStore('chat-store', {
       return null
     },
 
-    addChatByUuid(uuid: number, chat: Chat.Chat) {
+    addChatByUuid(uuid: number, chat: Chat.Chat, model: string) {
       if (!uuid || uuid === 0) {
         if (this.history.length === 0) {
           const uuid = Date.now()
-          fetchCreateChatRoom(chat.text, uuid)
-          this.history.push({ uuid, title: chat.text, isEdit: false })
+          fetchCreateChatRoom(chat.text, uuid, model)
+          this.history.push({ uuid, title: chat.text, isEdit: false, model })
           this.chat.push({ uuid, data: [chat] })
           this.active = uuid
           this.recordState()
@@ -137,7 +137,8 @@ export const useChatStore = defineStore('chat-store', {
           this.chat[0].data.push(chat)
           if (this.history[0].title === 'Новый чат') {
             this.history[0].title = chat.text
-            fetchRenameChatRoom(chat.text, this.history[0].uuid)
+            this.history[0].model = model
+            fetchRenameChatRoom(chat.text, this.history[0].uuid, this.history[0].model)
           }
           this.recordState()
         }
@@ -148,7 +149,8 @@ export const useChatStore = defineStore('chat-store', {
         this.chat[index].data.push(chat)
         if (this.history[index].title === 'Новый чат') {
           this.history[index].title = chat.text
-          fetchRenameChatRoom(chat.text, this.history[index].uuid)
+          this.history[index].model = model
+          fetchRenameChatRoom(chat.text, this.history[index].uuid, this.history[index].model)
         }
         this.recordState()
       }

@@ -86,6 +86,19 @@ export function fetchGetChatRooms<T = any>() {
   })
 }
 
+// Client-side function to fetch the user's account type
+export function fetchGetUserAccountType<T = any>() {
+  const authStore = useAuthStoreWithout()
+  const token = authStore.token
+
+  return get<T>({
+    url: '/accounttype',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
+
 // Client-side function to fetch the user's balance
 export function fetchGetUserBalance<T = any>() {
   const authStore = useAuthStoreWithout()
@@ -109,17 +122,17 @@ export function fetchUpdateUserBalance<T = any>(newBalance: number) {
   })
 }
 
-export function fetchCreateChatRoom<T = any>(title: string, roomId: number) {
+export function fetchCreateChatRoom<T = any>(title: string, roomId: number, model: string) {
   return post<T>({
     url: '/room-create',
-    data: { title, roomId },
+    data: { title, roomId, model },
   })
 }
 
-export function fetchRenameChatRoom<T = any>(title: string, roomId: number) {
+export function fetchRenameChatRoom<T = any>(title: string, roomId: number, model: string) {
   return post<T>({
     url: '/room-rename',
-    data: { title, roomId },
+    data: { title, roomId, model },
   })
 }
 

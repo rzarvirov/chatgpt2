@@ -67,15 +67,15 @@ router.post('/update-balance', auth, async (req, res) => {
 
 router.post('/room-create', auth, async (req, res) => {
   const userId = req.headers.userId
-  const { title, roomId } = req.body as { title: string; roomId: number }
-  const room = await createChatRoom(userId, title, roomId)
+  const { title, roomId, model } = req.body as { title: string; roomId: number; model: string }
+  const room = await createChatRoom(userId, title, roomId, model)
   res.send({ status: 'Success', message: null, data: room })
 })
 
 router.post('/room-rename', auth, async (req, res) => {
   const userId = req.headers.userId
-  const { title, roomId } = req.body as { title: string; roomId: number }
-  const room = await renameChatRoom(userId, title, roomId)
+  const { title, roomId, model } = req.body as { title: string; roomId: number; model: string }
+  const room = await renameChatRoom(userId, title, roomId, model)
   res.send({ status: 'Success', message: null, data: room })
 })
 

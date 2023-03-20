@@ -33,17 +33,18 @@ export async function updateChat(chatId: string, response: string, messageId: st
   await chatCol.updateOne(query, update)
 }
 
-export async function createChatRoom(userId: ObjectId, title: string, roomId: number) {
-  const room = new ChatRoom(userId, title, roomId)
+export async function createChatRoom(userId: ObjectId, title: string, roomId: number, model: string) {
+  const room = new ChatRoom(userId, title, roomId, model)
   await roomCol.insertOne(room)
   return room
 }
-export async function renameChatRoom(userId: ObjectId, title: string, roomId: number) {
+export async function renameChatRoom(userId: ObjectId, title: string, roomId: number, model: string) {
   const query = { userId, roomId }
   const update = {
     $set: {
-      title,
+      title, model,
     },
+
   }
   const result = await roomCol.updateOne(query, update)
   return result

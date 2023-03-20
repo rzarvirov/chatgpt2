@@ -19,6 +19,7 @@ class UserInfo {
   avatar?: string
   description?: string
   balance: number
+  accounttype: string
   constructor(email: string, password: string) {
     this.name = email
     this.email = email
@@ -27,6 +28,7 @@ class UserInfo {
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
     this.balance = 20 // Initialize the balance to 0 or any default value you want
+    this.accounttype = 'free'
   }
 }
 
@@ -48,10 +50,13 @@ class ChatRoom {
   userId: number
   title: string
   status: Status = Status.Normal
-  constructor(userId: number, title: string, roomId: number) {
+  model: string // new class property
+
+  constructor(userId: number, title: string, roomId: number, model: string) { // updated constructor signature
     this.userId = userId
     this.title = title
     this.roomId = roomId
+    this.model = model // initialize the new class property
   }
 }
 
