@@ -6,7 +6,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import type { ChatOptions, UserInfo } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserBalance, getUserById, insertChat, renameChatRoom, updateChat, updateUserBalance, updateUserInfo, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, insertChat, renameChatRoom, updateChat, updateUserBalance, updateUserInfo, verifyUser } from './storage/mongo'
 import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isNotEmptyString } from './utils/is'
@@ -37,6 +37,15 @@ router.get('/chatrooms', auth, async (req, res) => {
   })
   res.send({ status: 'Success', message: null, data: result })
 })
+
+// get account type
+router.get('/accounttype', auth, async (req, res) => {
+  const userId = req.headers.userId
+  const accounttype = await getUserAccountType(userId)
+
+  res.send({ status: 'Success', message: null, data: { accounttype } })
+})
+// got account type
 
 // get balance
 router.get('/balance', auth, async (req, res) => {

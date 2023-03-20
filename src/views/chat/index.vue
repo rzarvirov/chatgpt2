@@ -678,7 +678,7 @@ const getColourForKey = (key: string) => {
               />
             </template>
           </NAutoComplete>
-          <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled || isBalanceZero" @click="handleSubmit">
+          <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
             <template #icon>
               <span class="dark:text-black">
                 <SvgIcon icon="ri:send-plane-fill" />
@@ -721,7 +721,7 @@ const getColourForKey = (key: string) => {
 .circle-container {
   position: relative;
   display: inline-flex;
-  margin-left: -35px; /* Add a negative margin to reduce space */
+  margin-left: -px; /* Add a negative margin to reduce space */
 }
 
 .blue-circle {
