@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
@@ -92,28 +91,21 @@ async function chatReplyProcess(
   process?: (chat: ChatMessage) => void,
   model?: string,
 ) {
-  // if (!message)
-  //   return sendResponse({ type: 'Fail', message: 'Message is empty' })
-
   try {
-    let options: SendMessageOptions & { model?: string } = { timeoutMs }
-
-    console.log('MODEL:', model)
-
-    if (model)
-      options.model = model
+    let options: SendMessageOptions = { timeoutMs }
 
     if (lastContext) {
       if (apiModel === 'ChatGPTAPI')
-        options = { ...options, parentMessageId: lastContext.parentMessageId }
+        options = { parentMessageId: lastContext.parentMessageId }
       else
-        options = { ...options, ...lastContext }
+        options = { ...lastContext }
     }
 
     const response = await api.sendMessage(message, {
       ...options,
+      completionParams: model ? { model } : undefined,
       onProgress: (partialResponse) => {
-        process?.(partialResponse)
+        process?. (partialResponse)
       },
     })
 

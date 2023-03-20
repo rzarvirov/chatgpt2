@@ -26,7 +26,7 @@ export function fetchChatAPIProcess<T = any>(
     uuid: number
     regenerate?: boolean
     prompt: string
-    options?: { conversationId?: string; parentMessageId?: string }
+    options?: { conversationId?: string; parentMessageId?: string; completionParams: { model: 'gpt-4' } }
     model?: string
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
