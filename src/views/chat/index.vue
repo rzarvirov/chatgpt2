@@ -99,7 +99,6 @@ const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
 const selectedModel = ref<string>('gpt-3.5-turbo')
-const chatStarted = ref(false)
 
 const { uuid } = route.params as { uuid: string }
 
@@ -125,8 +124,6 @@ function handleSubmit() {
 }
 
 async function onConversation() {
-  // eslint-disable-next-line no-console
-  console.log('selectedModel: ', selectedModel)
   let message = prompt.value
 
   if (loading.value)
@@ -224,10 +221,6 @@ async function onConversation() {
         },
       })
     }
-    if (!chatStarted.value)
-      chatStarted.value = true
-    // eslint-disable-next-line no-console
-    console.log('selectedModel: ', selectedModel.value)
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -282,8 +275,6 @@ async function onConversation() {
 }
 
 async function onRegenerate(index: number) {
-  // eslint-disable-next-line no-console
-  console.log('selectedModel: ', selectedModel.value)
   if (loading.value)
     return
 
@@ -362,11 +353,6 @@ async function onRegenerate(index: number) {
         },
       })
     }
-    if (!chatStarted.value)
-      chatStarted.value = true
-
-    // eslint-disable-next-line no-console
-    console.log(selectedModel)
 
     await fetchChatAPIOnce()
   }
@@ -730,32 +716,4 @@ const getColourForKey = (key: string) => {
   .swiper-container-custom {
     padding-bottom: 40px;
   }
-
-.dropdown-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-select {
-  appearance: none;
-  background-color: transparent;
-  border: none;
-  font-size: 1.2rem;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  box-shadow: 0 0 0.5rem rgba(0,0,0,0.1);
-  outline: none;
-  cursor: pointer;
-  color: #333;
-}
-
-select:focus {
-  box-shadow: 0 0 0.5rem rgba(0,0,0,0.2);
-}
-
-select option {
-  background-color: white;
-  color: #333;
-}
 </style>
