@@ -125,6 +125,7 @@ function handleSubmit() {
 }
 
 async function onConversation() {
+  // eslint-disable-next-line no-console
   console.log(selectedModel)
   let message = prompt.value
 
@@ -225,6 +226,7 @@ async function onConversation() {
     }
     if (!chatStarted.value)
       chatStarted.value = true
+    // eslint-disable-next-line no-console
     console.log(selectedModel.value)
     await fetchChatAPIOnce()
   }
@@ -280,6 +282,7 @@ async function onConversation() {
 }
 
 async function onRegenerate(index: number) {
+  // eslint-disable-next-line no-console
   console.log(selectedModel.value)
   if (loading.value)
     return
@@ -361,6 +364,7 @@ async function onRegenerate(index: number) {
     if (!chatStarted.value)
       chatStarted.value = true
 
+    // eslint-disable-next-line no-console
     console.log(selectedModel)
 
     await fetchChatAPIOnce()
