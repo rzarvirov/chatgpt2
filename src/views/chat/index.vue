@@ -126,7 +126,7 @@ function handleSubmit() {
 
 async function onConversation() {
   // eslint-disable-next-line no-console
-  console.log(selectedModel)
+  console.log('selectedModel: ', selectedModel)
   let message = prompt.value
 
   if (loading.value)
@@ -227,7 +227,7 @@ async function onConversation() {
     if (!chatStarted.value)
       chatStarted.value = true
     // eslint-disable-next-line no-console
-    console.log(selectedModel.value)
+    console.log('selectedModel: ', selectedModel.value)
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -283,7 +283,7 @@ async function onConversation() {
 
 async function onRegenerate(index: number) {
   // eslint-disable-next-line no-console
-  console.log(selectedModel.value)
+  console.log('selectedModel: ', selectedModel.value)
   if (loading.value)
     return
 
