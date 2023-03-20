@@ -23,4 +23,4 @@ export interface ModelConfig {
   apibalance?: string
 }
 
-export type ApiModel = 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined
+export type ApiModel = 'ChatGPTAPI' | 'CustomChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined

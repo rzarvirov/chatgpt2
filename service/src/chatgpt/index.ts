@@ -10,6 +10,20 @@ import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
 
+class CustomChatGPTAPI extends ChatGPTAPI {
+  async sendMessage(
+    message: string,
+    options: SendMessageOptions & { model?: string },
+  ): Promise<ChatMessage> {
+    const completionParams = options.model ? { model: options.model } : {}
+    const modifiedOptions = {
+      ...options,
+      completionParams: { ...this._completionParams, ...completionParams },
+    }
+    return super.sendMessage(message, modifiedOptions)
+  }
+}
+
 const ErrorCodeMessage: Record<string, string> = {
   401: '[OpenAI] предоставлен неправильный ключ API | Incorrect API key provided',
   403: '[OpenAI] сервер отклонил доступ, пожалуйста, попробуйте позже | Server refused to access, please try again later',
@@ -28,7 +42,7 @@ let apiModel: ApiModel
 if (!process.env.OPENAI_API_KEY && !process.env.OPENAI_ACCESS_TOKEN)
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
-let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
+let api: ChatGPTAPI | CustomChatGPTAPI | ChatGPTUnofficialProxyAPI
 
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
@@ -39,7 +53,6 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
 
     const options: ChatGPTAPIOptions = {
       apiKey: process.env.OPENAI_API_KEY,
-      completionParams: { model },
       debug: true,
     }
 
@@ -56,8 +69,8 @@ let api: ChatGPTAPI | ChatGPTUnofficialProxyAPI
       }
     }
 
-    api = new ChatGPTAPI({ ...options })
-    apiModel = 'ChatGPTAPI'
+    api = new CustomChatGPTAPI({ ...options })
+    api = new CustomChatGPTAPI({ ...options })
   }
   else {
     const options: ChatGPTUnofficialProxyAPIOptions = {
@@ -89,7 +102,7 @@ async function chatReplyProcess(
   message: string,
   lastContext?: { conversationId?: string; parentMessageId?: string },
   process?: (chat: ChatMessage) => void,
-  model?: string,
+  model?: string, // Add this line
 ) {
   try {
     let options: SendMessageOptions = { timeoutMs }
@@ -103,7 +116,7 @@ async function chatReplyProcess(
 
     const response = await api.sendMessage(message, {
       ...options,
-      completionParams: model ? { model } : undefined,
+      model,
       onProgress: (partialResponse) => {
         process?. (partialResponse)
       },
