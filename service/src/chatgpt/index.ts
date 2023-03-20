@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
@@ -96,6 +97,8 @@ async function chatReplyProcess(
 
   try {
     let options: SendMessageOptions & { model?: string } = { timeoutMs }
+
+    console.log('MODEL:', model)
 
     if (model)
       options.model = model

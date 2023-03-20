@@ -183,7 +183,7 @@ async function onConversation() {
         uuid: chatUuid,
         prompt: message,
         options,
-        model: 'gpt-4',
+        model: selectedModel.value,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -323,7 +323,7 @@ async function onRegenerate(index: number) {
         regenerate: true,
         prompt: message,
         options,
-        model: 'gpt-4',
+        model: selectedModel.value,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
