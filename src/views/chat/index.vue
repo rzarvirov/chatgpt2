@@ -93,7 +93,6 @@ const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
-const showModelSelection = computed(() => !dataSources.value.length)
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
@@ -260,8 +259,8 @@ async function onConversation() {
   }
   finally {
     loading.value = false
+    await reduceBalance()
   }
-  await reduceBalance()
 }
 
 async function onRegenerate(index: number) {
@@ -343,7 +342,6 @@ async function onRegenerate(index: number) {
         },
       })
     }
-
     await fetchChatAPIOnce()
   }
   catch (error: any) {
@@ -376,8 +374,8 @@ async function onRegenerate(index: number) {
   }
   finally {
     loading.value = false
+    await reduceBalance()
   }
-  await reduceBalance()
 }
 
 function handleExport() {
@@ -440,7 +438,6 @@ function handleDelete(index: number) {
 function handleClear() {
   if (loading.value)
     return
-
   dialog.warning({
     title: t('chat.clearChat'),
     content: t('chat.clearChatConfirm'),
@@ -448,7 +445,6 @@ function handleClear() {
     negativeText: t('common.no'),
     onPositiveClick: () => {
       chatStore.clearChatByUuid(+uuid)
-      prompt.value = '' // Clear the textarea
     },
   })
 }
@@ -583,7 +579,7 @@ const getColourForKey = (key: string) => {
           class="w-full max-w-screen-xl m-auto dark:bg-[#101014]"
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
-          <template v-if="showModelSelection">
+          <template v-if="!dataSources.length">
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
               <select
                 v-model="selectedModel"
