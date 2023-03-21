@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
-import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt'
+import { ChatGPTAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import fetch from 'node-fetch'
@@ -42,22 +42,22 @@ let apiModel: ApiModel
 if (!process.env.OPENAI_API_KEY && !process.env.OPENAI_ACCESS_TOKEN)
   throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
 
-let api: ChatGPTAPI | CustomChatGPTAPI | ChatGPTUnofficialProxyAPI
+let api: ChatGPTAPI | CustomChatGPTAPI
 
 (async () => {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
 
   if (process.env.OPENAI_API_KEY) {
-    // const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
-    // const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
+    const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
+    const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
 
     const options: ChatGPTAPIOptions = {
       apiKey: process.env.OPENAI_API_KEY,
-      // completionParams: { model },
+      completionParams: { model },
       debug: true,
     }
 
-    /* increase max token limit if use gpt-4
+    // increase max token limit if use gpt-4
     if (model.toLowerCase().includes('gpt-4')) {
       // if use 32k model
       if (model.toLowerCase().includes('32k')) {
@@ -69,46 +69,12 @@ let api: ChatGPTAPI | CustomChatGPTAPI | ChatGPTUnofficialProxyAPI
         options.maxResponseTokens = 2048
       }
     }
-*/
+
     if (isNotEmptyString(process.env.OPENAI_API_BASE_URL))
       options.apiBaseUrl = process.env.OPENAI_API_BASE_URL
 
-    if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
-      const agent = new SocksProxyAgent({
-        hostname: process.env.SOCKS_PROXY_HOST,
-        port: process.env.SOCKS_PROXY_PORT,
-      })
-      options.fetch = (url, options) => {
-        return fetch(url, { agent, ...options })
-      }
-    }
-
     api = new CustomChatGPTAPI({ ...options })
     api = new CustomChatGPTAPI({ ...options })
-  }
-  else {
-    const options: ChatGPTUnofficialProxyAPIOptions = {
-      accessToken: process.env.OPENAI_ACCESS_TOKEN,
-      debug: true,
-    }
-
-    if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
-      const agent = new SocksProxyAgent({
-        hostname: process.env.SOCKS_PROXY_HOST,
-        port: process.env.SOCKS_PROXY_PORT,
-      })
-      options.fetch = (url, options) => {
-        return fetch(url, { agent, ...options })
-      }
-    }
-
-    if (isNotEmptyString(process.env.API_REVERSE_PROXY))
-      options.apiReverseProxyUrl = process.env.API_REVERSE_PROXY
-
-    setupProxy(options)
-
-    api = new ChatGPTUnofficialProxyAPI({ ...options })
-    apiModel = 'ChatGPTUnofficialProxyAPI'
   }
 })()
 
