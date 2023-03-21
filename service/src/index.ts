@@ -166,7 +166,7 @@ router.post('/chat', auth, async (req, res) => {
     const message = regenerate
       ? await getChat(roomId, uuid)
       : await insertChat(uuid, prompt, roomId, options as ChatOptions)
-    const response = await chatReply(prompt, options)
+    const response = await chatReplyProcess(prompt, options)
     if (response.status === 'Success')
       await updateChat(message._id, response.data.text, response.data.id)
     res.send(response)
