@@ -52,11 +52,10 @@ class ChatRoom {
   status: Status = Status.Normal
   model: string // new class property
 
-  constructor(userId: number, title: string, roomId: number, model: string) { // updated constructor signature
+  constructor(userId: number, title: string, roomId: number) { // updated constructor signature
     this.userId = userId
     this.title = title
     this.roomId = roomId
-    this.model = model // initialize the new class property
   }
 }
 

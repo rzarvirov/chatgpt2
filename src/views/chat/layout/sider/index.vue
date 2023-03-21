@@ -17,7 +17,7 @@ const show = ref(false)
 const collapsed = computed(() => appStore.siderCollapsed)
 
 function handleAdd() {
-  chatStore.addHistory({ title: 'Новый чат', uuid: Date.now(), isEdit: false, model: 'gpt-3.5-turbo' })
+  chatStore.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
 }
 
 function handleUpdateCollapsed() {

@@ -122,17 +122,17 @@ export function fetchUpdateUserBalance<T = any>(newBalance: number) {
   })
 }
 
-export function fetchCreateChatRoom<T = any>(title: string, roomId: number, model: string) {
+export function fetchCreateChatRoom<T = any>(title: string, roomId: number) {
   return post<T>({
     url: '/room-create',
-    data: { title, roomId, model },
+    data: { title, roomId },
   })
 }
 
-export function fetchRenameChatRoom<T = any>(title: string, roomId: number, model: string) {
+export function fetchRenameChatRoom<T = any>(title: string, roomId: number) {
   return post<T>({
     url: '/room-rename',
-    data: { title, roomId, model },
+    data: { title, roomId },
   })
 }
 

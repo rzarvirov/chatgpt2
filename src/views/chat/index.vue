@@ -69,10 +69,9 @@ async function reduceBalance() {
 
 function handleRecharge() {
   // Add your recharge logic here
-  ms.warning('Лимит запросов исчерпан')
   dialog.warning({
     title: 'Пополнение баланса',
-    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы пополним ваш баланс. Текущая средняя стоимость запроса к gpt-4 ~ 0.1$ за сообщение. Возможность выбирать модель для использования (включая более доступную gpt-3.5) появится в следующем релизе. Не забудьте указать ваш e-mail в комментарии к переводу. Хотите поддержать?',
+    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы пополним ваш баланс. Не забудьте указать ваш e-mail в комментарии к переводу. Хотите поддержать?',
     positiveText: t('common.yes'),
     negativeText: t('common.no'),
     onPositiveClick: () => {
@@ -135,7 +134,7 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: null },
     },
-    selectedModel.value,
+    // selectedModel.value,
   )
   scrollToBottom()
 
@@ -160,7 +159,7 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: { ...options } },
     },
-    selectedModel.value,
+    // selectedModel.value,
   )
   scrollToBottom()
 
@@ -687,12 +686,13 @@ const getColourForKey = (key: string) => {
           <div v-if="isAuthenticated">
             <NButton
               v-if="balance === 0"
-              style="display: inline-block; background-color: #72BCD4; border: 0px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'}"
+              style="display: inline-block; background-color: #72BCD4; border: 0px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};"
               @click="handleRecharge"
             >
               Пополнить
             </NButton>
-            <div v-else>
+
+            <div v-else style="cursor: pointer;" @click="handleRecharge">
               <div class="circle-container">
                 <div class="gold-circle flex items-center justify-center w-8 h-8 rounded-full bg-gold text-white">
                   <span>10</span>
@@ -720,7 +720,7 @@ const getColourForKey = (key: string) => {
 .circle-container {
   position: relative;
   display: inline-flex;
-  margin-left: -px; /* Add a negative margin to reduce space */
+  margin-left: -35px; /* Add a negative margin to reduce space */
 }
 
 .blue-circle {

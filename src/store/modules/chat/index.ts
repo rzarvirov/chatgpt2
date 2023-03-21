@@ -29,6 +29,9 @@ export const useChatStore = defineStore('chat-store', {
       let uuid = this.active
       this.history = []
       this.chat = []
+      if (rooms.findIndex((item: { uuid: number | null }) => item.uuid === uuid) <= -1 && rooms.length > 0)
+        uuid = null
+
       for (const r of rooms) {
         this.history.unshift(r)
         if (uuid == null)
@@ -37,14 +40,20 @@ export const useChatStore = defineStore('chat-store', {
         if (uuid === r.uuid)
           await this.syncChat(r)
       }
-
       if (uuid == null) {
         uuid = Date.now()
-        this.addHistory({ title: 'Новый Чат', uuid: Date.now(), isEdit: false, model: 'bad model' })
+        this.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
       }
-
       this.active = uuid
       this.reloadRoute(uuid)
+    },
+
+    addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
+      fetchCreateChatRoom(history.title, history.uuid)
+      this.history.unshift(history)
+      this.chat.unshift({ uuid: history.uuid, data: chatData })
+      this.active = history.uuid
+      this.reloadRoute(history.uuid)
     },
 
     async syncChat(h: Chat.History) {
@@ -55,12 +64,9 @@ export const useChatStore = defineStore('chat-store', {
       }
     },
 
-    addHistory(history: Chat.History, chatData: Chat.Chat[] = []) {
-      fetchCreateChatRoom(history.title, history.uuid, '')
-      this.history.unshift(history)
-      this.chat.unshift({ uuid: history.uuid, data: chatData })
-      this.active = history.uuid
-      this.reloadRoute(history.uuid)
+    setUsingContext(context: boolean) {
+      this.usingContext = context
+      this.recordState()
     },
 
     updateHistory(uuid: number, edit: Partial<Chat.History>) {
@@ -69,7 +75,7 @@ export const useChatStore = defineStore('chat-store', {
         this.history[index] = { ...this.history[index], ...edit }
         this.recordState()
         if (!edit.isEdit)
-          fetchRenameChatRoom(this.history[index].title, this.history[index].uuid, this.history[index].model)
+          fetchRenameChatRoom(this.history[index].title, this.history[index].uuid)
       }
     },
 
@@ -123,22 +129,21 @@ export const useChatStore = defineStore('chat-store', {
       return null
     },
 
-    addChatByUuid(uuid: number, chat: Chat.Chat, model: string) {
+    addChatByUuid(uuid: number, chat: Chat.Chat) {
       if (!uuid || uuid === 0) {
         if (this.history.length === 0) {
           const uuid = Date.now()
-          fetchCreateChatRoom(chat.text, uuid, model)
-          this.history.push({ uuid, title: chat.text, isEdit: false, model })
+          fetchCreateChatRoom(chat.text, uuid)
+          this.history.push({ uuid, title: chat.text, isEdit: false })
           this.chat.push({ uuid, data: [chat] })
           this.active = uuid
           this.recordState()
         }
         else {
           this.chat[0].data.push(chat)
-          if (this.history[0].title === 'Новый чат') {
+          if (this.history[0].title === 'New Chat') {
             this.history[0].title = chat.text
-            this.history[0].model = model
-            fetchRenameChatRoom(chat.text, this.history[0].uuid, this.history[0].model)
+            fetchRenameChatRoom(chat.text, this.history[0].uuid)
           }
           this.recordState()
         }
@@ -147,10 +152,9 @@ export const useChatStore = defineStore('chat-store', {
       const index = this.chat.findIndex(item => item.uuid === uuid)
       if (index !== -1) {
         this.chat[index].data.push(chat)
-        if (this.history[index].title === 'Новый чат') {
+        if (this.history[index].title === 'New Chat') {
           this.history[index].title = chat.text
-          this.history[index].model = model
-          fetchRenameChatRoom(chat.text, this.history[index].uuid, this.history[index].model)
+          fetchRenameChatRoom(chat.text, this.history[index].uuid)
         }
         this.recordState()
       }
@@ -226,6 +230,13 @@ export const useChatStore = defineStore('chat-store', {
         this.chat[index].data = []
         this.recordState()
       }
+    },
+
+    clearLocalChat() {
+      this.chat = []
+      this.history = []
+      this.active = null
+      this.recordState()
     },
 
     async reloadRoute(uuid?: number) {
