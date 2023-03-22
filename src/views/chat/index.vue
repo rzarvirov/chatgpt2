@@ -103,12 +103,12 @@ function handleRecharge() {
   // Add your recharge logic here
   dialog.warning({
     title: 'Пополнение баланса',
-    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на любую сумму и мы пополним ваш баланс. Не забудьте указать ваш e-mail в комментарии к переводу. Хотите поддержать?',
+    content: 'Автоматическое пополнение временно недоступно. Поддержите проект на Boosty для пополнение баланса. Хотите поддержать?',
     positiveText: t('common.yes'),
     negativeText: t('common.no'),
     onPositiveClick: () => {
       // Replace 'https://example.com' with the URL you want to open
-      window.open('https://pay.cloudtips.ru/p/99817dfa', '_blank')
+      window.open('https://boosty.to/aibuddy', '_blank')
     },
   })
 }
@@ -600,6 +600,10 @@ const getColourForKey = (key: string) => {
   const prompt = PromptsList.find(prompt => prompt.key === key)
   return prompt ? prompt.colour : '#72BCD4' // Fallback color if not found
 }
+
+const openNewWindow = () => {
+  window.open('https://boosty.to/aibuddy', '_blank')
+}
 </script>
 
 <template>
@@ -722,11 +726,21 @@ const getColourForKey = (key: string) => {
           <div v-if="isAuthenticated">
             <NButton
               v-if="selectedModel === 'gpt-3.5-turbo' ? balance === 0 : probalance === 0"
-              :style="{ backgroundColor: selectedModel === 'gpt-3.5-turbo' ? '#72BCD4' : '#FFD700', color: 'black', border: '0px solid', borderRadius: '20px', padding: '5px 10px', margin: '5px', cursor: 'pointer', fontSize: isMobile ? '12px' : '16px' }"
-              @click="handleRecharge"
+              :style="{
+                backgroundColor: selectedModel === 'gpt-3.5-turbo' ? '#72BCD4' : '#FFD700',
+                color: 'black',
+                border: '0px solid',
+                borderRadius: '20px',
+                padding: '5px 10px',
+                margin: '5px',
+                cursor: 'pointer',
+                fontSize: isMobile ? '12px' : '16px',
+              }"
+              @click="openNewWindow"
             >
               Пополнить
             </NButton>
+
             <div v-else>
               <div class="circle-container">
                 <div
