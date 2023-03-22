@@ -293,7 +293,11 @@ async function onConversation() {
   }
   finally {
     loading.value = false
-    await reduceBalance()
+    if (selectedModel.value === 'gpt-3.5-turbo')
+      await reduceBalance()
+
+    else if (selectedModel.value === 'gpt-4')
+      await reduceProBalance()
   }
 }
 
@@ -485,10 +489,14 @@ function handleClear() {
 
 function handleEnter(event: KeyboardEvent) {
   // Add a check for isBalanceZero
-  if (isBalanceZero.value) {
-    // Display an error message
-    // Replace `errorMessage` with the method or variable you use to display error messages
+  if (selectedModel.value === 'gpt-3.5-turbo' && isBalanceZero.value) {
+  // Display an error message for the base model if balance is zero
     ms.warning('Баланс запросов исчерпан')
+    return
+  }
+  else if (selectedModel.value === 'gpt-4' && isProBalanceZero.value) {
+  // Display an error message for the PRO model if balance is zero
+    ms.warning('Баланс запросов PRO исчерпан')
     return
   }
 
@@ -614,20 +622,6 @@ const getColourForKey = (key: string) => {
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
           <template v-if="!dataSources.length && !sendbuttonClicked">
-            <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
-              <select
-                v-model="selectedModel"
-                class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white"
-              >
-                <option value="gpt-3.5-turbo">
-                  Базовая: gpt-3.5-turbo
-                </option>
-                <option value="gpt-4">
-                  PRO: gpt-4
-                </option>
-              </select>
-            </div>
-            <br>
             <div style="text-align: center;">
               <swiper-container
                 class="swiper-container-custom"
@@ -654,9 +648,19 @@ const getColourForKey = (key: string) => {
             </div>
           </template>
           <template v-else>
-            <div class="text-center mb-4 text-neutral-500">
-              Выбранная модель: {{ selectedModel }}
-            </div>
+            <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
+              <select
+                v-model="selectedModel"
+                class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white"
+              >
+                <option value="gpt-3.5-turbo">
+                  Базовый режим (GPT-3.5)
+                </option>
+                <option value="gpt-4">
+                  PRO режим (GPT-4)
+                </option>
+              </select>
+            </div><br>
             <div>
               <Message
                 v-for="(item, index) of dataSources"
@@ -717,18 +721,29 @@ const getColourForKey = (key: string) => {
           </NButton>
           <div v-if="isAuthenticated">
             <NButton
-              v-if="balance === 0"
-              style="display: inline-block; background-color: #72BCD4; border: 0px solid #72BCD4; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; font-size: ${isMobile ? '12px' : '16px'};"
+              v-if="selectedModel === 'gpt-3.5-turbo' ? balance === 0 : probalance === 0"
+              :style="{ backgroundColor: selectedModel === 'gpt-3.5-turbo' ? '#72BCD4' : '#FFD700', color: 'black', border: '0px solid', borderRadius: '20px', padding: '5px 10px', margin: '5px', cursor: 'pointer', fontSize: isMobile ? '12px' : '16px' }"
               @click="handleRecharge"
             >
               Пополнить
             </NButton>
             <div v-else>
               <div class="circle-container">
-                <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white" style="cursor: pointer;" @click="handleRecharge">
+                <div
+                  v-if="selectedModel === 'gpt-3.5-turbo'"
+                  class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white"
+                  style="cursor: pointer;"
+                  @click="handleRecharge"
+                >
                   <span>{{ balance }}</span>
                 </div>
-                <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white" style="cursor: pointer;" @click="handleRecharge">
+
+                <div
+                  v-else-if="selectedModel === 'gpt-4'"
+                  class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white"
+                  style="cursor: pointer;"
+                  @click="handleRecharge"
+                >
                   <span>{{ probalance }}</span>
                 </div>
               </div>
