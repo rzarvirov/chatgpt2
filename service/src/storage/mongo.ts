@@ -33,23 +33,21 @@ export async function updateChat(chatId: string, response: string, messageId: st
   await chatCol.updateOne(query, update)
 }
 
-export async function createChatRoom(userId: ObjectId, title: string, roomId: number, model: string) {
-  const room = new ChatRoom(userId, title, roomId, model)
+export async function createChatRoom(userId: ObjectId, title: string, roomId: number) {
+  const room = new ChatRoom(userId, title, roomId)
   await roomCol.insertOne(room)
   return room
 }
-export async function renameChatRoom(userId: ObjectId, title: string, roomId: number, model: string) {
+export async function renameChatRoom(userId: ObjectId, title: string, roomId: number) {
   const query = { userId, roomId }
   const update = {
     $set: {
-      title, model,
+      title,
     },
-
   }
   const result = await roomCol.updateOne(query, update)
   return result
 }
-
 export async function deleteChatRoom(userId: ObjectId, roomId: number) {
   const result = await roomCol.updateOne({ roomId, userId }, { $set: { status: Status.Deleted } })
   await clearChat(roomId)
@@ -153,11 +151,20 @@ export async function getUserBalance(userId: string) {
   return user ? user.balance : null
 }
 
-export async function getUserAccountType(userId: string) {
-  const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { accounttype: 1 } })
-  return user ? user.accounttype : null
+export async function getUserProBalance(userId: string) {
+  const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { probalance: 1 } })
+  return user ? user.probalance : null
 }
 
 export async function updateUserBalance(userId: string, newBalance: number) {
   await userCol.updateOne({ _id: new ObjectId(userId) }, { $set: { balance: newBalance } })
+}
+
+export async function updateUserProBalance(userId: string, newProBalance: number) {
+  await userCol.updateOne({ _id: new ObjectId(userId) }, { $set: { probalance: newProBalance } })
+}
+
+export async function getUserAccountType(userId: string) {
+  const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { accounttype: 1 } })
+  return user ? user.accounttype : null
 }

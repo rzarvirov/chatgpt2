@@ -14,7 +14,7 @@ import PromptsList from '@/assets/prompts_RU.json'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess, fetchGetUserBalance, fetchUpdateUserBalance } from '@/api'
+import { fetchChatAPIProcess, fetchGetUserBalance, fetchGetUserProBalance, fetchUpdateUserBalance, fetchUpdateUserProBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
@@ -35,10 +35,16 @@ const chatStore = useChatStore()
 const authStore = useAuthStoreWithout()
 const isAuthenticated = computed(() => authStore.session && authStore.session.auth)
 const balance = ref(0)
+const probalance = ref(0)
 
 const isBalanceZero = computed(() => {
   // Replace `balance` with the variable or getter you use to track the balance
   return balance.value === 0
+})
+
+const isProBalanceZero = computed(() => {
+  // Replace `balance` with the variable or getter you use to track the balance
+  return probalance.value === 0
 })
 
 async function fetchBalance() {
@@ -51,9 +57,24 @@ async function fetchBalance() {
   }
 }
 
+async function fetchProBalance() {
+  try {
+    const response = await fetchGetUserProBalance()
+    probalance.value = response.data.probalance
+  }
+  catch (error) {
+    console.error('Error fetching user pro balance:', error)
+  }
+}
+
 onMounted(async () => {
   if (authStore.session == null || !authStore.session.auth || authStore.token)
     await fetchBalance()
+})
+
+onMounted(async () => {
+  if (authStore.session == null || !authStore.session.auth || authStore.token)
+    await fetchProBalance()
 })
 
 async function reduceBalance() {
@@ -61,6 +82,17 @@ async function reduceBalance() {
   try {
     await fetchUpdateUserBalance(newBalance)
     balance.value = newBalance
+  }
+  catch (error) {
+    console.error('Error updating user balance:', error)
+  }
+}
+
+async function reduceProBalance() {
+  const newProBalance = Math.max(0, probalance.value - 1)
+  try {
+    await fetchUpdateUserProBalance(newProBalance)
+    probalance.value = newProBalance
   }
   catch (error) {
     console.error('Error updating user balance:', error)
@@ -86,7 +118,7 @@ useCopyCode()
 
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
-const { scrollRef, scrollToBottom } = useScroll()
+const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
 const { uuid } = route.params as { uuid: string }
 
@@ -177,7 +209,7 @@ async function onConversation() {
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
-          const lastIndex = responseText.lastIndexOf('\n')
+          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
           let chunk = responseText
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
@@ -204,7 +236,7 @@ async function onConversation() {
               return fetchChatAPIOnce()
             }
 
-            scrollToBottom()
+            scrollToBottomIfAtBottom()
           }
           catch (error) {
           //
@@ -225,7 +257,7 @@ async function onConversation() {
           loading: false,
         },
       )
-      scrollToBottom()
+      scrollToBottomIfAtBottom()
       return
     }
 
@@ -257,7 +289,7 @@ async function onConversation() {
         requestOptions: { prompt: message, options: { ...options } },
       },
     )
-    scrollToBottom()
+    scrollToBottomIfAtBottom()
   }
   finally {
     loading.value = false
@@ -311,7 +343,7 @@ async function onRegenerate(index: number) {
           const xhr = event.target
           const { responseText } = xhr
           // Always process the final line
-          const lastIndex = responseText.lastIndexOf('\n')
+          const lastIndex = responseText.lastIndexOf('\n', responseText.length - 2)
           let chunk = responseText
           if (lastIndex !== -1)
             chunk = responseText.substring(lastIndex)
@@ -691,11 +723,13 @@ const getColourForKey = (key: string) => {
             >
               Пополнить
             </NButton>
-
             <div v-else>
               <div class="circle-container">
                 <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white" style="cursor: pointer;" @click="handleRecharge">
                   <span>{{ balance }}</span>
+                </div>
+                <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white" style="cursor: pointer;" @click="handleRecharge">
+                  <span>{{ probalance }}</span>
                 </div>
               </div>
             </div>

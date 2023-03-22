@@ -10,6 +10,8 @@ import { sendResponse } from '../utils'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
 
+dotenv.config()
+
 class CustomChatGPTAPI extends ChatGPTAPI {
   async sendMessage(
     message: string,
@@ -32,8 +34,6 @@ const ErrorCodeMessage: Record<string, string> = {
   504: '[OpenAI] превышение времени ожидания шлюза | Gateway Time-out',
   500: '[OpenAI] внутренняя ошибка сервера | Internal Server Error',
 }
-
-dotenv.config()
 
 const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 10000
 

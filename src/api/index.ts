@@ -112,12 +112,35 @@ export function fetchGetUserBalance<T = any>() {
   })
 }
 
+// Client-side function to fetch the user's probalance
+export function fetchGetUserProBalance<T = any>() {
+  const authStore = useAuthStoreWithout()
+  const token = authStore.token
+
+  return get<T>({
+    url: '/probalance',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
+
 // Update user balance
 export function fetchUpdateUserBalance<T = any>(newBalance: number) {
   return post<T>({
     url: '/update-balance',
     data: {
       newBalance,
+    },
+  })
+}
+
+// Update user probalance
+export function fetchUpdateUserProBalance<T = any>(newProBalance: number) {
+  return post<T>({
+    url: '/update-probalance',
+    data: {
+      newProBalance,
     },
   })
 }

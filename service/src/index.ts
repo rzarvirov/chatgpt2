@@ -6,7 +6,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import type { ChatOptions, UserInfo } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, insertChat, renameChatRoom, updateChat, updateUserBalance, updateUserInfo, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, getUserProBalance, insertChat, renameChatRoom, updateChat, updateUserBalance, updateUserInfo, updateUserProBalance, verifyUser } from './storage/mongo'
 import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isNotEmptyString } from './utils/is'
@@ -64,6 +64,24 @@ router.post('/update-balance', auth, async (req, res) => {
   res.send({ status: 'Success', message: null, data: null })
 })
 // updated balance
+
+// get probalance
+router.get('/probalance', auth, async (req, res) => {
+  const userId = req.headers.userId
+  const probalance = await getUserProBalance(userId)
+
+  res.send({ status: 'Success', message: null, data: { probalance } })
+})
+// got probalance
+
+// update probalance
+router.post('/update-probalance', auth, async (req, res) => {
+  const userId = req.headers.userId
+  const newProBalance = req.body.newProBalance
+  await updateUserProBalance(userId, newProBalance)
+  res.send({ status: 'Success', message: null, data: null })
+})
+// updated probalance
 
 router.post('/room-create', auth, async (req, res) => {
   const userId = req.headers.userId

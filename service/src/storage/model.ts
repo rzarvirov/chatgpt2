@@ -50,7 +50,6 @@ class ChatRoom {
   userId: number
   title: string
   status: Status = Status.Normal
-  model: string // new class property
 
   constructor(userId: number, title: string, roomId: number) { // updated constructor signature
     this.userId = userId
