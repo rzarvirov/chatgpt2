@@ -121,11 +121,21 @@ function isValidPassword(pwd: string) {
   return regex.test(pwd)
 }
 
+function isValidEmail(email: string) {
+  // Check if the email is in a valid format
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return regex.test(email)
+}
+
 async function handleRegister() {
   const name = username.value.trim()
   const pwd = password.value.trim()
   if (!name || !pwd) {
-    ms.warning('Введите почту и пароль для начала регистрации') // Change this message to match the style of other messages on the page.
+    ms.warning('Введите почту и пароль для начала регистрации')
+    return
+  }
+  if (!isValidEmail(name)) {
+    ms.warning('Введите действительный адрес электронной почты')
     return
   }
   if (!isValidPassword(pwd)) {

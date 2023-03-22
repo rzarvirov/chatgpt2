@@ -692,12 +692,12 @@ const getColourForKey = (key: string) => {
               Пополнить
             </NButton>
 
-            <div v-else style="cursor: pointer;" @click="handleRecharge">
+            <div v-else>
               <div class="circle-container">
                 <div class="gold-circle flex items-center justify-center w-8 h-8 rounded-full bg-gold text-white">
                   <span>10</span>
                 </div>
-                <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white">
+                <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white" style="cursor: pointer;" @click="handleRecharge">
                   <span>{{ balance }}</span>
                 </div>
               </div>
