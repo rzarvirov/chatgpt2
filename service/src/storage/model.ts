@@ -19,6 +19,7 @@ class UserInfo {
   avatar?: string
   description?: string
   balance: number
+  probalance: number
   accounttype: string
   constructor(email: string, password: string) {
     this.name = email
@@ -28,6 +29,7 @@ class UserInfo {
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
     this.balance = 20 // Initialize the balance to 0 or any default value you want
+    this.probalance = 5
     this.accounttype = 'free'
   }
 }

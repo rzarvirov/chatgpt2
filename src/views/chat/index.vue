@@ -626,6 +626,19 @@ const openNewWindow = () => {
           :class="[isMobile ? 'p-2' : 'p-4']"
         >
           <template v-if="!dataSources.length && !sendbuttonClicked">
+            <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
+              <select
+                v-model="selectedModel"
+                class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white"
+              >
+                <option value="gpt-3.5-turbo">
+                  Базовый режим (GPT-3.5)
+                </option>
+                <option value="gpt-4">
+                  PRO режим (GPT-4)
+                </option>
+              </select>
+            </div><br>
             <div style="text-align: center;">
               <swiper-container
                 class="swiper-container-custom"
