@@ -694,9 +694,6 @@ const getColourForKey = (key: string) => {
 
             <div v-else>
               <div class="circle-container">
-                <div class="gold-circle flex items-center justify-center w-8 h-8 rounded-full bg-gold text-white">
-                  <span>10</span>
-                </div>
                 <div class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white" style="cursor: pointer;" @click="handleRecharge">
                   <span>{{ balance }}</span>
                 </div>
@@ -713,23 +710,4 @@ const getColourForKey = (key: string) => {
   .swiper-container-custom {
     padding-bottom: 40px;
   }
-
-  .bg-gold {
-  background-color: gold;
-}
-.circle-container {
-  position: relative;
-  display: inline-flex;
-  margin-left: -35px; /* Add a negative margin to reduce space */
-}
-
-.blue-circle {
-  z-index: 1;
-}
-
-.gold-circle {
-  position: relative;
-  right: -40px;
-  z-index: 0;
-}
 </style>
