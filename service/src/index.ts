@@ -24,20 +24,6 @@ app.all('*', (_, res, next) => {
   next()
 })
 
-router.get('/chatrooms', auth, async (req, res) => {
-  const userId = req.headers.userId
-  const rooms = await getChatRooms(userId)
-  const result = []
-  rooms.forEach((r) => {
-    result.push({
-      uuid: r.roomId,
-      title: r.title,
-      isEdit: false,
-    })
-  })
-  res.send({ status: 'Success', message: null, data: result })
-})
-
 // get account type
 router.get('/accounttype', auth, async (req, res) => {
   const userId = req.headers.userId
@@ -82,6 +68,20 @@ router.post('/update-probalance', auth, async (req, res) => {
   res.send({ status: 'Success', message: null, data: null })
 })
 // updated probalance
+
+router.get('/chatrooms', auth, async (req, res) => {
+  const userId = req.headers.userId
+  const rooms = await getChatRooms(userId)
+  const result = []
+  rooms.forEach((r) => {
+    result.push({
+      uuid: r.roomId,
+      title: r.title,
+      isEdit: false,
+    })
+  })
+  res.send({ status: 'Success', message: null, data: result })
+})
 
 router.post('/room-create', auth, async (req, res) => {
   const userId = req.headers.userId
@@ -184,7 +184,7 @@ router.post('/chat', auth, async (req, res) => {
     const message = regenerate
       ? await getChat(roomId, uuid)
       : await insertChat(uuid, prompt, roomId, options as ChatOptions)
-    const response = await chatReplyProcess(prompt, options)
+    const response = await chatReply(prompt, options)
     if (response.status === 'Success')
       await updateChat(message._id, response.data.text, response.data.id)
     res.send(response)
@@ -198,8 +198,8 @@ router.post('/chat-process', auth, async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
-    const { roomId, uuid, regenerate, prompt, options = {}, model } = req.body as
-      { roomId: number; uuid: number; regenerate: boolean; prompt: string; options?: ChatContext; model?: string }
+    const { roomId, uuid, regenerate, prompt, options = {} } = req.body as
+      { roomId: number; uuid: number; regenerate: boolean; prompt: string; options?: ChatContext } // model?: string
     const message = regenerate
       ? await getChat(roomId, uuid)
       : await insertChat(uuid, prompt, roomId, options as ChatOptions)
@@ -207,7 +207,7 @@ router.post('/chat-process', auth, async (req, res) => {
     const result = await chatReplyProcess(prompt, options, (chat: ChatMessage) => {
       res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
       firstChunk = false
-    }, model)
+    })
     if (result.status === 'Success')
       await updateChat(message._id, result.data.text, result.data.id)
   }
