@@ -898,9 +898,25 @@ const getColourForKey = (key: string) => {
           Узнать детали и подписаться
         </button>
       </div>
-
+      <br>
       <div v-show="activeTab === 3" class="tab-content text-black">
-        Бонус за репост (в разработке)
+        <div class="flex justify-center space-x-4 mt-4">
+          <!-- Telegram Share -->
+          <a href="https://t.me/share/url?url=https://aibuddy.ru&text=Обалдеть!" target="_blank" class="text-blue-600 hover:text-blue-800">
+            <SvgIcon icon="ri:telegram-fill" class="w-12 h-12" />
+          </a>
+
+          <!-- Facebook Share -->
+          <a href="https://www.facebook.com/sharer/sharer.php?u=https://aibuddy.ru" target="_blank" class="text-blue-800 hover:text-blue-900">
+            <SvgIcon icon="ri:facebook-fill" class="w-12 h-12" />
+          </a>
+
+          <!-- Twitter Share -->
+          <a href="https://twitter.com/intent/tweet?url=https://aibuddy.ru&text=Вау!" target="_blank" class="text-blue-500 hover:text-blue-700">
+            <SvgIcon icon="ri:twitter-fill" class="w-12 h-12" />
+          </a>
+        </div>
+        <br><br>Поделитесь нашим сайтом с друзьями и мы начилим вам 50 запросов бесплатно (функция в разработке)
       </div>
 
       <!-- Close button -->
