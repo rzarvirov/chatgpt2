@@ -567,10 +567,6 @@ const placeholder = computed(() => {
   return t('chat.placeholder')
 })
 
-const buttonDisabled = computed(() => {
-  return loading.value || !prompt.value || prompt.value.trim() === ''
-})
-
 const footerClass = computed(() => {
   let classes = ['p-4']
   if (isMobile.value)
@@ -748,7 +744,11 @@ const getColourForKey = (key: string) => {
               />
             </template>
           </NAutoComplete>
-          <NButton v-if="balance > 0" type="primary" :disabled="buttonDisabled" @click="handleSubmit">
+          <NButton
+            type="primary"
+            :disabled="(selectedModel === 'gpt-3.5-turbo' && balance <= 0) || (selectedModel === 'gpt-4' && probalance <= 0)"
+            @click="handleSubmit"
+          >
             <template #icon>
               <span class="dark:text-black">
                 <SvgIcon icon="ri:send-plane-fill" />
@@ -805,10 +805,15 @@ const getColourForKey = (key: string) => {
       <!-- Tab buttons -->
       <div class="flex mb-4">
         <button :class="{ 'bg-blue-500': activeTab === 1, 'bg-gray-400': activeTab !== 1 }" class="flex-1 text-white font-bold py-2 px-4 rounded-l" @click="activeTab = 1">
-          Поддержать разово
+          Донат
         </button>
         <button :class="{ 'bg-yellow-500': activeTab === 2, 'bg-gray-400 ': activeTab !== 2 }" class="flex-1 text-white font-bold py-2 px-4 rounded-r" @click="activeTab = 2">
           Подписка
+        </button>
+        <button :class="{ 'bg-green-500': activeTab === 3, 'bg-gray-400': activeTab !== 3 }" class="flex-none text-white font-bold py-2 px-4 ml-2 rounded" @click="activeTab = 3">
+          <span class="dark:text-black">
+            <SvgIcon icon="ri:send-plane-fill" />
+          </span>
         </button>
       </div>
 
@@ -820,7 +825,7 @@ const getColourForKey = (key: string) => {
               🔹 Старт (100 ₽):
             </h3>
             <p class="text-sm">
-              20 запросов к Базовой модели (GPT-3.5)<br>
+              50 запросов к Базовой модели (GPT-3.5)<br>
               5 запросов к PRO-модели (GPT-4)
             </p>
           </div>
@@ -829,7 +834,7 @@ const getColourForKey = (key: string) => {
               🔹 Развитие (300 ₽):
             </h3>
             <p class="text-sm">
-              80 запросов к Базовой модели (GPT-3.5)<br>
+              200 запросов к Базовой модели (GPT-3.5)<br>
               20 запросов к PRO-модели (GPT-4)
             </p>
           </div>
@@ -838,7 +843,7 @@ const getColourForKey = (key: string) => {
               🔹 Максимум (1 000 ₽):
             </h3>
             <p class="text-sm">
-              300 запросов к Базовой модели (GPT-3.5)<br>
+              800 запросов к Базовой модели (GPT-3.5)<br>
               50 запросов к PRO-модели (GPT-4)
             </p>
           </div>
@@ -892,6 +897,10 @@ const getColourForKey = (key: string) => {
         <button class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="openUrl('https://boosty.to/aibuddy')">
           Узнать детали и подписаться
         </button>
+      </div>
+
+      <div v-show="activeTab === 3" class="tab-content text-black">
+        Бонус за репост (в разработке)
       </div>
 
       <!-- Close button -->
