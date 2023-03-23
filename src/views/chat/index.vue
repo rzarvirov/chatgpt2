@@ -19,6 +19,13 @@ import { fetchChatAPIProcess, fetchGetUserBalance, fetchGetUserProBalance, fetch
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
+const showModal = ref(false)
+const activeTab = ref(1)
+
+const openUrl = (url: string) => {
+  window.open(url, '_blank')
+}
+
 let controller = new AbortController()
 
 const openLongReply = import.meta.env.VITE_GLOB_OPEN_LONG_REPLY === 'true'
@@ -102,8 +109,12 @@ async function reduceProBalance() {
   }
 }
 
-function handleRecharge() {
-  // Add your recharge logic here
+// function handleRecharge() {
+const handleRecharge = () => {
+  showModal.value = true
+  sendbuttonClicked.value = true
+
+  /* Add your recharge logic here
   dialog.warning({
     title: 'Пополнение баланса',
     content: 'Автоматическое пополнение временно недоступно. Поддержите проект на Boosty для пополнение баланса. Хотите поддержать?',
@@ -113,7 +124,7 @@ function handleRecharge() {
       // Replace 'https://example.com' with the URL you want to open
       window.open('https://boosty.to/aibuddy', '_blank')
     },
-  })
+  }) */
 }
 
 // end of balance script
@@ -606,10 +617,6 @@ const getColourForKey = (key: string) => {
   const prompt = PromptsList.find(prompt => prompt.key === key)
   return prompt ? prompt.colour : '#72BCD4' // Fallback color if not found
 }
-
-const openNewWindow = () => {
-  window.open('https://boosty.to/aibuddy', '_blank')
-}
 </script>
 
 <template>
@@ -635,7 +642,7 @@ const openNewWindow = () => {
             <div class="flex items-center justify-center mt-4 text-center text-neutral-500">
               <select
                 v-model="selectedModel"
-                class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white"
+                class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white mr-2"
               >
                 <option value="gpt-3.5-turbo">
                   Базовый режим (GPT-3.5)
@@ -644,7 +651,12 @@ const openNewWindow = () => {
                   PRO режим (GPT-4)
                 </option>
               </select>
-            </div><br>
+              <!-- New button to open the new window -->
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="handleRecharge">
+                Поддержать
+              </button>
+            </div>
+            <br>
             <div style="text-align: center;">
               <swiper-container
                 class="swiper-container-custom"
@@ -746,17 +758,14 @@ const openNewWindow = () => {
           <div v-if="isAuthenticated">
             <NButton
               v-if="selectedModel === 'gpt-3.5-turbo' ? balance === 0 : probalance === 0"
-              :style="{
-                backgroundColor: selectedModel === 'gpt-3.5-turbo' ? '#72BCD4' : '#FFD700',
-                color: 'black',
-                border: '0px solid',
-                borderRadius: '20px',
-                padding: '5px 10px',
-                margin: '5px',
-                cursor: 'pointer',
-                fontSize: isMobile ? '12px' : '16px',
+              class="text-black border-0 rounded-lg py-1 px-2 my-1 cursor-pointer"
+              :class="{
+                'bg-blue-500': selectedModel === 'gpt-3.5-turbo',
+                'bg-yellow-500': selectedModel === 'gpt-4',
+                'text-xs': isMobile,
+                'text-base': !isMobile,
               }"
-              @click="openNewWindow"
+              @click="handleRecharge"
             >
               Пополнить
             </NButton>
@@ -786,6 +795,110 @@ const openNewWindow = () => {
         </div>
       </div>
     </footer>
+  </div>
+  <div v-show="showModal" class="modal fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50">
+    <div class="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+      <h2 class="text-xl font-bold mb-4 dark:text-black">
+        Поддержите проект
+      </h2>
+
+      <!-- Tab buttons -->
+      <div class="flex mb-4">
+        <button :class="{ 'bg-blue-500': activeTab === 1, 'bg-gray-400': activeTab !== 1 }" class="flex-1 text-white font-bold py-2 px-4 rounded-l" @click="activeTab = 1">
+          Поддержать разово
+        </button>
+        <button :class="{ 'bg-yellow-500': activeTab === 2, 'bg-gray-400 ': activeTab !== 2 }" class="flex-1 text-white font-bold py-2 px-4 rounded-r" @click="activeTab = 2">
+          Подписка
+        </button>
+      </div>
+
+      <!-- Tab content -->
+      <div v-show="activeTab === 1" class="tab-content">
+        <div class="mb-4 space-y-4 text-black">
+          <div>
+            <h3 class="font-bold">
+              🔹 Старт (100 ₽):
+            </h3>
+            <p class="text-sm">
+              20 запросов к Базовой модели (GPT-3.5)<br>
+              5 запросов к PRO-модели (GPT-4)
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold">
+              🔹 Развитие (300 ₽):
+            </h3>
+            <p class="text-sm">
+              80 запросов к Базовой модели (GPT-3.5)<br>
+              20 запросов к PRO-модели (GPT-4)
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold">
+              🔹 Максимум (1 000 ₽):
+            </h3>
+            <p class="text-sm">
+              300 запросов к Базовой модели (GPT-3.5)<br>
+              50 запросов к PRO-модели (GPT-4)
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold">
+              Укажите ваш E-Mail в комментарии к переводу
+            </h3>
+          </div>
+        </div>
+        <button class="w-full mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="openUrl('https://pay.cloudtips.ru/p/99817dfa')">
+          Поддержать
+        </button>
+      </div>
+
+      <div v-show="activeTab === 2" class="tab-content">
+        <!-- Subscription options -->
+        <div class="mb-4 space-y-4 text-black">
+          <div>
+            <h3 class="font-bold">
+              🔸 Базовая (99 ₽ в месяц):
+            </h3>
+            <p class="text-sm">
+              Этот тариф подходит для тех, кто только начинает знакомиться с возможностями ChatGPT.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold">
+              🔸 PRO (299 ₽ в месяц):
+            </h3>
+            <p class="text-sm">
+              Для пользователей с более активным использованием, таких как писатели, маркетологи, и программисты.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold">
+              🔸 Ultra (999 ₽ в месяц):
+            </h3>
+            <p class="text-sm">
+              Этот тариф предназначен для тех, кто активно работает с большим объемом информации, например аналитиков, исследователей и менеджеров проектов.
+            </p>
+          </div>
+          <div>
+            <h3 class="font-bold">
+              🔸 Unlimited (1 999 ₽ в месяц):
+            </h3>
+            <p class="text-sm">
+              Этот тариф идеален для профессионалов и организаций, которые не хотят ограничивать свои возможности.
+            </p>
+          </div>
+        </div>
+        <button class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="openUrl('https://boosty.to/aibuddy')">
+          Узнать детали и подписаться
+        </button>
+      </div>
+
+      <!-- Close button -->
+      <button class="w-full mt-2 bg-gray-300 hover:bg-gray-400 text-white font-bold py-2 px-4 rounded" @click="showModal = false; sendbuttonClicked = false">
+        Закрыть
+      </button>
+    </div>
   </div>
 </template>
 

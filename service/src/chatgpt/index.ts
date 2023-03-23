@@ -35,7 +35,7 @@ const ErrorCodeMessage: Record<string, string> = {
   500: '[OpenAI] внутренняя ошибка сервера | Internal Server Error',
 }
 
-const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 10000
+const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 3000
 
 let apiModel: ApiModel
 
@@ -53,7 +53,7 @@ let api: ChatGPTAPI | CustomChatGPTAPI
 
     const options: ChatGPTAPIOptions = {
       apiKey: process.env.OPENAI_API_KEY,
-      completionParams: { model },
+      completionParams: { model, max_tokens: 2000 },
       debug: true,
     }
 
