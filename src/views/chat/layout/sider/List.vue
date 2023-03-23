@@ -5,15 +5,11 @@ import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useAuthStoreWithout } from '@/store/modules/auth'
-
 const { isMobile } = useBasicLayout()
-
 const appStore = useAppStore()
 const chatStore = useChatStore()
 const authStore = useAuthStoreWithout()
-
 const dataSources = computed(() => chatStore.history)
-
 onMounted(async () => {
   if (authStore.session == null || !authStore.session.auth || authStore.token)
     await handleSyncChat()
@@ -26,37 +22,30 @@ async function handleSyncChat() {
   if (scrollRef)
     nextTick(() => scrollRef.scrollTop = scrollRef.scrollHeight)
 }
-
 async function handleSelect({ uuid }: Chat.History) {
   if (isActive(uuid))
     return
-
   // 这里不需要 不然每次切换都rename
   // if (chatStore.active)
   //   chatStore.updateHistory(chatStore.active, { isEdit: false })
   await chatStore.syncChat({ uuid } as Chat.History)
   await chatStore.setActive(uuid)
-
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
 }
-
 function handleEdit({ uuid }: Chat.History, isEdit: boolean, event?: MouseEvent) {
   event?.stopPropagation()
   chatStore.updateHistory(uuid, { isEdit })
 }
-
 function handleDelete(index: number, event?: MouseEvent | TouchEvent) {
   event?.stopPropagation()
   chatStore.deleteHistory(index)
 }
-
 function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEvent) {
   event?.stopPropagation()
   if (event.key === 'Enter')
     chatStore.updateHistory(uuid, { isEdit })
 }
-
 function isActive(uuid: number) {
   return chatStore.active === uuid
 }
