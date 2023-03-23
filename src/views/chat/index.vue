@@ -30,6 +30,8 @@ const sendbuttonClicked = ref(false)
 
 const chatStore = useChatStore()
 
+useCopyCode()
+
 // balance script
 
 const authStore = useAuthStoreWithout()
@@ -114,7 +116,6 @@ function handleRecharge() {
 }
 
 // end of balance script
-useCopyCode()
 
 const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
@@ -127,6 +128,7 @@ const conversationList = computed(() => dataSources.value.filter(item => (!item.
 
 const prompt = ref<string>('')
 const loading = ref<boolean>(false)
+const inputRef = ref<Ref | null>(null)
 
 // Add PromptStore
 const promptStore = usePromptStore()
@@ -154,11 +156,11 @@ async function onConversation() {
     return
 
   controller = new AbortController()
-  const chatUuid = Date.now()
+  const chatUuid = Date.now() // ?
   addChat(
     +uuid,
     {
-      uuid: chatUuid,
+      uuid: chatUuid, // ?
       dateTime: new Date().toLocaleString(),
       text: message,
       inversion: true,
@@ -166,7 +168,6 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: null },
     },
-    // selectedModel.value,
   )
   scrollToBottom()
 
@@ -182,7 +183,7 @@ async function onConversation() {
   addChat(
     +uuid,
     {
-      uuid: chatUuid,
+      uuid: chatUuid, // ?
       dateTime: new Date().toLocaleString(),
       text: '',
       loading: true,
@@ -191,7 +192,6 @@ async function onConversation() {
       conversationOptions: null,
       requestOptions: { prompt: message, options: { ...options } },
     },
-    // selectedModel.value,
   )
   scrollToBottom()
 
@@ -199,11 +199,11 @@ async function onConversation() {
     let lastText = ''
     const fetchChatAPIOnce = async () => {
       await fetchChatAPIProcess<Chat.ConversationResponse>({
-        roomId: +uuid,
-        uuid: chatUuid,
+        roomId: +uuid, // ?
+        uuid: chatUuid, // ?
         prompt: message,
         options,
-        model: selectedModel.value,
+        model: selectedModel.value, // ?
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -469,6 +469,7 @@ function handleDelete(index: number) {
     negativeText: t('common.no'),
     onPositiveClick: () => {
       chatStore.deleteChatByUuid(+uuid, index)
+      sendbuttonClicked.value = false
     },
   })
 }
@@ -483,6 +484,8 @@ function handleClear() {
     negativeText: t('common.no'),
     onPositiveClick: () => {
       chatStore.clearChatByUuid(+uuid)
+      sendbuttonClicked.value = false
+      prompt.value = ''
     },
   })
 }
@@ -565,6 +568,8 @@ const footerClass = computed(() => {
 
 onMounted(() => {
   scrollToBottom()
+  if (inputRef.value && !isMobile.value)
+    inputRef.value?.focus()
 })
 
 onUnmounted(() => {
@@ -724,6 +729,7 @@ const openNewWindow = () => {
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
+                ref="inputRef"
                 v-model:value="prompt" type="textarea" :placeholder="placeholder"
                 :autosize="{ minRows: 1, maxRows: 8 }" @input="handleInput" @focus="handleFocus" @blur="handleBlur" @keypress="handleEnter"
               />

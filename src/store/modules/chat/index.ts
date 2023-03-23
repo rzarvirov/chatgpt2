@@ -42,7 +42,7 @@ export const useChatStore = defineStore('chat-store', {
       }
       if (uuid == null) {
         uuid = Date.now()
-        this.addHistory({ title: 'New Chat', uuid: Date.now(), isEdit: false })
+        this.addHistory({ title: 'Новый чат', uuid: Date.now(), isEdit: false })
       }
       this.active = uuid
       this.reloadRoute(uuid)
@@ -141,7 +141,7 @@ export const useChatStore = defineStore('chat-store', {
         }
         else {
           this.chat[0].data.push(chat)
-          if (this.history[0].title === 'New Chat') {
+          if (this.history[0].title === 'Новый чат') {
             this.history[0].title = chat.text
             fetchRenameChatRoom(chat.text, this.history[0].uuid)
           }
@@ -152,7 +152,7 @@ export const useChatStore = defineStore('chat-store', {
       const index = this.chat.findIndex(item => item.uuid === uuid)
       if (index !== -1) {
         this.chat[index].data.push(chat)
-        if (this.history[index].title === 'New Chat') {
+        if (this.history[index].title === 'Новый чат') {
           this.history[index].title = chat.text
           fetchRenameChatRoom(chat.text, this.history[index].uuid)
         }

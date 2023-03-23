@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, nextTick, onMounted } from 'vue'
+import { computed, inject, nextTick, onMounted } from 'vue'
 import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
@@ -10,9 +10,14 @@ const appStore = useAppStore()
 const chatStore = useChatStore()
 const authStore = useAuthStoreWithout()
 const dataSources = computed(() => chatStore.history)
+const handleAdd = inject<() => void>('handleAdd')
+
 onMounted(async () => {
   if (authStore.session == null || !authStore.session.auth || authStore.token)
     await handleSyncChat()
+
+  if (dataSources.value.length === 0 && handleAdd)
+    handleAdd()
 })
 async function handleSyncChat() {
   // if (chatStore.history.length == 1 && chatStore.history[0].title == 'New Chat'
@@ -40,6 +45,11 @@ function handleEdit({ uuid }: Chat.History, isEdit: boolean, event?: MouseEvent)
 function handleDelete(index: number, event?: MouseEvent | TouchEvent) {
   event?.stopPropagation()
   chatStore.deleteHistory(index)
+  if (isMobile.value)
+    appStore.setSiderCollapsed(true)
+
+  if (dataSources.value.length === 0 && handleAdd)
+    handleAdd()
 }
 function handleEnter({ uuid }: Chat.History, isEdit: boolean, event: KeyboardEvent) {
   event?.stopPropagation()
