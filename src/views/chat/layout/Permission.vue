@@ -227,16 +227,6 @@ async function googleAuthCallback(response: any) {
     loading.value = false
   }
 }
-
-const detailsVisible = ref(false)
-
-const showDetails = () => {
-  detailsVisible.value = true
-}
-
-const closeDetails = () => {
-  detailsVisible.value = false
-}
 </script>
 
 <template>
