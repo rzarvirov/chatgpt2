@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchLogin, fetchRegister, fetchVerify } from '@/api'
+import { fetchGoogleLogin, fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
 
@@ -201,6 +201,37 @@ onMounted(() => {
   currentSentence.value = getNextSentence()
   typeWriter(currentSentence.value, 0, 30)
 })
+
+// Google Auth
+
+const handleGoogleSuccess = async (googleUser: any) => {
+  const idToken = googleUser.getAuthResponse().id_token
+
+  let loginSuccessful = false
+
+  try {
+    const response = await fetchGoogleLogin(idToken)
+    if (response.status === 'Success') {
+      await authStore.setToken(response.data.token)
+      ms.success('success')
+      visible.value = false
+      router.go(0)
+      loginSuccessful = true
+    }
+    else {
+      ms.error('error')
+      authStore.removeToken()
+    }
+  }
+  catch (error: any) {
+    ms.error(error.message ?? 'error')
+    authStore.removeToken()
+  }
+  finally {
+    if (loginSuccessful)
+      visible.value = false
+  }
+}
 </script>
 
 <template>
@@ -218,6 +249,7 @@ onMounted(() => {
             <small>{{ currentSentence }}</small>
           </p>
         </header>
+
         <NSpace justify="space-around">
           <NButton block type="primary" @click="showRegister">
             Регистрация
@@ -225,6 +257,7 @@ onMounted(() => {
           <NButton block type="info" @click="showLogin">
             Вход
           </NButton>
+          <google-login @success="handleGoogleSuccess" />
         </NSpace>
       </div>
       <div v-if="showLoginForm || showRegisterForm" class="space-y-4">

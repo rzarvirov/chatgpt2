@@ -1,7 +1,7 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
-import { ObjectId } from 'mongodb'
 import { OAuth2Client } from 'google-auth-library'
+import { ObjectId } from 'mongodb'
 import type { ChatContext, ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
@@ -12,7 +12,8 @@ import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isNotEmptyString } from './utils/is'
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+const googleClientId = '474493346119-5o0f10gmqbr1ecdj8is1igk74jp65422.apps.googleusercontent.com'
+const googleClient = new OAuth2Client(googleClientId)
 
 const app = express()
 const router = express.Router()
@@ -342,46 +343,50 @@ router.post('/verify', async (req, res) => {
   }
 })
 
-app.use('', router)
-app.use('/api', router)
-
-app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))
-
 // Google Auth
 
-router.post('/auth/google', async (req, res) => {
+router.post('/google-login', async (req, res) => {
   try {
-    const { access_token } = req.body
+    const { idToken } = req.body as { idToken: string }
 
-    // Verify the Google access token
+    if (!idToken)
+      throw new Error('ID token is empty')
+
+    // Verify Google ID token
     const ticket = await googleClient.verifyIdToken({
-      idToken: access_token,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      idToken,
+      audience: googleClientId,
     })
+    const payload = ticket.getPayload()
+    const googleEmail = payload.email
 
-    const googleUser = ticket.getPayload()
-
-    // Check if the user already exists in your database using their email
-    let user = await getUser(googleUser.email)
+    let user = await getUser(googleEmail)
 
     if (user === null) {
-      // If the user doesn't exist, create a new user with the Google user's email
-      await createUser(googleUser.email, null)
-      user = await getUser(googleUser.email)
+      // Register & verify new user
+      await createUser(googleEmail, '') // Empty password for Google users
+      await verifyUser(googleEmail)
+      user = await getUser(googleEmail)
     }
 
-    // Create and return a JWT token for the user
     const token = jwt.sign({
       name: user.name ? user.name : user.email,
       avatar: user.avatar,
       description: user.description,
       userId: user._id,
-      root: googleUser.email.toLowerCase() === process.env.ROOT_USER,
+      root: googleEmail.toLowerCase() === process.env.ROOT_USER,
     }, process.env.AUTH_SECRET_KEY)
 
-    res.send({ status: 'Success', message: 'Добро пожаловать!', data: { token } })
+    res.send({ status: 'Success', message: 'Welcome!', data: { token } })
   }
   catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null })
   }
 })
+
+// End of Google Auth
+
+app.use('', router)
+app.use('/api', router)
+
+app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))
