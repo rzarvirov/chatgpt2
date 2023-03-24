@@ -228,35 +228,15 @@ async function googleAuthCallback(response: any) {
   }
 }
 
-/* const handleGoogleSuccess = async (googleUser: any) => {
-  const idToken = googleUser.getAuthResponse().id_token
+const detailsVisible = ref(false)
 
-  let loginSuccessful = false
+const showDetails = () => {
+  detailsVisible.value = true
+}
 
-  try {
-    const response = await fetchGoogleLogin(idToken)
-    console.log('Response:', response)
-    if (response.status === 'Success') {
-      await authStore.setToken(response.data.token)
-      ms.success('success')
-      visible.value = false
-      router.go(0)
-      loginSuccessful = true
-    }
-    else {
-      ms.error('error')
-      authStore.removeToken()
-    }
-  }
-  catch (error: any) {
-    ms.error(error.message ?? 'error')
-    authStore.removeToken()
-  }
-  finally {
-    if (loginSuccessful)
-      visible.value = false
-  }
-} */
+const closeDetails = () => {
+  detailsVisible.value = false
+}
 </script>
 
 <template>
@@ -281,12 +261,12 @@ async function googleAuthCallback(response: any) {
           <div>
             <GoogleLogin :callback="googleAuthCallback" />
           </div>
-          <div>или</div>
+          <div>или создайте аккаунт / войдите</div>
           <div class="flex flex-row items-center justify-center space-x-4">
-            <NButton block type="primary" @click="showRegister">
+            <NButton type="primary" class="px-4 py-2" @click="showRegister">
               Регистрация
             </NButton>
-            <NButton block type="info" @click="showLogin">
+            <NButton type="info" class="px-4 py-2" @click="showLogin">
               Вход
             </NButton>
           </div>
