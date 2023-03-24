@@ -204,7 +204,31 @@ onMounted(() => {
 })
 
 // Google Auth
-const handleGoogleSuccess = async (googleUser: any) => {
+const loading = ref(false)
+const token = ref('')
+
+async function googleAuthCallback(response: any) {
+  const credential = response?.credential
+  if (!credential)
+    return
+  try {
+    loading.value = true
+    const result = await fetchGoogleLogin(credential) // Get the result from the server
+    await authStore.setToken(result.data.token) // Set the JWT token from the server
+    ms.success('success')
+    window.location.reload()
+  }
+  catch (error: any) {
+    ms.error(error.message ?? 'error')
+    authStore.removeToken()
+    token.value = ''
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+/* const handleGoogleSuccess = async (googleUser: any) => {
   const idToken = googleUser.getAuthResponse().id_token
 
   let loginSuccessful = false
@@ -232,7 +256,7 @@ const handleGoogleSuccess = async (googleUser: any) => {
     if (loginSuccessful)
       visible.value = false
   }
-}
+} */
 </script>
 
 <template>
@@ -246,19 +270,27 @@ const handleGoogleSuccess = async (googleUser: any) => {
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
             Зарегистрируйтесь и получите доступ* к удивительным возможностям ChatGPT (*бесплатно, ограничение по количеству запросов в день).
           </p>
-          <p class="text-base text-center text-slate-500">
+          <p
+            class="text-base text-center text-slate-500"
+            style="line-height: 1.5; height: calc(1.5em * 3); overflow: hidden;"
+          >
             <small>{{ currentSentence }}</small>
           </p>
         </header>
-        <NSpace justify="space-around">
-          <google-login @success="handleGoogleSuccess" />
-          <NButton block type="primary" @click="showRegister">
-            Регистрация
-          </NButton>
-          <NButton block type="info" @click="showLogin">
-            Вход
-          </NButton>
-        </NSpace>
+        <div class="flex flex-col items-center justify-center space-y-4">
+          <div>
+            <GoogleLogin :callback="googleAuthCallback" />
+          </div>
+          <div>или</div>
+          <div class="flex flex-row items-center justify-center space-x-4">
+            <NButton block type="primary" @click="showRegister">
+              Регистрация
+            </NButton>
+            <NButton block type="info" @click="showLogin">
+              Вход
+            </NButton>
+          </div>
+        </div>
       </div>
       <div v-if="showLoginForm || showRegisterForm" class="space-y-4">
         <header class="space-y-2">
