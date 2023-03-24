@@ -10,6 +10,7 @@ RUN apk add --no-cache git \
     && pnpm run build \
     && pnpm install jsonwebtoken \
     && pnpm install jwt-token \
+    && pnpm install google-auth-library \
     && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 # service
@@ -24,6 +25,7 @@ RUN apk add --no-cache git \
     && pnpm install --only=production \
     && pnpm install jsonwebtoken \
     && pnpm install jwt-token \
+    && pnpm install google-auth-library \
     && rm -rf /root/.npm /root/.pnpm-store /usr/local/share/.cache /tmp/*
 
 EXPOSE 3002
