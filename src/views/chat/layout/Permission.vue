@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <script setup lang='ts'>
 import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
@@ -203,7 +204,6 @@ onMounted(() => {
 })
 
 // Google Auth
-
 const handleGoogleSuccess = async (googleUser: any) => {
   const idToken = googleUser.getAuthResponse().id_token
 
@@ -211,6 +211,7 @@ const handleGoogleSuccess = async (googleUser: any) => {
 
   try {
     const response = await fetchGoogleLogin(idToken)
+    console.log('Response:', response)
     if (response.status === 'Success') {
       await authStore.setToken(response.data.token)
       ms.success('success')
@@ -249,15 +250,14 @@ const handleGoogleSuccess = async (googleUser: any) => {
             <small>{{ currentSentence }}</small>
           </p>
         </header>
-
         <NSpace justify="space-around">
+          <google-login @success="handleGoogleSuccess" />
           <NButton block type="primary" @click="showRegister">
             Регистрация
           </NButton>
           <NButton block type="info" @click="showLogin">
             Вход
           </NButton>
-          <google-login @success="handleGoogleSuccess" />
         </NSpace>
       </div>
       <div v-if="showLoginForm || showRegisterForm" class="space-y-4">
