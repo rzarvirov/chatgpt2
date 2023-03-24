@@ -1,6 +1,7 @@
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
+import { OAuth2Client } from 'google-auth-library'
 import type { ChatContext, ChatMessage } from './chatgpt'
 import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
@@ -10,6 +11,8 @@ import { clearChat, createChatRoom, createUser, deleteChat, deleteChatRoom, exis
 import { sendMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isNotEmptyString } from './utils/is'
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 const app = express()
 const router = express.Router()
@@ -343,3 +346,42 @@ app.use('', router)
 app.use('/api', router)
 
 app.listen(3002, () => globalThis.console.log('Server is running on port 3002'))
+
+// Google Auth
+
+router.post('/auth/google', async (req, res) => {
+  try {
+    const { access_token } = req.body
+
+    // Verify the Google access token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: access_token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    })
+
+    const googleUser = ticket.getPayload()
+
+    // Check if the user already exists in your database using their email
+    let user = await getUser(googleUser.email)
+
+    if (user === null) {
+      // If the user doesn't exist, create a new user with the Google user's email
+      await createUser(googleUser.email, null)
+      user = await getUser(googleUser.email)
+    }
+
+    // Create and return a JWT token for the user
+    const token = jwt.sign({
+      name: user.name ? user.name : user.email,
+      avatar: user.avatar,
+      description: user.description,
+      userId: user._id,
+      root: googleUser.email.toLowerCase() === process.env.ROOT_USER,
+    }, process.env.AUTH_SECRET_KEY)
+
+    res.send({ status: 'Success', message: 'Добро пожаловать!', data: { token } })
+  }
+  catch (error) {
+    res.send({ status: 'Fail', message: error.message, data: null })
+  }
+})

@@ -1,4 +1,5 @@
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
+import axios from 'axios'
 import { get, post } from '@/utils/request'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
@@ -184,4 +185,16 @@ export function fetchDeleteChat<T = any>(roomId: number, uuid: number, inversion
     url: '/chat-delete',
     data: { roomId, uuid, inversion },
   })
+}
+
+// Add this function to your /src/api/index.ts file
+export async function fetchGoogleLogin(accessToken: string) {
+  const response = await axios.post('/auth/google', {
+    access_token: accessToken,
+  })
+
+  if (response.status !== 200)
+    throw new Error(response.statusText)
+
+  return response
 }

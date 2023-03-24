@@ -53,7 +53,7 @@ let api: ChatGPTAPI | CustomChatGPTAPI
 
     const options: ChatGPTAPIOptions = {
       apiKey: process.env.OPENAI_API_KEY,
-      completionParams: { model, max_tokens: 2000 },
+      completionParams: { model, max_tokens: parseInt(`${model === 'gpt-4' ? 8192 : 2048}`) },
       debug: true,
     }
 
