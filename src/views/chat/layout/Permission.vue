@@ -240,6 +240,9 @@ async function googleAuthCallback(response: any) {
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
             Зарегистрируйтесь и получите доступ* к удивительным возможностям ChatGPT (*бесплатно, ограничение по количеству запросов в день).
           </p>
+          <p class="text-base text-center">
+            <u><a href="http://about.aibuddy.ru/">Узнать подробности</a></u>
+          </p>
           <p
             class="text-base text-center text-slate-500"
             style="line-height: 1.5; height: calc(1.5em * 3); overflow: hidden;"
