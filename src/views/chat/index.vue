@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Ref } from 'vue'
@@ -206,7 +207,6 @@ async function onConversation() {
     },
   )
   scrollToBottom()
-
   try {
     let lastText = ''
     const fetchChatAPIOnce = async () => {
@@ -654,13 +654,13 @@ const getColourForKey = (key: string) => {
             </div>
             <br>
             <div style="text-align: center;">
-              <swiper-container
+              <swiper
                 class="swiper-container-custom"
                 slides-per-view="1"
                 :pagination="{ clickable: true }"
                 pagination-type="bullets"
                 :space-between="30"
-                css-mode="true"
+                :css-mode="true"
                 :mousewheel="true"
               >
                 <swiper-slide v-for="(page, pageIndex) in pages" :key="pageIndex">
@@ -675,7 +675,7 @@ const getColourForKey = (key: string) => {
                     </div>
                   </div>
                 </swiper-slide>
-              </swiper-container>
+              </swiper>
             </div>
           </template>
           <template v-else>
@@ -856,6 +856,10 @@ const getColourForKey = (key: string) => {
         <button class="w-full mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="openUrl('https://pay.cloudtips.ru/p/99817dfa')">
           Поддержать
         </button>
+        <div class="text-black">
+          <br>
+          <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
+        </div>
       </div>
 
       <div v-show="activeTab === 2" class="tab-content">

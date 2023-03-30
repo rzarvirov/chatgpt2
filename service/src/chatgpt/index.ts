@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
@@ -50,7 +51,6 @@ let api: ChatGPTAPI | CustomChatGPTAPI
   if (process.env.OPENAI_API_KEY) {
     const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
     const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
-
     const options: ChatGPTAPIOptions = {
       apiKey: process.env.OPENAI_API_KEY,
       completionParams: { model, max_tokens: parseInt(`${model === 'gpt-4' ? 8192 : 2048}`) },
@@ -93,7 +93,7 @@ async function chatReplyProcess(
       else
         options = { ...lastContext }
     }
-
+    console.log('model', model)
     const response = await api.sendMessage(message, {
       ...options,
       model,
