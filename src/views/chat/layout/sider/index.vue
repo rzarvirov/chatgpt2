@@ -87,6 +87,11 @@ if (getCurrentInstance())
             Библиотека запросов
           </NButton>
         </div>
+        <div class="p-4">
+          <center>
+            <u><a href="https://about.aibuddy.ru/%D0%BE%D0%B1%D1%80%D0%B0%D1%82%D0%BD%D0%B0%D1%8F-%D1%81%D0%B2%D1%8F%D0%B7%D1%8C">Обратная связь</a></u> / <u><a href="https://about.aibuddy.ru/">О сервисе</a></u>
+          </center>
+        </div>
       </main>
       <Footer />
     </div>
