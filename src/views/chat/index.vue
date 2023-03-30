@@ -647,6 +647,11 @@ const getColourForKey = (key: string) => {
                   PRO режим (GPT-4)
                 </option>
               </select>
+
+              <a href="https://www.about.aibuddy.ru/%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D0%B8-chatgpt" target="_blank" class="mr-2">
+                <SvgIcon icon="ri:question-line" width="48" />
+              </a>
+
               <!-- New button to open the new window -->
               <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="handleRecharge">
                 Поддержать
