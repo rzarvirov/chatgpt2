@@ -96,7 +96,9 @@ async function chatReplyProcess(
     console.log('model', model)
     const response = await api.sendMessage(message, {
       ...options,
-      model,
+      completionParams: {
+        model,
+      },
       onProgress: (partialResponse) => {
         process?. (partialResponse)
       },
