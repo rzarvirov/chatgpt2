@@ -1,7 +1,8 @@
-/* eslint-disable no-console */
 import type { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { get, post } from '@/utils/request'
+import type { ConfigState, MailConfig, SiteConfig } from '@/components/common/Setting/model'
 import { useAuthStoreWithout } from '@/store/modules/auth'
+import { useSettingStore } from '@/store'
 
 export function fetchChatAPI<T = any>(
   prompt: string,
@@ -32,16 +33,11 @@ export function fetchChatAPIProcess<T = any>(
     signal?: GenericAbortSignal
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
 ) {
+  const settingStore = useSettingStore()
+
   return post<T>({
     url: '/chat-process',
-    data: {
-      roomId: params.roomId,
-      uuid: params.uuid,
-      regenerate: params.regenerate || false,
-      prompt: params.prompt,
-      options: params.options,
-      model: params.model,
-    },
+    data: { roomId: params.roomId, uuid: params.uuid, regenerate: params.regenerate || false, prompt: params.prompt, options: params.options, systemMessage: settingStore.systemMessage, model: params.model },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })
@@ -173,6 +169,13 @@ export function fetchGetChatHistory<T = any>(roomId: number) {
   })
 }
 
+export function fetchClearAllChat<T = any>() {
+  return post<T>({
+    url: '/chat-clear-all',
+    data: { },
+  })
+}
+
 export function fetchClearChat<T = any>(roomId: number) {
   return post<T>({
     url: '/chat-clear',
@@ -184,6 +187,34 @@ export function fetchDeleteChat<T = any>(roomId: number, uuid: number, inversion
   return post<T>({
     url: '/chat-delete',
     data: { roomId, uuid, inversion },
+  })
+}
+
+export function fetchUpdateMail<T = any>(mail: MailConfig) {
+  return post<T>({
+    url: '/setting-mail',
+    data: mail,
+  })
+}
+
+export function fetchTestMail<T = any>(mail: MailConfig) {
+  return post<T>({
+    url: '/mail-test',
+    data: mail,
+  })
+}
+
+export function fetchUpdateSite<T = any>(config: SiteConfig) {
+  return post<T>({
+    url: '/setting-site',
+    data: config,
+  })
+}
+
+export function fetchUpdateBaseSetting<T = any>(config: ConfigState) {
+  return post<T>({
+    url: '/setting-base',
+    data: config,
   })
 }
 

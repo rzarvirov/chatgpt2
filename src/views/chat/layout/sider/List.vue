@@ -16,34 +16,40 @@ const handleAdd = inject<() => void>('handleAdd')
 
 onMounted(async () => {
   if (authStore.session == null || !authStore.session.auth || authStore.token)
-    await handleSyncChat()
+    await handleSyncChatRoom()
 
   if (dataSources.value.length === 0 && handleAdd)
     handleAdd()
 })
-async function handleSyncChat() {
+
+async function handleSyncChatRoom() {
   // if (chatStore.history.length == 1 && chatStore.history[0].title == 'New Chat'
   //   && chatStore.chat[0].data.length <= 0)
-  await chatStore.syncHistory()
-  const scrollRef = document.querySelector('#scrollRef')
-  if (scrollRef)
-    nextTick(() => scrollRef.scrollTop = scrollRef.scrollHeight)
+  chatStore.syncHistory(() => {
+    const scrollRef = document.querySelector('#scrollRef')
+    if (scrollRef)
+      nextTick(() => scrollRef.scrollTop = scrollRef.scrollHeight)
+  })
 }
-async function handleSelect({ uuid }: Chat.History) {
+
+async function handleSelect({ uuid }: Chat. History) {
   if (isActive(uuid))
     return
-  // 这里不需要 不然每次切换都rename
-  // if (chatStore.active)
-  //   chatStore.updateHistory(chatStore.active, { isEdit: false })
-  await chatStore.syncChat({ uuid } as Chat.History)
+  chatStore.syncChat({ uuid } as Chat.History, () => {
+    const scrollRef = document.querySelector('#scrollRef')
+    if (scrollRef)
+      nextTick(() => scrollRef.scrollTop = scrollRef.scrollHeight)
+  })
   await chatStore.setActive(uuid)
   if (isMobile.value)
     appStore.setSiderCollapsed(true)
 }
-function handleEdit({ uuid }: Chat.History, isEdit: boolean, event?: MouseEvent) {
+
+function handleEdit({ uuid }: Chat. History, isEdit: boolean, event?: MouseEvent) {
   event?.stopPropagation()
   chatStore.updateHistory(uuid, { isEdit })
 }
+
 function handleDelete(index: number, event?: MouseEvent | TouchEvent) {
   event?.stopPropagation()
   chatStore.deleteHistory(index)
@@ -69,7 +75,7 @@ function isActive(uuid: number) {
 <template>
   <NScrollbar class="px-4">
     <div class="flex flex-col gap-2 text-sm">
-      <template v-if="!dataSources.length">
+      <template v-if="!dataSources. length">
         <div class="flex flex-col items-center mt-4 text-center text-neutral-300">
           <SvgIcon icon="ri:inbox-line" class="mb-2 text-3xl" />
           <span>{{ $t('common.noData') }}</span>
@@ -88,8 +94,7 @@ function isActive(uuid: number) {
             <div class="relative flex-1 overflow-hidden break-all text-ellipsis whitespace-nowrap">
               <NInput
                 v-if="item.isEdit"
-                v-model:value="item.title"
-                size="tiny"
+                v-model:value="item.title" size="tiny"
                 @keypress="handleEnter(item, false, $event)"
               />
               <span v-else>{{ item.title }}</span>

@@ -8,24 +8,16 @@ import type { UserInfo } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { t } from '@/locales'
-
+import { fetchClearAllChat } from '@/api'
 const appStore = useAppStore()
 const userStore = useUserStore()
-
 const { isMobile } = useBasicLayout()
-
 const ms = useMessage()
-
 const theme = computed(() => appStore.theme)
-
 const userInfo = computed(() => userStore.userInfo)
-
 const avatar = ref(userInfo.value.avatar ?? '')
-
 const name = ref(userInfo.value.name ?? '')
-
 const description = ref(userInfo.value.description ?? '')
-
 const language = computed({
   get() {
     return appStore.language
@@ -34,7 +26,6 @@ const language = computed({
     appStore.setLanguage(value)
   },
 })
-
 const themeOptions: { label: string; key: Theme; icon: string }[] = [
   {
     label: 'Auto',
@@ -64,7 +55,6 @@ async function updateUserInfo(options: Partial<UserInfo>) {
   await userStore.updateUserInfo(true, options)
   ms.success(t('common.success'))
 }
-
 function exportData(): void {
   const date = getCurrentDate()
   const data: string = localStorage.getItem('chatStorage') || '{}'
@@ -78,16 +68,13 @@ function exportData(): void {
   link.click()
   document.body.removeChild(link)
 }
-
 function importData(event: Event): void {
   const target = event.target as HTMLInputElement
   if (!target || !target.files)
     return
-
   const file: File = target.files[0]
   if (!file)
     return
-
   const reader: FileReader = new FileReader()
   reader.onload = () => {
     try {
@@ -102,12 +89,11 @@ function importData(event: Event): void {
   }
   reader.readAsText(file)
 }
-
-function clearData(): void {
+async function clearData(): Promise<void> {
+  await fetchClearAllChat()
   localStorage.removeItem('chatStorage')
   location.reload()
 }
-
 function handleImportButtonClick(): void {
   const fileInput = document.getElementById('fileInput') as HTMLElement
   if (fileInput)
@@ -136,7 +122,6 @@ function handleImportButtonClick(): void {
           <NInput v-model:value="avatar" placeholder="" />
         </div>
       </div>
-
       <div
         class="flex items-center space-x-4"
         :class="isMobile && 'items-start'"
@@ -201,7 +186,7 @@ function handleImportButtonClick(): void {
       </div>
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.saveUserInfo') }}</span>
-        <NButton size="small" type="primary" @click="updateUserInfo({ avatar, name, description })">
+        <NButton type="primary" @click="updateUserInfo({ avatar, name, description })">
           {{ $t('common.save') }}
         </NButton>
       </div>

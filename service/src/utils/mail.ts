@@ -1,30 +1,40 @@
+import * as fs from 'fs'
+import * as path from 'path'
 import nodemailer from 'nodemailer'
+import type { MailConfig } from '../storage/model'
+import { getCacheConfig } from '../storage/config'
 
-// create reusable transporter object using SMTP transport
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: process.env.SMTP_TSL,
-  auth: {
-    user: process.env.SMTP_USERNAME,
-    pass: process.env.SMTP_PASSWORD,
-  },
-})
+export async function sendVerifyMail(toMail: string, verifyUrl: string) {
+  const config = (await getCacheConfig())
 
-export function sendMail(toMail: string, verifyUrl: string) {
+  const templatesPath = path.join(__dirname, 'templates')
+  const mailTemplatePath = path.join(templatesPath, 'mail.template.html')
+  let mailHtml = fs.readFileSync(mailTemplatePath, 'utf8')
+  mailHtml = mailHtml.replace(/\${VERIFY_URL}/g, verifyUrl)
+  sendMail(toMail, 'AiBuddy.ru: Подтверждение регистрации', mailHtml, config.mailConfig)
+}
+
+export async function sendTestMail(toMail: string, config: MailConfig) {
+  return sendMail(toMail, '测试邮件|Test mail', '这是一封测试邮件|This is test mail', config)
+}
+
+async function sendMail(toMail: string, subject: string, html: string, config: MailConfig) {
   const mailOptions = {
-    from: process.env.SMTP_SENDER, // sender address
-    to: toMail, // list of receivers
-    subject: 'aibuddy.ru: Подтверждение регистрации', // Subject line
-    // text: 'Hello world?', // plain text body
-    html: `<h3>Вы регистрируетесь на сайте aibuddy.ru, ссылка для подтверждения вашего электронного адреса (действительна в течение 12 часов):</h3><br/><br/><h2><a target="_blank" href="${verifyUrl}">Подтвердить регистрацию</a></h2>`, // html body
+    from: config.smtpUserName,
+    to: toMail,
+    subject,
+    html,
   }
 
-  // send mail with defined transport object
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error)
-      throw error
-    else
-      return info.messageId
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_TSL,
+    auth: {
+      user: process.env.SMTP_USERNAME,
+      pass: process.env.SMTP_PASSWORD,
+    },
   })
+  const info = await transporter.sendMail(mailOptions)
+  return info.messageId
 }

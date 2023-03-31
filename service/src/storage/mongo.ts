@@ -1,12 +1,16 @@
 import { MongoClient, ObjectId } from 'mongodb'
+import dotenv from 'dotenv'
 import { ChatInfo, ChatRoom, Status, UserInfo } from './model'
-import type { ChatOptions } from './model'
+import type { ChatOptions, Config } from './model'
+
+dotenv.config()
 
 const url = process.env.MONGODB_URL
 const client = new MongoClient(url)
 const chatCol = client.db('chatgpt').collection('chat')
 const roomCol = client.db('chatgpt').collection('chat_room')
 const userCol = client.db('chatgpt').collection('user')
+const configCol = client.db('chatgpt').collection('config')
 
 /**
  * 插入聊天信息
@@ -33,12 +37,13 @@ export async function updateChat(chatId: string, response: string, messageId: st
   await chatCol.updateOne(query, update)
 }
 
-export async function createChatRoom(userId: ObjectId, title: string, roomId: number) {
+export async function createChatRoom(userId: string, title: string, roomId: number) {
   const room = new ChatRoom(userId, title, roomId)
   await roomCol.insertOne(room)
   return room
 }
-export async function renameChatRoom(userId: ObjectId, title: string, roomId: number) {
+
+export async function renameChatRoom(userId: string, title: string, roomId: number) {
   const query = { userId, roomId }
   const update = {
     $set: {
@@ -48,20 +53,26 @@ export async function renameChatRoom(userId: ObjectId, title: string, roomId: nu
   const result = await roomCol.updateOne(query, update)
   return result
 }
-export async function deleteChatRoom(userId: ObjectId, roomId: number) {
+
+export async function deleteChatRoom(userId: string, roomId: number) {
   const result = await roomCol.updateOne({ roomId, userId }, { $set: { status: Status.Deleted } })
   await clearChat(roomId)
   return result
 }
 
-export async function getChatRooms(userId: ObjectId) {
+export async function getChatRooms(userId: string) {
   const cursor = await roomCol.find({ userId, status: { $ne: Status.Deleted } })
   const rooms = []
   await cursor.forEach(doc => rooms.push(doc))
   return rooms
 }
 
-export async function existsChatRoom(userId: ObjectId, roomId: number) {
+export async function deleteAllChatRooms(userId: string) {
+  await roomCol.updateMany({ userId, status: Status.Normal }, { $set: { status: Status.Deleted } })
+  await chatCol.updateMany({ userId, status: Status.Normal }, { $set: { status: Status.Deleted } })
+}
+
+export async function existsChatRoom(userId: string, roomId: number) {
   const room = await roomCol.findOne({ roomId, userId })
   return !!room
 }
@@ -130,8 +141,8 @@ export async function createUser(email: string, password: string, name?: string)
   return userInfo
 }
 
-export async function updateUserInfo(userId: ObjectId, user: UserInfo) {
-  const result = userCol.updateOne({ _id: userId }
+export async function updateUserInfo(userId: string, user: UserInfo) {
+  const result = userCol.updateOne({ _id: new ObjectId(userId) }
     , { $set: { name: user.name, description: user.description, avatar: user.avatar } })
   return result
 }
@@ -141,13 +152,24 @@ export async function getUser(email: string): Promise<UserInfo> {
   return await userCol.findOne({ email }) as UserInfo
 }
 
-export async function getUserById(userId: ObjectId): Promise<UserInfo> {
-  return await userCol.findOne({ _id: userId }) as UserInfo
+export async function getUserById(userId: string): Promise<UserInfo> {
+  return await userCol.findOne({ _id: new ObjectId(userId) }) as UserInfo
 }
 
 export async function verifyUser(email: string) {
   email = email.toLowerCase()
   return await userCol.updateOne({ email }, { $set: { status: Status.Normal, verifyTime: new Date().toLocaleString() } })
+}
+
+export async function getConfig(): Promise<Config> {
+  return await configCol.findOne() as Config
+}
+
+export async function updateConfig(config: Config): Promise<Config> {
+  const result = await configCol.replaceOne({ _id: config._id }, config, { upsert: true })
+  if (result.modifiedCount > 0 || result.upsertedCount > 0)
+    return config
+  return null
 }
 
 export async function getUserBalance(userId: string) {

@@ -33,34 +33,21 @@ class UserInfo {
     this.accounttype = 'free'
   }
 }
-
-class UserOauth {
-  userId: number
-  oauthType: OauthType
-  oauthId: string
-
-  constructor(userId: number, oauthType: OauthType, oauthId: string) {
-    this.userId = userId
-    this.oauthType = oauthType
-    this.oauthId = oauthId
-  }
-}
-
 class ChatRoom {
   _id: ObjectId
   roomId: number
-  userId: number
+  userId: string
   title: string
   status: Status = Status.Normal
 
-  constructor(userId: number, title: string, roomId: number) { // updated constructor signature
+  constructor(userId: string, title: string, roomId: number) { // updated constructor signature
     this.userId = userId
     this.title = title
     this.roomId = roomId
   }
 }
 
-class ChatOptions {
+export class ChatOptions {
   parentMessageId?: string
   messageId?: string
   constructor(parentMessageId?: string, messageId?: string) {
@@ -69,7 +56,7 @@ class ChatOptions {
   }
 }
 
-class ChatInfo {
+export class ChatInfo {
   _id: ObjectId
   roomId: number
   uuid: number
@@ -87,4 +74,41 @@ class ChatInfo {
   }
 }
 
-export { UserInfo, UserOauth, ChatRoom, ChatInfo, ChatOptions, Status }
+export class Config {
+  constructor(
+    public _id: ObjectId,
+    public timeoutMs: number,
+    public apiKey?: string,
+    public accessToken?: string,
+    public apiBaseUrl?: string,
+    public apiModel?: string,
+    public reverseProxy?: string,
+    public socksProxy?: string,
+    public httpsProxy?: string,
+    public siteConfig?: SiteConfig,
+    public mailConfig?: MailConfig,
+  ) { }
+}
+
+export class SiteConfig {
+  constructor(
+    public siteTitle?: string,
+    public loginEnabled?: boolean,
+    public loginSalt?: string,
+    public registerEnabled?: boolean,
+    public registerMails?: string,
+    public siteDomain?: string,
+  ) { }
+}
+
+export class MailConfig {
+  constructor(
+    public smtpHost: string,
+    public smtpPort: number,
+    public smtpTsl: boolean,
+    public smtpUserName: string,
+    public smtpPassword: string,
+  ) { }
+}
+
+export { UserInfo, ChatRoom, Status }

@@ -1,31 +1,18 @@
-/* eslint-disable no-console */
 import * as dotenv from 'dotenv'
 import 'isomorphic-fetch'
 import type { ChatGPTAPIOptions, ChatMessage, SendMessageOptions } from 'chatgpt'
 import { ChatGPTAPI } from 'chatgpt'
 import { SocksProxyAgent } from 'socks-proxy-agent'
-import { HttpsProxyAgent } from 'https-proxy-agent'
+import httpsProxyAgent from 'https-proxy-agent'
 import fetch from 'node-fetch'
 import axios from 'axios'
 import { sendResponse } from '../utils'
+import { getCacheConfig, getOriginConfig } from '../storage/config'
 import { isNotEmptyString } from '../utils/is'
 import type { ApiModel, ChatContext, ChatGPTUnofficialProxyAPIOptions, ModelConfig } from '../types'
+import type { RequestOptions } from './types'
 
 dotenv.config()
-
-class CustomChatGPTAPI extends ChatGPTAPI {
-  async sendMessage(
-    message: string,
-    options: SendMessageOptions & { model?: string },
-  ): Promise<ChatMessage> {
-    const completionParams = options.model ? { model: options.model } : {}
-    const modifiedOptions = {
-      ...options,
-      completionParams: { ...this._completionParams, ...completionParams },
-    }
-    return super.sendMessage(message, modifiedOptions)
-  }
-}
 
 const ErrorCodeMessage: Record<string, string> = {
   401: '[OpenAI] предоставлен неправильный ключ API | Incorrect API key provided',
@@ -36,27 +23,28 @@ const ErrorCodeMessage: Record<string, string> = {
   500: '[OpenAI] внутренняя ошибка сервера | Internal Server Error',
 }
 
-const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 3000
+const { HttpsProxyAgent } = httpsProxyAgent
 
 let apiModel: ApiModel
+let api: ChatGPTAPI
 
-if (!process.env.OPENAI_API_KEY && !process.env.OPENAI_ACCESS_TOKEN)
-  throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
-
-let api: ChatGPTAPI | CustomChatGPTAPI
-
-(async () => {
+export async function initApi() {
   // More Info: https://github.com/transitive-bullshit/chatgpt-api
 
-  if (process.env.OPENAI_API_KEY) {
+  const config = await getCacheConfig()
+  if (!config.apiKey && !config.accessToken)
+    throw new Error('Missing OPENAI_API_KEY or OPENAI_ACCESS_TOKEN environment variable')
+
+  if (isNotEmptyString(config.apiKey)) {
+    const OPENAI_API_BASE_URL = process.env.OPENAI_API_BASE_URL
     const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
     const model = isNotEmptyString(OPENAI_API_MODEL) ? OPENAI_API_MODEL : 'gpt-3.5-turbo'
+
     const options: ChatGPTAPIOptions = {
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: config.apiKey,
       completionParams: { model, max_tokens: parseInt(`${model === 'gpt-4' ? 8192 : 2048}`) },
       debug: true,
     }
-
     // increase max token limit if use gpt-4
     if (model.toLowerCase().includes('gpt-4')) {
       // if use 32k model
@@ -70,35 +58,59 @@ let api: ChatGPTAPI | CustomChatGPTAPI
       }
     }
 
-    if (isNotEmptyString(process.env.OPENAI_API_BASE_URL))
-      options.apiBaseUrl = process.env.OPENAI_API_BASE_URL
+    if (isNotEmptyString(OPENAI_API_BASE_URL))
+      options.apiBaseUrl = `${OPENAI_API_BASE_URL}/v1`
 
-    api = new CustomChatGPTAPI({ ...options })
-    api = new CustomChatGPTAPI({ ...options })
+    await setupProxy(options)
+
+    api = new ChatGPTAPI({ ...options })
+    apiModel = 'ChatGPTAPI'
   }
-})()
+  else {
+    const OPENAI_API_MODEL = process.env.OPENAI_API_MODEL
+    const options: ChatGPTUnofficialProxyAPIOptions = {
+      accessToken: config.accessToken,
+      debug: true,
+    }
+    if (isNotEmptyString(OPENAI_API_MODEL))
+      options.model = OPENAI_API_MODEL
 
-async function chatReplyProcess(
-  message: string,
-  lastContext?: { conversationId?: string; parentMessageId?: string },
-  process?: (chat: ChatMessage) => void,
-  model?: string, // Add this line
-) {
+    if (isNotEmptyString(config.reverseProxy))
+      options.apiReverseProxyUrl = config.reverseProxy
+
+    await setupProxy(options)
+
+    // api = new ChatGPTUnofficialProxyAPI({ ...options })
+    // apiModel = 'ChatGPTUnofficialProxyAPI'
+  }
+}
+
+async function chatReplyProcess(chatOptions: RequestOptions) {
+  const { message, lastContext, process, systemMessage, model } = chatOptions
   try {
+    const timeoutMs = (await getCacheConfig()).timeoutMs
     let options: SendMessageOptions = { timeoutMs }
 
-    if (lastContext) {
-      if (apiModel === 'ChatGPTAPI' || apiModel === 'CustomChatGPTAPI')
-        options = { parentMessageId: lastContext.parentMessageId }
+    if (apiModel === 'ChatGPTAPI') {
+      if (isNotEmptyString(systemMessage))
+        options.systemMessage = systemMessage
+      if (isNotEmptyString(model)) {
+        if (!options.completionParams)
+          options.completionParams = {}
+
+        options.completionParams.model = model
+      }
+    }
+
+    if (lastContext != null) {
+      if (apiModel === 'ChatGPTAPI')
+        options.parentMessageId = lastContext.parentMessageId
       else
         options = { ...lastContext }
     }
-    console.log('model', model)
+
     const response = await api.sendMessage(message, {
       ...options,
-      completionParams: {
-        model,
-      },
       onProgress: (partialResponse) => {
         process?. (partialResponse)
       },
@@ -115,17 +127,21 @@ async function chatReplyProcess(
   }
 }
 
-async function fetchAPIBalance() {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+async function fetchBalance() {
+  const config = await getCacheConfig()
+  const OPENAI_API_KEY = config.apiKey
+  const OPENAI_API_BASE_URL = config.apiBaseUrl
+
   if (!isNotEmptyString(OPENAI_API_KEY))
     return Promise.resolve('-')
 
+  const API_BASE_URL = isNotEmptyString(OPENAI_API_BASE_URL)
+    ? OPENAI_API_BASE_URL
+    : 'https://api.openai.com'
+
   try {
-    const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
-    }
-    const response = await axios.get('https://api.openai.com/dashboard/billing/credit_grants', { headers })
+    const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${OPENAI_API_KEY}` }
+    const response = await axios.get(`${API_BASE_URL}/dashboard/billing/credit_grants`, { headers })
     const balance = response.data.total_available ?? 0
     return Promise.resolve(balance.toFixed(3))
   }
@@ -135,29 +151,28 @@ async function fetchAPIBalance() {
 }
 
 async function chatConfig() {
-  const apibalance = await fetchAPIBalance()
-  const reverseProxy = process.env.API_REVERSE_PROXY ?? '-'
-  const socksProxy = (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) ? (`${process.env.SOCKS_PROXY_HOST}:${process.env.SOCKS_PROXY_PORT}`) : '-'
-  const httpsProxy = (process.env.HTTPS_PROXY || process.env.ALL_PROXY) ?? '-'
+  const config = await getOriginConfig() as ModelConfig
+  config.balance = await fetchBalance()
   return sendResponse<ModelConfig>({
     type: 'Success',
-    data: { apiModel, reverseProxy, timeoutMs, socksProxy, apibalance },
+    data: config,
   })
 }
 
-function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOptions) {
-  if (process.env.SOCKS_PROXY_HOST && process.env.SOCKS_PROXY_PORT) {
+async function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOptions) {
+  const config = await getCacheConfig()
+  if (config.socksProxy) {
     const agent = new SocksProxyAgent({
-      hostname: process.env.SOCKS_PROXY_HOST,
-      port: process.env.SOCKS_PROXY_PORT,
+      hostname: config.socksProxy.split(':')[0],
+      port: parseInt(config.socksProxy.split(':')[1]),
     })
     options.fetch = (url, options) => {
       return fetch(url, { agent, ...options })
     }
   }
   else {
-    if (process.env.HTTPS_PROXY || process.env.ALL_PROXY) {
-      const httpsProxy = process.env.HTTPS_PROXY || process.env.ALL_PROXY
+    if (config.httpsProxy || process.env.ALL_PROXY) {
+      const httpsProxy = config.httpsProxy || process.env.ALL_PROXY
       if (httpsProxy) {
         const agent = new HttpsProxyAgent(httpsProxy)
         options.fetch = (url, options) => {
@@ -171,6 +186,8 @@ function setupProxy(options: ChatGPTAPIOptions | ChatGPTUnofficialProxyAPIOption
 function currentModel(): ApiModel {
   return apiModel
 }
+
+initApi()
 
 export type { ChatContext, ChatMessage }
 

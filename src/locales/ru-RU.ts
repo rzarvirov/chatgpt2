@@ -31,6 +31,7 @@ export default {
     unauthorizedTips: 'Не авторизован, сначала необходимо выполнить проверку.',
   },
   chat: {
+    newChatButton: 'Новый чат',
     placeholder: 'Спросите что-нибудь...; Используйте символ / чтобы посмотреть потрясающие примеры',
     placeholderMobile: 'Спросите что-нибудь...',
     copy: 'Копировать',
@@ -51,6 +52,8 @@ export default {
     clearHistoryConfirm: 'Вы уверены, что хотите очистить историю чата?',
   },
   setting: {
+    advanced: 'Тонкие материи',
+    role: 'Роль',
     setting: 'Настройка',
     general: 'Общее',
     config: 'Конфигурация',

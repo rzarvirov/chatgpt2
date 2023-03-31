@@ -1,5 +1,15 @@
 import type { FetchFn } from 'chatgpt'
 
+export interface RequestProps {
+  roomId: number
+  uuid: number
+  regenerate: boolean
+  prompt: string
+  options?: ChatContext
+  systemMessage: string
+  model?: string
+}
+
 export interface ChatContext {
   conversationId?: string
   parentMessageId?: string
@@ -19,8 +29,9 @@ export interface ModelConfig {
   reverseProxy?: string
   timeoutMs?: number
   socksProxy?: string
+  httpsProxy?: string
   allowRegister?: boolean
-  apibalance?: string
+  balance?: string
 }
 
-export type ApiModel = 'ChatGPTAPI' | 'CustomChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined
+export type ApiModel = 'ChatGPTAPI' | 'ChatGPTUnofficialProxyAPI' | undefined

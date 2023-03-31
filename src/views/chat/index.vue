@@ -1,4 +1,3 @@
-<!-- eslint-disable no-console -->
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Ref } from 'vue'
@@ -36,7 +35,6 @@ const dialog = useDialog()
 const ms = useMessage()
 const selectedModel = ref<string>('gpt-3.5-turbo')
 const sendbuttonClicked = ref(false)
-
 const chatStore = useChatStore()
 
 useCopyCode()
@@ -207,6 +205,7 @@ async function onConversation() {
     },
   )
   scrollToBottom()
+
   try {
     let lastText = ''
     const fetchChatAPIOnce = async () => {
@@ -215,7 +214,7 @@ async function onConversation() {
         uuid: chatUuid, // ?
         prompt: message,
         options,
-        model: selectedModel.value, // ?
+        model: selectedModel.value,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -274,7 +273,6 @@ async function onConversation() {
     }
 
     const currentChat = getChatByUuidAndIndex(+uuid, dataSources.value.length - 1)
-
     if (currentChat?.text && currentChat.text !== '') {
       updateChatSome(
         +uuid,
