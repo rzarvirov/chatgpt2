@@ -1,12 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import nodemailer from 'nodemailer'
-import type { MailConfig } from '../storage/model'
-import { getCacheConfig } from '../storage/config'
 
 export async function sendVerifyMail(toMail: string, verifyUrl: string) {
-  const config = (await getCacheConfig())
-
   const templatesPath = path.join(__dirname, 'templates')
   const mailTemplatePath = path.join(templatesPath, 'mail.template.html')
   let mailHtml = fs.readFileSync(mailTemplatePath, 'utf8')
@@ -14,7 +10,7 @@ export async function sendVerifyMail(toMail: string, verifyUrl: string) {
   sendMail(toMail, 'AiBuddy.ru: Подтверждение регистрации', mailHtml)
 }
 
-export async function sendTestMail(toMail: string, config: MailConfig) {
+export async function sendTestMail(toMail: string) {
   return sendMail(toMail, '测试邮件|Test mail', '这是一封测试邮件|This is test mail')
 }
 
