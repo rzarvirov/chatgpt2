@@ -22,7 +22,7 @@ import { useAuthStoreWithout } from '@/store/modules/auth'
 const showModal = ref(false)
 const activeTab = ref(1)
 
-const openUrl = (url: string) => {
+function openUrl(url: string) {
   window.open(url, '_blank')
 }
 
@@ -109,7 +109,7 @@ async function reduceProBalance() {
 }
 
 // function handleRecharge() {
-const handleRecharge = () => {
+function handleRecharge() {
   showModal.value = true
   sendbuttonClicked.value = true
 
@@ -551,7 +551,7 @@ const searchOptions = computed(() => {
   }
 })
 // value anti-rendering key
-const renderOption = (option: { label: string }) => {
+function renderOption(option: { label: string }) {
   for (const i of promptTemplate.value) {
     if (i.value === option.label)
       return [i.key]
@@ -601,13 +601,13 @@ const pages = computed(() => {
   return pagesArray
 })
 
-const handleHashtagClick = (key: string) => {
+function handleHashtagClick(key: string) {
   const clickedPrompt = PromptsList.find(prompt => prompt.key === key)
   if (clickedPrompt)
     prompt.value = clickedPrompt.value
 }
 
-const getColourForKey = (key: string) => {
+function getColourForKey(key: string) {
   const prompt = PromptsList.find(prompt => prompt.key === key)
   return prompt ? prompt.colour : '#72BCD4' // Fallback color if not found
 }

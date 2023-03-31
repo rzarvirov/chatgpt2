@@ -41,7 +41,7 @@ const promptStore = usePromptStore()
 const promptList = ref<any>(promptStore.promptList)
 
 // 移动端自适应相关
-const renderTemplate = () => {
+function renderTemplate() {
   const [keyLimit, valueLimit] = isMobile.value ? [20, 200] : [50, 400]
 
   return promptList.value.map((item: { key: string; value: string }) => {
@@ -62,7 +62,7 @@ const pagination = computed(() => {
 })
 
 // table相关
-const createColumns = (): DataTableColumns<DataProps> => {
+function createColumns(): DataTableColumns<DataProps> {
   return [
     {
       title: t('store.title'),
@@ -98,7 +98,7 @@ const dataSource = computed(() => {
   return data
 })
 
-const fetchData = async () => {
+async function fetchData() {
   const response = await fetch('/prompts_RU.json')
   const jsonData = await response.json()
   promptList.value = jsonData

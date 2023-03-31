@@ -140,7 +140,7 @@ async function handleRegister() {
     return
   }
   if (!isValidPassword(pwd)) {
-    ms.warning('Пароль должен содержать не менее 8 символов, включая заглавную букву, строчную букву и цифру')
+    ms.warning('Пароль должен содержать не менее 8 символов, включая заглавную букву, строчную букву, цифру и специальный символ')
     return
   }
   try {
@@ -164,20 +164,20 @@ const sentences = SentencesList
 const currentSentenceIndex = ref(0)
 const currentSentence = ref('')
 
-const getNextSentenceIndex = (): number => {
+function getNextSentenceIndex(): number {
   const index = Math.floor(Math.random() * sentences.length)
   return index === currentSentenceIndex.value
     ? getNextSentenceIndex()
     : index
 }
 
-const getNextSentence = (): string => {
+function getNextSentence(): string {
   const index = getNextSentenceIndex()
   currentSentenceIndex.value = index
   return sentences[index]
 }
 
-const typeWriter = (sentence: string, index: number, speed: number) => {
+function typeWriter(sentence: string, index: number, speed: number) {
   if (index === 0)
     currentSentence.value = ''
 
