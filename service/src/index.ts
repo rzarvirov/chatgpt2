@@ -9,7 +9,6 @@ import { clearConfigCache, getCacheConfig, getOriginConfig } from './storage/con
 import type { ChatOptions, Config, MailConfig, SiteConfig, UserInfo } from './storage/model'
 import { Status } from './storage/model'
 import { clearChat, createChatRoom, createUser, deleteAllChatRooms, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, getUserProBalance, insertChat, renameChatRoom, updateChat, updateConfig, updateUserBalance, updateUserInfo, updateUserProBalance, verifyUser } from './storage/mongo'
-import { limiter } from './middleware/limiter'
 import { sendTestMail, sendVerifyMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isEmail, isNotEmptyString } from './utils/is'
@@ -257,7 +256,7 @@ router.post('/chat', auth, async (req, res) => {
   }
 })
 
-router.post('/chat-process', [auth, limiter], async (req, res) => {
+router.post('/chat-process', [auth], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
