@@ -11,16 +11,16 @@ export async function sendVerifyMail(toMail: string, verifyUrl: string) {
   const mailTemplatePath = path.join(templatesPath, 'mail.template.html')
   let mailHtml = fs.readFileSync(mailTemplatePath, 'utf8')
   mailHtml = mailHtml.replace(/\${VERIFY_URL}/g, verifyUrl)
-  sendMail(toMail, 'AiBuddy.ru: Подтверждение регистрации', mailHtml, config.mailConfig)
+  sendMail(toMail, 'AiBuddy.ru: Подтверждение регистрации', mailHtml)
 }
 
 export async function sendTestMail(toMail: string, config: MailConfig) {
-  return sendMail(toMail, '测试邮件|Test mail', '这是一封测试邮件|This is test mail', config)
+  return sendMail(toMail, '测试邮件|Test mail', '这是一封测试邮件|This is test mail')
 }
 
-async function sendMail(toMail: string, subject: string, html: string, config: MailConfig) {
+async function sendMail(toMail: string, subject: string, html: string) {
   const mailOptions = {
-    from: config.smtpUserName,
+    from: process.env.SMTP_SENDER,
     to: toMail,
     subject,
     html,
