@@ -23,6 +23,8 @@ const ErrorCodeMessage: Record<string, string> = {
   500: '[OpenAI] внутренняя ошибка сервера | Internal Server Error',
 }
 
+const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 5000
+
 const { HttpsProxyAgent } = httpsProxyAgent
 
 let apiModel: ApiModel
@@ -42,7 +44,7 @@ export async function initApi() {
 
     const options: ChatGPTAPIOptions = {
       apiKey: config.apiKey,
-      completionParams: { model, max_tokens: parseInt(`${model === 'gpt-4' ? 8192 : 2048}`) },
+      completionParams: { model },
       debug: true,
     }
     // increase max token limit if use gpt-4
@@ -88,7 +90,6 @@ export async function initApi() {
 async function chatReplyProcess(chatOptions: RequestOptions) {
   const { message, lastContext, process, systemMessage, model } = chatOptions
   try {
-    const timeoutMs = (await getCacheConfig()).timeoutMs
     let options: SendMessageOptions = { timeoutMs }
 
     if (apiModel === 'ChatGPTAPI') {
