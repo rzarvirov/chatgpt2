@@ -591,7 +591,8 @@ interface Prompt {
 }
 
 const keys = PromptsList.map((prompt: Prompt) => prompt.key)
-const ITEMS_PER_PAGE = 22
+const isMobile2 = window.innerWidth <= 768
+const ITEMS_PER_PAGE = isMobile2 ? 20 : 60
 
 const pages = computed(() => {
   const pagesArray = []
@@ -610,6 +611,17 @@ function handleHashtagClick(key: string) {
 function getColourForKey(key: string) {
   const prompt = PromptsList.find(prompt => prompt.key === key)
   return prompt ? prompt.colour : '#72BCD4' // Fallback color if not found
+}
+
+const button = ref<HTMLElement | null>(null)
+
+onMounted(() => {
+  if (button.value)
+    button.value.style.opacity = '1'
+})
+
+function goToPage(url: string) {
+  window.open(url, '_blank')
 }
 </script>
 
@@ -658,7 +670,7 @@ function getColourForKey(key: string) {
             <br>
             <div style="text-align: center;">
               <swiper
-                class="swiper-container-custom"
+                class="swiper-container-custom grey-bullets"
                 slides-per-view="1"
                 :pagination="{ clickable: true }"
                 pagination-type="bullets"
@@ -679,6 +691,14 @@ function getColourForKey(key: string) {
                   </div>
                 </swiper-slide>
               </swiper>
+              <div
+                ref="button"
+                class="button"
+                :style="`font-size: ${isMobile ? '12px' : '14px'};`"
+                @click="() => goToPage('https://about.aibuddy.ru/recipes')"
+              >
+                Советы по использованию
+              </div>
             </div>
           </template>
           <template v-else>
@@ -938,4 +958,24 @@ function getColourForKey(key: string) {
   .swiper-container-custom {
     padding-bottom: 40px;
   }
+  .button {
+  display: inline-block;
+  background-color: rgb(212, 130, 7);
+  border: 1px solid rgb(212, 130, 7);
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  color: rgb(255, 255, 255);
+  opacity: 0;
+  transition: opacity 1s ease-in;
+}
+/* Add this to your styles */
+.grey-bullets .swiper-pagination-bullet {
+  background-color: #cccccc; /* Adjust the grey color to your preference */
+}
+
+.grey-bullets .swiper-pagination-bullet-active {
+  background-color: #007aff; /* Adjust the active bullet color to your preference */
+}
 </style>
