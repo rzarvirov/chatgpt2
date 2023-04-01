@@ -639,15 +639,15 @@ function getColourForKey(key: string) {
                 class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white mr-2"
               >
                 <option value="gpt-3.5-turbo">
-                  Базовый режим (GPT-3.5)
+                  Базовый режим
                 </option>
                 <option value="gpt-4">
-                  PRO режим (GPT-4)
+                  PRO режим
                 </option>
               </select>
 
               <a href="https://www.about.aibuddy.ru/%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D0%B8-chatgpt" target="_blank" class="mr-2">
-                <SvgIcon icon="ri:question-line" width="48" />
+                <SvgIcon icon="ri:question-line" width="30" />
               </a>
 
               <!-- New button to open the new window -->
@@ -688,10 +688,10 @@ function getColourForKey(key: string) {
                 class="bg-white shadow-md rounded p-2 dark:bg-gray-800 dark:text-white"
               >
                 <option value="gpt-3.5-turbo">
-                  Базовый режим (GPT-3.5)
+                  Базовый режим
                 </option>
                 <option value="gpt-4">
-                  PRO режим (GPT-4)
+                  PRO режим
                 </option>
               </select>
             </div><br>
