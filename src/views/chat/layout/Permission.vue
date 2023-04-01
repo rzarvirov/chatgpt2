@@ -117,8 +117,8 @@ async function handleLogin() {
 }
 
 function isValidPassword(pwd: string) {
-  // Require at least 8 characters, including an uppercase letter, a lowercase letter, and a number
-  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+  // Require at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[a-zA-Z\d@$!%*?&]{8,}$/
   return regex.test(pwd)
 }
 
