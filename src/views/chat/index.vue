@@ -691,13 +691,16 @@ function goToPage(url: string) {
                   </div>
                 </swiper-slide>
               </swiper>
-              <div
-                ref="button"
-                class="button"
-                :style="`font-size: ${isMobile ? '12px' : '14px'};`"
-                @click="() => goToPage('https://about.aibuddy.ru/recipes')"
-              >
-                Советы по использованию
+              <div style="display: flex; justify-content: center; width: 100%;">
+                <div
+                  ref="button"
+                  class="button"
+                  :style="`font-size: ${isMobile ? '14px' : '16px'}; display: flex; align-items: center;`"
+                  @click="() => goToPage('https://about.aibuddy.ru/recipes')"
+                >
+                  <SvgIcon icon="ri:reactjs-fill" width="30" style="margin-right: 10px;" />
+                  <span>Советы по использованию</span>
+                </div>
               </div>
             </div>
           </template>
@@ -960,9 +963,9 @@ function goToPage(url: string) {
   }
   .button {
   display: inline-block;
-  background-color: rgb(212, 130, 7);
-  border: 1px solid rgb(212, 130, 7);
-  border-radius: 20px;
+  background-color: #007aff;
+  border: 2px solid #007aff;
+  border-radius: 5px;
   padding: 5px 10px;
   margin: 5px;
   cursor: pointer;
