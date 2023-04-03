@@ -46,7 +46,6 @@ async function handleVerify(verifytoken: string) {
   }
   catch (error: any) {
     ms.error(error.message ?? 'error')
-    authStore.removeToken()
   }
   finally {
     registerLoading.value = false
@@ -74,7 +73,6 @@ async function handleLogin() {
   }
   catch (error: any) {
     ms.error(error.message ?? 'error')
-    authStore.removeToken()
     password.value = ''
   }
   finally {

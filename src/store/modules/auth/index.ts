@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import jwt_decode from 'jwt-decode'
 import type { UserInfo } from '../user/helper'
 import { getToken, removeToken, setToken } from './helper'
-import { store, useUserStore } from '@/store'
+import { store, useChatStore, useUserStore } from '@/store'
 import { fetchSession } from '@/api'
 
 interface SessionResponse {
@@ -53,10 +53,12 @@ export const useAuthStore = defineStore('auth-store', {
       setToken(token)
     },
 
-    removeToken() {
+    async removeToken() {
       this.token = undefined
       const userStore = useUserStore()
       userStore.resetUserInfo()
+      const chatStore = useChatStore()
+      await chatStore.clearLocalChat()
       removeToken()
     },
   },

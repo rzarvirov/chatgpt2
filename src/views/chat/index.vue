@@ -231,7 +231,7 @@ async function onConversation() {
               dataSources.value.length - 1,
               {
                 dateTime: new Date().toLocaleString(),
-                text: lastText + data.text ?? '',
+                text: lastText + (data.text ?? ''),
                 inversion: false,
                 error: false,
                 loading: false,
@@ -965,7 +965,7 @@ function goToPage(url: string) {
   display: inline-block;
   background-color: #007aff;
   border: 2px solid #007aff;
-  border-radius: 5px;
+  border-radius: 2px;
   padding: 5px 10px;
   margin: 5px;
   cursor: pointer;

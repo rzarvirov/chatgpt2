@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { computed, inject, nextTick, onMounted, watch } from 'vue'
+import { computed, inject, nextTick, onMounted } from 'vue'
 import { NInput, NPopconfirm, NScrollbar } from 'naive-ui'
 import { SvgIcon } from '@/components/common'
 import { useAppStore, useChatStore } from '@/store'
@@ -17,11 +17,6 @@ const handleAdd = inject<() => void>('handleAdd')
 onMounted(async () => {
   if (authStore.session == null || !authStore.session.auth || authStore.token)
     await handleSyncChatRoom()
-
-  watch(dataSources, () => {
-    if (dataSources.value.length === 0 && handleAdd)
-      handleAdd()
-  }, { immediate: true })
 })
 
 async function handleSyncChatRoom() {
