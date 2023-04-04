@@ -594,10 +594,20 @@ const keys = PromptsList.map((prompt: Prompt) => prompt.key)
 const isMobile2 = window.innerWidth <= 768
 const ITEMS_PER_PAGE = isMobile2 ? 20 : 60
 
+function shuffle<T>(array: T[]): T[] {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
 const pages = computed(() => {
   const pagesArray = []
-  for (let i = 0; i < keys.length; i += ITEMS_PER_PAGE)
-    pagesArray.push(keys.slice(i, i + ITEMS_PER_PAGE))
+  const shuffledKeys = shuffle([...keys]) // Create a shuffled copy of the keys array
+
+  for (let i = 0; i < shuffledKeys.length; i += ITEMS_PER_PAGE)
+    pagesArray.push(shuffledKeys.slice(i, i + ITEMS_PER_PAGE))
 
   return pagesArray
 })
@@ -663,7 +673,7 @@ function goToPage(url: string) {
               </a>
 
               <!-- New button to open the new window -->
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="handleRecharge">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded" @click="handleRecharge">
                 Поддержать
               </button>
             </div>
@@ -683,7 +693,7 @@ function goToPage(url: string) {
                     <div
                       v-for="(key, index) in page"
                       :key="index"
-                      :style="`display: inline-block; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 20px; padding: 5px 10px; margin: 5px; cursor: pointer; color: black; font-size: ${isMobile ? '12px' : '14px'};`"
+                      :style="`display: inline-block; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 10px; padding: 5px 10px; margin: 5px; cursor: pointer; color: black; font-size: ${isMobile ? '12px' : '14px'}; opacity: 1;`"
                       @click="handleHashtagClick(key)"
                     >
                       {{ key }}
@@ -884,7 +894,7 @@ function goToPage(url: string) {
         </button>
         <div class="text-black">
           <br>
-          <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
+          <b>Бесплатано:</b> каждые 12 часов баланс базовой модели увеличивается до 5 запросов, чтобы вы могли продолжать пользоваться сервисом.
         </div>
       </div>
 
@@ -963,9 +973,9 @@ function goToPage(url: string) {
   }
   .button {
   display: inline-block;
-  background-color: #007aff;
-  border: 2px solid #007aff;
-  border-radius: 2px;
+  background-color: rgb(59 130 246);
+  border: 2px solid rgb(59 130 246);
+  border-radius: 5px;
   padding: 5px 10px;
   margin: 5px;
   cursor: pointer;
@@ -979,6 +989,6 @@ function goToPage(url: string) {
 }
 
 .grey-bullets .swiper-pagination-bullet-active {
-  background-color: #007aff; /* Adjust the active bullet color to your preference */
+  background-color: rgb(59 130 246); /* Adjust the active bullet color to your preference */
 }
 </style>
