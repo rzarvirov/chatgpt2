@@ -17,10 +17,6 @@ import { rootAuth } from './middleware/rootAuth'
 const googleClientId = '474493346119-5o0f10gmqbr1ecdj8is1igk74jp65422.apps.googleusercontent.com'
 const googleClient = new OAuth2Client(googleClientId)
 
-const mailruClientId = 'b3b29595e5eb4892985c57d499e9e57f'
-const mailruClientSecret = '6c5f9955849547729f3446d96e804d20'
-const mailruRedirectUri = 'http://localhost:8008'
-
 const app = express()
 const router = express.Router()
 
@@ -42,6 +38,7 @@ router.get('/accounttype', auth, async (req, res) => {
 
   res.send({ status: 'Success', message: null, data: { accounttype } })
 })
+
 // got account type
 
 // get balance

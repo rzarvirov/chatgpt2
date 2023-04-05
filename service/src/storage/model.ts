@@ -28,7 +28,7 @@ class UserInfo {
     this.status = Status.PreVerify
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
-    this.balance = 25 // Initialize the balance to 0 or any default value you want
+    this.balance = 20 // Initialize the balance to 0 or any default value you want
     this.probalance = 0
     this.accounttype = 'free'
   }

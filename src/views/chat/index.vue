@@ -1,3 +1,4 @@
+<!-- eslint-disable no-console -->
 <script setup lang='ts'>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import type { Ref } from 'vue'
@@ -15,9 +16,11 @@ import PromptsList from '@/assets/prompts_RU.json'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess, fetchGetUserBalance, fetchGetUserProBalance, fetchUpdateUserBalance, fetchUpdateUserProBalance } from '@/api'
+import { fetchChatAPIProcess, fetchGetUserAccountType, fetchGetUserBalance, fetchGetUserProBalance, fetchUpdateUserBalance, fetchUpdateUserProBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
+
+const countdown: Ref<number> = ref(0)
 
 const showModal = ref(false)
 const activeTab = ref(1)
@@ -45,6 +48,7 @@ const authStore = useAuthStoreWithout()
 const isAuthenticated = computed(() => authStore.session && authStore.session.auth)
 const balance = ref(0)
 const probalance = ref(0)
+const accountType = ref('')
 
 const isBalanceZero = computed(() => {
   // Replace `balance` with the variable or getter you use to track the balance
@@ -66,6 +70,16 @@ async function fetchBalance() {
   }
 }
 
+async function fetchAccountType() {
+  try {
+    const response = await fetchGetUserAccountType()
+    accountType.value = response.data.accounttype
+  }
+  catch (error) {
+    console.error('Error fetching user account type:', error)
+  }
+}
+
 async function fetchProBalance() {
   try {
     const response = await fetchGetUserProBalance()
@@ -77,8 +91,10 @@ async function fetchProBalance() {
 }
 
 onMounted(async () => {
-  if (authStore.session == null || !authStore.session.auth || authStore.token)
+  if (authStore.session == null || !authStore.session.auth || authStore.token) {
     await fetchBalance()
+    await fetchAccountType()
+  }
 })
 
 onMounted(async () => {
@@ -157,6 +173,10 @@ function handleSubmit() {
   onConversation()
 }
 
+function getRandomNumber(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
 async function onConversation() {
   let message = prompt.value
 
@@ -165,6 +185,20 @@ async function onConversation() {
 
   if (!message || message.trim() === '')
     return
+
+  // Check if the user has a free account and a balance less than or equal to 3
+  if (balance.value <= 3 && accountType.value === 'free') {
+    // Generate a random delay between 5 to 10 seconds
+    const delaySeconds = getRandomNumber(5, 10)
+    countdown.value = delaySeconds
+    for (let i = 0; i < delaySeconds; i++) {
+      setTimeout(() => {
+        countdown.value -= 1
+      }, i * 1000)
+    }
+    // Wait for the delay to complete before proceeding with the chat
+    await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000))
+  }
 
   controller = new AbortController()
   const chatUuid = Date.now() // ?
@@ -771,6 +805,9 @@ function goToPage(url: string) {
               <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
+          <div v-if="countdown > 0" class="countdown-placeholder">
+            Бесплатный аккаунт, запрос в очереди: {{ countdown }} секунд
+          </div>
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
@@ -809,7 +846,7 @@ function goToPage(url: string) {
             <div v-else>
               <div class="circle-container">
                 <div
-                  v-if="selectedModel === 'gpt-3.5-turbo'"
+                  v-if="(selectedModel === 'gpt-3.5-turbo' && accountType !== 'free') || (selectedModel === 'gpt-3.5-turbo' && balance < 10 && accountType === 'free')"
                   class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white"
                   style="cursor: pointer;"
                   @click="handleRecharge"
