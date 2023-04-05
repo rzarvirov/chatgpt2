@@ -5,6 +5,7 @@ import { setupPageGuard } from './permission'
 import { ChatLayout } from '@/views/chat/layout'
 
 const routes: RouteRecordRaw[] = [
+
   {
     path: '/',
     name: 'Root',

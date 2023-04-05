@@ -17,11 +17,16 @@ import { rootAuth } from './middleware/rootAuth'
 const googleClientId = '474493346119-5o0f10gmqbr1ecdj8is1igk74jp65422.apps.googleusercontent.com'
 const googleClient = new OAuth2Client(googleClientId)
 
+const mailruClientId = 'b3b29595e5eb4892985c57d499e9e57f'
+const mailruClientSecret = '6c5f9955849547729f3446d96e804d20'
+const mailruRedirectUri = 'http://localhost:8008'
+
 const app = express()
 const router = express.Router()
 
 app.use(express.static('public'))
 app.use(express.json())
+// Add this line to enable CORS
 
 app.all('*', (_, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
@@ -479,10 +484,9 @@ router.post('/setting-mail', rootAuth, async (req, res) => {
 
 router.post('/mail-test', rootAuth, async (req, res) => {
   try {
-    const config = req.body as MailConfig
     const userId = req.headers.userId as string
     const user = await getUserById(userId)
-    await sendTestMail(user.email, config)
+    await sendTestMail(user.email)
     res.send({ status: 'Success', message: 'Успешно', data: null })
   }
   catch (error) {

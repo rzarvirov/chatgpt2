@@ -17,6 +17,7 @@ specifiers:
   autoprefixer: ^10.4.13
   axios: ^1.3.4
   chatgpt: ^5.1.2
+  cors: ^2.8.5
   crypto-js: ^4.1.1
   eslint: ^8.35.0
   eslint-scope: ^7.1.1
@@ -33,6 +34,8 @@ specifiers:
   naive-ui: ^2.34.3
   npm-run-all: ^4.1.5
   passport: ^0.6.0
+  passport-mail-ts: ^1.0.2
+  passport-yandex: ^0.0.5
   passport-yandex-token: ^2.1.0
   pinia: ^2.0.32
   postcss: ^8.4.21
@@ -57,6 +60,7 @@ dependencies:
   '@types/gapi.auth2': 0.0.57
   '@vueuse/core': 9.13.0_vue@3.2.47
   chatgpt: 5.1.3
+  cors: 2.8.5
   express-rate-limit: 6.7.0
   google-auth-library: 8.7.0
   highlight.js: 11.7.0
@@ -66,6 +70,8 @@ dependencies:
   markdown-it: 13.0.1
   naive-ui: 2.34.3_vue@3.2.47
   passport: 0.6.0
+  passport-mail-ts: 1.0.2
+  passport-yandex: 0.0.5
   passport-yandex-token: 2.1.0
   pinia: 2.0.33_hmuptsblhheur2tugfgucj7gc4
   react-icons: 4.8.0
@@ -3087,6 +3093,14 @@ packages:
       browserslist: 4.21.5
     dev: true
 
+  /cors/2.8.5:
+    resolution: {integrity: sha512-KIHbLJqu73RGr/hnbrO9uBeixNGuvSQjul/jdFvS/KFSIH1hWVd1ng7zOHx+YrEfInLG7q4n6GHQ9cDtxv/P6g==}
+    engines: {node: '>= 0.10'}
+    dependencies:
+      object-assign: 4.1.1
+      vary: 1.1.2
+    dev: false
+
   /cosmiconfig-typescript-loader/4.3.0_6n2coyk7getfcou7yqpqzdwl2u:
     resolution: {integrity: sha512-NTxV1MFfZDLPiBMjxbHRwSh5LaLcPMwNdCutmnHJCKoVnlvldPWlllonKwrsRJ5pYZBIBGRWWU2tfvzxgeSW5Q==}
     engines: {node: '>=12', npm: '>=6'}
@@ -5455,7 +5469,6 @@ packages:
   /object-assign/4.1.1:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /object-hash/3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
@@ -5621,6 +5634,13 @@ packages:
     engines: {node: '>= 0.10'}
     dev: true
 
+  /passport-mail-ts/1.0.2:
+    resolution: {integrity: sha512-4g5QvS2SxSZqnb19tRUl7AOkkv0qDBg14rND2pve2F3QHmDEVQo0hCrH7itC3kJC49mG6CRJRPtPM8KZlfA4Ug==}
+    engines: {node: '>= 12.0.0'}
+    dependencies:
+      passport-oauth2: 1.7.0
+    dev: false
+
   /passport-oauth/1.0.0:
     resolution: {integrity: sha512-4IZNVsZbN1dkBzmEbBqUxDG8oFOIK81jqdksE3HEb/vI3ib3FMjbiZZ6MTtooyYZzmKu0BfovjvT1pdGgIq+4Q==}
     engines: {node: '>= 0.4.0'}
@@ -5658,6 +5678,14 @@ packages:
     resolution: {integrity: sha512-8NHD/3bxzO97/doFV+dNaBwSMOYR9/HvW9gVKmJclQaDHqo/1oGSt6tPvFriAJ29aEUcs6nuKNfbDTc40tspuA==}
     dependencies:
       passport-oauth: 1.0.0
+    dev: false
+
+  /passport-yandex/0.0.5:
+    resolution: {integrity: sha512-zw0JR2jLrPGhF7eAzVJb7CvAd8Uacy7dSckzt0bzonTBDbsWx2wdmVDa11Kg4fDLirHkQF72nM0ijDs8oKdO3A==}
+    engines: {node: '>= 0.10.0'}
+    dependencies:
+      passport-oauth: 1.0.0
+      pkginfo: 0.3.1
     dev: false
 
   /passport/0.6.0:
@@ -5785,6 +5813,11 @@ packages:
     resolution: {integrity: sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==}
     engines: {node: '>= 6'}
     dev: true
+
+  /pkginfo/0.3.1:
+    resolution: {integrity: sha512-yO5feByMzAp96LtP58wvPKSbaKAi/1C4kV9XpTctr6EepnP6F33RBNOiVrdz9BrPA98U2BMFsTNHo44TWcbQ2A==}
+    engines: {node: '>= 0.4.0'}
+    dev: false
 
   /pluralize/8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
@@ -6889,6 +6922,11 @@ packages:
     dependencies:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
+
+  /vary/1.1.2:
+    resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
+    engines: {node: '>= 0.8'}
+    dev: false
 
   /vdirs/0.1.8_vue@3.2.47:
     resolution: {integrity: sha512-H9V1zGRLQZg9b+GdMk8MXDN2Lva0zx72MPahDKc30v+DtwKjfyOSXWRIX4t2mhDubM1H09gPhWeth/BJWPHGUw==}

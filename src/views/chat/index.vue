@@ -837,7 +837,7 @@ function goToPage(url: string) {
       <h2 class="text-xl font-bold mb-4 dark:text-black">
         Поддержите проект
       </h2>
-
+      Нам нужна ваша поддержка, чтобы продолжать развиваться. Выберите один из способов и получите вознаграждение.
       <!-- Tab buttons -->
       <div class="flex mb-4">
         <button :class="{ 'bg-blue-500': activeTab === 1, 'bg-gray-400': activeTab !== 1 }" class="flex-1 text-white font-bold py-2 px-4 rounded-l" @click="activeTab = 1">
@@ -894,7 +894,7 @@ function goToPage(url: string) {
         </button>
         <div class="text-black">
           <br>
-          <b>Бесплатано:</b> каждые 12 часов баланс базовой модели увеличивается до 5 запросов, чтобы вы могли продолжать пользоваться сервисом.
+          <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3 запросов, чтобы вы могли продолжать пользоваться сервисом.
         </div>
       </div>
 

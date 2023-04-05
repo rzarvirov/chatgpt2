@@ -28,8 +28,8 @@ class UserInfo {
     this.status = Status.PreVerify
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
-    this.balance = 30 // Initialize the balance to 0 or any default value you want
-    this.probalance = 5
+    this.balance = 25 // Initialize the balance to 0 or any default value you want
+    this.probalance = 3
     this.accounttype = 'free'
   }
 }

@@ -1,17 +1,17 @@
 <!-- eslint-disable no-console -->
 <script setup lang='ts'>
+// Add this line before "import { fetchGoogleLogin, fetchLogin, fetchRegister, fetchVerify } from '@/api'"
 import { computed, onMounted, ref, watch } from 'vue'
 import { NButton, NInput, NModal, NSpace, useMessage } from 'naive-ui'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchGoogleLogin, fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
+const props = defineProps<Props>()
 
 interface Props {
   visible: boolean
 }
-
-const props = defineProps<Props>()
 
 const route = useRoute()
 const router = useRouter()
@@ -254,6 +254,7 @@ async function googleAuthCallback(response: any) {
           <div>
             <GoogleLogin :callback="googleAuthCallback" />
           </div>
+          <div />
           <div>или создайте аккаунт / войдите</div>
           <div class="flex flex-row items-center justify-center space-x-4">
             <NButton type="primary" class="px-4 py-2" @click="showRegister">
