@@ -29,7 +29,7 @@ class UserInfo {
     this.createTime = new Date().toLocaleString()
     this.verifyTime = null
     this.balance = 25 // Initialize the balance to 0 or any default value you want
-    this.probalance = 3
+    this.probalance = 0
     this.accounttype = 'free'
   }
 }
