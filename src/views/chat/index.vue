@@ -832,12 +832,17 @@ function goToPage(url: string) {
       </div>
     </footer>
   </div>
-  <div v-show="showModal" class="modal fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50">
+  <div
+    v-show="showModal"
+    :style="`font-size: ${isMobile ? '12px' : '14px'};`"
+    class="modal fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50"
+  >
     <div class="bg-white p-8 rounded shadow-lg max-w-lg w-full">
       <h2 class="text-xl font-bold mb-4 dark:text-black">
         Поддержите проект
       </h2>
-      Нам нужна ваша поддержка, чтобы продолжать развиваться. Выберите один из способов и получите вознаграждение.
+      Нам нужна ваша поддержка, чтобы продолжать развиваться и не использовать рекламу. Выберите один из способов и получите вознаграждение.
+      <div><br></div>
       <!-- Tab buttons -->
       <div class="flex mb-4">
         <button :class="{ 'bg-blue-500': activeTab === 1, 'bg-gray-400': activeTab !== 1 }" class="flex-1 text-white font-bold py-2 px-4 rounded-l" @click="activeTab = 1">
@@ -894,7 +899,7 @@ function goToPage(url: string) {
         </button>
         <div class="text-black">
           <br>
-          <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3 запросов, чтобы вы могли продолжать пользоваться сервисом.
+          <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
         </div>
       </div>
 
