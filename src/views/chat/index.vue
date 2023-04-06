@@ -188,7 +188,7 @@ async function onConversation() {
     return
 
   // Check if the user has a free account and a balance less than or equal to 3
-  if (balance.value <= 9 && accountType.value === 'free') {
+  if (balance.value <= 7 && accountType.value === 'free') {
     const delaySeconds = getRandomNumber(10, 20)
     countdown.value = delaySeconds
     showCountdownModal.value = true // Show countdown modal
@@ -927,7 +927,7 @@ function goToPage(url: string) {
         Узнать подробности и выбрать
       </button>
       <br><br>
-      <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
+      <b>Бесплатно:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
     </div>
   </div>
 
@@ -998,7 +998,7 @@ function goToPage(url: string) {
         </button>
         <div class="text-black">
           <br>
-          <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
+          <b>Бесплатно:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
         </div>
       </div>
 
