@@ -878,7 +878,7 @@ function goToPage(url: string) {
       <p>Запрос в очереди: <b>{{ countdown }}</b> секунд</p>
       <button
         class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="openUrl('https://boosty.to/aibuddy')"
+        @click="openUrl('https://boosty.to/aibuddy/about')"
       >
         Поддержать и получить PRO аккаунт
       </button>
@@ -922,7 +922,7 @@ function goToPage(url: string) {
       </div>
       <button
         class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="openUrl('https://boosty.to/aibuddy')"
+        @click="openUrl('https://boosty.to/aibuddy/about')"
       >
         Узнать подробности и выбрать
       </button>
@@ -1042,7 +1042,7 @@ function goToPage(url: string) {
               </p></a>
           </div>
         </div>
-        <button class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="openUrl('https://boosty.to/aibuddy')">
+        <button class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" @click="openUrl('https://boosty.to/aibuddy/about')">
           Выбрать и подписаться
         </button>
       </div>
