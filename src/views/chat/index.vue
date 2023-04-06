@@ -21,6 +21,7 @@ import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
 const countdown: Ref<number> = ref(0)
+const showCountdownModal = ref(false)
 
 const showModal = ref(false)
 const activeTab = ref(1)
@@ -187,17 +188,17 @@ async function onConversation() {
     return
 
   // Check if the user has a free account and a balance less than or equal to 3
-  if (balance.value <= 3 && accountType.value === 'free') {
-    // Generate a random delay between 5 to 10 seconds
-    const delaySeconds = getRandomNumber(5, 10)
+  if (balance.value <= 9 && accountType.value === 'free') {
+    const delaySeconds = getRandomNumber(10, 20)
     countdown.value = delaySeconds
+    showCountdownModal.value = true // Show countdown modal
     for (let i = 0; i < delaySeconds; i++) {
       setTimeout(() => {
         countdown.value -= 1
       }, i * 1000)
     }
-    // Wait for the delay to complete before proceeding with the chat
     await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000))
+    showCountdownModal.value = false // Hide countdown modal
   }
 
   controller = new AbortController()
@@ -805,9 +806,6 @@ function goToPage(url: string) {
               <SvgIcon icon="ri:chat-history-line" />
             </span>
           </HoverButton>
-          <div v-if="countdown > 0" class="countdown-placeholder">
-            Бесплатный аккаунт, запрос в очереди: {{ countdown }} секунд
-          </div>
           <NAutoComplete v-model:value="prompt" :options="searchOptions" :render-label="renderOption">
             <template #default="{ handleInput, handleBlur, handleFocus }">
               <NInput
@@ -870,11 +868,75 @@ function goToPage(url: string) {
     </footer>
   </div>
   <div
+    v-show="showCountdownModal"
+    class="countdown-modal fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50"
+  >
+    <div class="bg-white p-8 rounded shadow-lg max-w-lg w-full dark:text-black">
+      <h2 class="text-xl font-bold mb-4">
+        Вы используете бесплатный аккаунт
+      </h2>
+      <p>Запрос в очереди: <b>{{ countdown }}</b> секунд</p>
+      <button
+        class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        @click="openUrl('https://boosty.to/aibuddy')"
+      >
+        Поддержать и получить PRO аккаунт
+      </button>
+      <br><br>Выберите любой уровень подписки и используйте сервис без задержек:<br><br>
+      <div class="mb-4 space-y-4 text-black">
+        <div>
+          <a href="https://boosty.to/aibuddy/purchase/1572084">
+            <h3 class="font-bold">
+              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">Базовая (99 ₽ в месяц)</span>
+            </h3>
+          </a>
+        </div>
+        <div>
+          <a href="https://boosty.to/aibuddy/purchase/1572086">
+            <h3 class="font-bold">
+              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">PRO (299 ₽ в месяц)</span>
+            </h3>
+          </a>
+        </div>
+        <div>
+          <a href="https://boosty.to/aibuddy/purchase/1628030">
+            <h3 class="font-bold">
+              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">PRO+ (499 ₽ в месяц)</span>
+            </h3>
+          </a>
+        </div>
+        <div>
+          <a href="https://boosty.to/aibuddy/purchase/1572088">
+            <h3 class="font-bold">
+              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">Ultra (999 ₽ в месяц)</span>
+            </h3>
+          </a>
+        </div>
+        <div>
+          <a href="https://boosty.to/aibuddy/purchase/1572090">
+            <h3 class="font-bold">
+              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">Unlimited (1 999 ₽ в месяц)</span>
+            </h3>
+          </a>
+        </div>
+      </div>
+      <button
+        class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        @click="openUrl('https://boosty.to/aibuddy')"
+      >
+        Узнать подробности и выбрать
+      </button>
+      <br><br>
+      <b>Бесплатано:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
+    </div>
+  </div>
+
+  <div
     v-show="showModal"
     :style="`font-size: ${isMobile ? '12px' : '14px'};`"
     class="modal fixed inset-0 flex items-center justify-center p-4 bg-black bg-opacity-50"
   >
-    <div class="bg-white p-8 rounded shadow-lg max-w-lg w-full">
+    <div class="bg-white p-8 rounded shadow-lg max-w-lg w-full dark:text-black">
       <h2 class="text-xl font-bold mb-4 dark:text-black">
         Поддержите проект
       </h2>
@@ -953,13 +1015,13 @@ function goToPage(url: string) {
               </p></a>
           </div>
           <div>
-            <a href="https://boosty.to/aibuddy/purchase/1572086">
-              <h3 class="font-bold">
-                🔸 <span style="color: rgb(59 130 246); text-decoration: underline;">PRO (299 ₽ в месяц)</span>:
-              </h3>
-              <p class="text-sm">
-                Для пользователей с более активным использованием, таких как писатели, маркетологи, и программисты.
-              </p></a>
+            <h3 class="font-bold">
+              🔸 <a href="https://boosty.to/aibuddy/purchase/1572086"><span style="color: rgb(59 130 246); text-decoration: underline;">PRO (299 ₽ в месяц)</span></a> / <a href="https://boosty.to/aibuddy/purchase/1628030"><span style="color: rgb(59 130 246); text-decoration: underline;">PRO+ (499 ₽ в месяц)</span>:
+              </a>
+            </h3>
+            <p class="text-sm">
+              Для пользователей с более активным использованием, таких как писатели, маркетологи, и программисты.
+            </p>
           </div>
           <div>
             <a href="https://boosty.to/aibuddy/purchase/1572088">
