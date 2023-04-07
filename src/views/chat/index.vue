@@ -244,12 +244,17 @@ async function onConversation() {
   try {
     let lastText = ''
     const fetchChatAPIOnce = async () => {
+      let localSelectedModel = selectedModel.value
+
+      if (accountType.value === 'ultra' && probalance.value < 800)
+        localSelectedModel = 'gpt-3.5-turbo'
+
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         roomId: +uuid, // ?
         uuid: chatUuid, // ?
         prompt: message,
         options,
-        model: selectedModel.value,
+        model: localSelectedModel,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -380,13 +385,17 @@ async function onRegenerate(index: number) {
   try {
     let lastText = ''
     const fetchChatAPIOnce = async () => {
+      let localSelectedModel = selectedModel.value
+
+      if (accountType.value === 'ultra' && probalance.value < 800)
+        localSelectedModel = 'gpt-3.5-turbo'
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         roomId: +uuid,
         uuid: chatUuid || Date.now(),
         regenerate: true,
         prompt: message,
         options,
-        model: selectedModel.value,
+        model: localSelectedModel,
         signal: controller.signal,
         onDownloadProgress: ({ event }) => {
           const xhr = event.target
@@ -844,7 +853,7 @@ function goToPage(url: string) {
             <div v-else>
               <div class="circle-container">
                 <div
-                  v-if="(selectedModel === 'gpt-3.5-turbo' && accountType !== 'free') || (selectedModel === 'gpt-3.5-turbo' && balance < 10 && accountType === 'free')"
+                  v-if="(selectedModel === 'gpt-3.5-turbo' && accountType !== 'free' && accountType !== 'ultra') || (selectedModel === 'gpt-3.5-turbo' && balance < 10 && accountType === 'free')"
                   class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white"
                   style="cursor: pointer;"
                   @click="handleRecharge"
@@ -853,7 +862,7 @@ function goToPage(url: string) {
                 </div>
 
                 <div
-                  v-else-if="selectedModel === 'gpt-4'"
+                  v-else-if="(selectedModel === 'gpt-4' && accountType !== 'ultra')"
                   class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white"
                   style="cursor: pointer;"
                   @click="handleRecharge"
