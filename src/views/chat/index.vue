@@ -885,58 +885,17 @@ function goToPage(url: string) {
         Вы используете бесплатный аккаунт
       </h2>
       <p>Запрос в очереди: <b>{{ countdown }}</b> секунд</p>
+      <br>Выберите любой уровень подписки и используйте сервис без задержек:<br>
       <button
         class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         @click="openUrl('https://boosty.to/aibuddy/about')"
       >
-        Поддержать и получить PRO аккаунт
-      </button>
-      <br><br>Выберите любой уровень подписки и используйте сервис без задержек:<br><br>
-      <div class="mb-4 space-y-4 text-black">
-        <div>
-          <a href="https://boosty.to/aibuddy/purchase/1572084">
-            <h3 class="font-bold">
-              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">Базовая (99 ₽ в месяц)</span>
-            </h3>
-          </a>
-        </div>
-        <div>
-          <a href="https://boosty.to/aibuddy/purchase/1572086">
-            <h3 class="font-bold">
-              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">PRO (299 ₽ в месяц)</span>
-            </h3>
-          </a>
-        </div>
-        <div>
-          <a href="https://boosty.to/aibuddy/purchase/1628030">
-            <h3 class="font-bold">
-              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">PRO+ (499 ₽ в месяц)</span>
-            </h3>
-          </a>
-        </div>
-        <div>
-          <a href="https://boosty.to/aibuddy/purchase/1572088">
-            <h3 class="font-bold">
-              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">Ultra (999 ₽ в месяц)</span>
-            </h3>
-          </a>
-        </div>
-        <div>
-          <a href="https://boosty.to/aibuddy/purchase/1572090">
-            <h3 class="font-bold">
-              🔸 <span style="color: rgb(59, 130, 246); text-decoration: underline;">Unlimited (1 999 ₽ в месяц)</span>
-            </h3>
-          </a>
-        </div>
-      </div>
-      <button
-        class="w-full mt-4 bg-yellow-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        @click="openUrl('https://boosty.to/aibuddy/about')"
-      >
-        Узнать подробности и выбрать
+        Оформить подписку
       </button>
       <br><br>
       <b>Бесплатно:</b> каждые 24 часа баланс базовой модели увеличивается до 3-х запросов, чтобы вы могли продолжать пользоваться сервисом.
+      <br><br>
+      <a href="https://www.about.aibuddy.ru/about-5"><span style="color: rgb(59 130 246); text-decoration: underline;">Почему мы ограничиваем бесплатное использование?</span></a>
     </div>
   </div>
 
