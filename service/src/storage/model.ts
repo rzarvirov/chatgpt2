@@ -50,9 +50,11 @@ class ChatRoom {
 export class ChatOptions {
   parentMessageId?: string
   messageId?: string
-  constructor(parentMessageId?: string, messageId?: string) {
+  conversationId?: string
+  constructor(parentMessageId?: string, messageId?: string, conversationId?: string) {
     this.parentMessageId = parentMessageId
     this.messageId = messageId
+    this.conversationId = conversationId
   }
 }
 
