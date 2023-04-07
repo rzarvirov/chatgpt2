@@ -188,7 +188,7 @@ async function onConversation() {
     return
 
   // Check if the user has a free account and a balance less than or equal to 3
-  if (balance.value <= 7 && accountType.value === 'free') {
+  if (balance.value <= 5 && accountType.value === 'free') {
     const delaySeconds = getRandomNumber(10, 20)
     countdown.value = delaySeconds
     showCountdownModal.value = true // Show countdown modal
