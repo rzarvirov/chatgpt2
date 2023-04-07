@@ -9,6 +9,9 @@ import { setupStore } from './store'
 import { setupRouter } from './router'
 import 'swiper/swiper-bundle.css'
 
+// Import the initYandexMetrica function
+import { initYandexMetrica } from './yandex-metrica'
+
 async function bootstrap() {
   const app = createApp(App)
 
@@ -30,6 +33,10 @@ async function bootstrap() {
 
   app.component('Swiper', Swiper)
   app.component('SwiperSlide', SwiperSlide)
+
+  // Call the initYandexMetrica function with your Yandex Metrica ID
+  const yandexMetricaId = '93129644' // Replace with your actual Yandex Metrica ID
+  initYandexMetrica(yandexMetricaId)
 
   app.mount('#app')
 }
