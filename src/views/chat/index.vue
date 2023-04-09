@@ -188,7 +188,7 @@ async function onConversation() {
     return
 
   // Check if the user has a free account and a balance less than or equal to 3
-  if (balance.value <= 7 && accountType.value === 'free') {
+  if (balance.value <= 10 && accountType.value === 'free') {
     const delaySeconds = getRandomNumber(10, 20)
     countdown.value = delaySeconds
     showCountdownModal.value = true // Show countdown modal
@@ -387,7 +387,7 @@ async function onRegenerate(index: number) {
     const fetchChatAPIOnce = async () => {
       let localSelectedModel = selectedModel.value
 
-      if (accountType.value === 'ultra' && probalance.value < 800)
+      if ((accountType.value === 'ultra' && probalance.value < 900) || (accountType.value === 'pro' && probalance.value < 20))
         localSelectedModel = 'gpt-3.5-turbo'
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         roomId: +uuid,
@@ -908,7 +908,7 @@ function goToPage(url: string) {
       <h2 class="text-xl font-bold mb-4 dark:text-black">
         Поддержите проект
       </h2>
-      Нам нужна ваша поддержка, чтобы продолжать развиваться и не использовать рекламу. Выберите один из способов и получите вознаграждение.
+      <a href="https://www.about.aibuddy.ru/about-5"><span style="color: rgb(59 130 246); text-decoration: underline;">Нам нужна ваша поддержка</span></a>, чтобы продолжать развиваться и не использовать рекламу. Выберите один из способов и получите вознаграждение.
       <div><br></div>
       <!-- Tab buttons -->
       <div class="flex mb-4">
@@ -1032,7 +1032,7 @@ function goToPage(url: string) {
             <SvgIcon icon="ri:twitter-fill" class="w-12 h-12" />
           </a>
         </div>
-        <br><br>Поделитесь нашим сайтом с друзьями и мы начилим вам 50 запросов бесплатно (функция в разработке)
+        <br><br>
       </div>
 
       <!-- Close button -->
