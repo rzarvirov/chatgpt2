@@ -23,7 +23,7 @@ const ErrorCodeMessage: Record<string, string> = {
   500: '[OpenAI] внутренняя ошибка сервера | Internal Server Error',
 }
 
-const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 30 * 5000
+const timeoutMs: number = !isNaN(+process.env.TIMEOUT_MS) ? +process.env.TIMEOUT_MS : 100 * 1000
 
 const { HttpsProxyAgent } = httpsProxyAgent
 

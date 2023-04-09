@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { NButton, NInput, NPopconfirm, NSelect, useMessage } from 'naive-ui'
 import type { Language, Theme } from '@/store/modules/app/helper'
 import { SvgIcon } from '@/components/common'
@@ -7,8 +7,12 @@ import { useAppStore, useUserStore } from '@/store'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
+import { fetchClearAllChat, fetchGetUserAccountType } from '@/api'
 import { t } from '@/locales'
-import { fetchClearAllChat } from '@/api'
+import { useAuthStoreWithout } from '@/store/modules/auth'
+
+const authStore = useAuthStoreWithout()
+const accountType = ref('')
 const appStore = useAppStore()
 const userStore = useUserStore()
 const { isMobile } = useBasicLayout()
@@ -99,6 +103,21 @@ function handleImportButtonClick(): void {
   if (fileInput)
     fileInput.click()
 }
+
+async function fetchAccountType() {
+  try {
+    const response = await fetchGetUserAccountType()
+    accountType.value = response.data.accounttype
+  }
+  catch (error) {
+    console.error('Error fetching user account type:', error)
+  }
+}
+
+onMounted(async () => {
+  if (authStore.session == null || !authStore.session.auth || authStore.token)
+    await fetchAccountType()
+})
 </script>
 
 <template>
@@ -109,7 +128,11 @@ function handleImportButtonClick(): void {
         <div class="w-[200px]">
           <NInput v-model:value="name" placeholder="" />
         </div>
+        <a href="https://boosty.to/aibuddy/about" target="_blank" class="ml-4 px-2 py-1 text-white rounded no-underline" :class="accountType !== 'free' ? 'bg-yellow-500' : 'bg-blue-500'">
+          {{ accountType }}
+        </a>
       </div>
+
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
         <div class="flex-1">

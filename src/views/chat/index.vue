@@ -471,6 +471,28 @@ async function onRegenerate(index: number) {
 }
 
 function handleExport() {
+  if (accountType.value === 'free') {
+    const url = 'https://boosty.to/aibuddy/about' // Replace with the desired URL
+
+    dialog.warning({
+      title: 'Недоступно для вашего аккаунта',
+      content: 'Сохранение диалого недоступно для вашего аккаунта. Подпишитесь чтобы использовать все функции сервиса',
+      positiveText: 'Подписаться',
+      negativeText: 'Нет',
+      onPositiveClick: () => {
+        // Open the URL in a new tab
+        window.open(url, '_blank')
+      },
+      onNegativeClick: () => {
+        // Stop the function execution
+
+      },
+    })
+
+    // Return early to prevent the rest of the function from executing
+    return
+  }
+
   if (loading.value)
     return
 
@@ -717,8 +739,8 @@ function goToPage(url: string) {
               </a>
 
               <!-- New button to open the new window -->
-              <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded" @click="handleRecharge">
-                Поддержать
+              <button v-if="accountType === 'free'" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded" @click="handleRecharge">
+                Бесплатный Аккаунт
               </button>
             </div>
             <br>
@@ -771,7 +793,12 @@ function goToPage(url: string) {
                   PRO режим
                 </option>
               </select>
-            </div><br>
+              <button v-if="accountType === 'free'" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded" @click="handleRecharge">
+                Бесплатный Аккаунт
+              </button>
+            </div>
+
+            <br>
             <div>
               <Message
                 v-for="(item, index) of dataSources"
