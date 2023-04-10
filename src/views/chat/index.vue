@@ -739,8 +739,8 @@ function goToPage(url: string) {
               </a>
 
               <!-- New button to open the new window -->
-              <button v-if="accountType === 'free'" class="bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded" @click="handleRecharge">
-                Бесплатный Аккаунт
+              <button v-if="accountType === 'free'" class="bg-yellow-500 hover:bg-yellow-700 text-white py-2 px-4 rounded" @click="handleRecharge">
+                Купить PRO-версию
               </button>
             </div>
             <br>
@@ -793,8 +793,8 @@ function goToPage(url: string) {
                   PRO режим
                 </option>
               </select>
-              <button v-if="accountType === 'free'" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white py-2 px-4 rounded" @click="handleRecharge">
-                Бесплатный Аккаунт
+              <button v-if="accountType === 'free'" class="ml-4 bg-yellow-500 hover:bg-yellow-700 text-white py-2 px-4 rounded" @click="handleRecharge">
+                Купить PRO-версию
               </button>
             </div>
 
