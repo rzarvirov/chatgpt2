@@ -1,6 +1,6 @@
 <!-- eslint-disable no-console -->
 <script setup lang='ts'>
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, onUnmounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -12,16 +12,20 @@ import { useChat } from './hooks/useChat'
 import { useCopyCode } from './hooks/useCopyCode'
 import { useUsingContext } from './hooks/useUsingContext'
 import HeaderComponent from './components/Header/index.vue'
-import PromptsList from '@/assets/prompts_RU.json'
+import PromptsList from '@/assets/prompts_RU2.json'
 import { HoverButton, SvgIcon } from '@/components/common'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
 import { useChatStore, usePromptStore } from '@/store'
-import { fetchChatAPIProcess, fetchGetUserAccountType, fetchGetUserBalance, fetchGetUserProBalance, fetchUpdateUserBalance, fetchUpdateUserProBalance } from '@/api'
+import { fetchChatAPIProcess, fetchGetUserAccountType, fetchGetUserBalance, fetchGetUserProBalance, fetchUpdateChatRoomPrompt, fetchUpdateUserBalance, fetchUpdateUserProBalance } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
+import IconPrompt from '@/icons/Prompt.vue'
+
+const Prompt = defineAsyncComponent(() => import('@/components/common/Setting/Prompt.vue'))
 
 const countdown: Ref<number> = ref(0)
 const showCountdownModal = ref(false)
+const showSwiper = ref(true)
 
 const showModal = ref(false)
 const activeTab = ref(1)
@@ -155,8 +159,10 @@ const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
 const conversationList = computed(() => dataSources.value.filter(item => (!item.inversion && !item.error)))
 
 const prompt = ref<string>('')
+
 const loading = ref<boolean>(false)
 const inputRef = ref<Ref | null>(null)
+const showPrompt = ref(false)
 
 // Add PromptStore
 const promptStore = usePromptStore()
@@ -559,6 +565,7 @@ function handleClear() {
     positiveText: t('common.yes'),
     negativeText: t('common.no'),
     onPositiveClick: () => {
+      resetQuestions()
       chatStore.clearChatByUuid(+uuid)
       sendbuttonClicked.value = false
       prompt.value = ''
@@ -650,13 +657,16 @@ onUnmounted(() => {
 })
 
 // random keys
-interface Prompt {
+interface PromptBase {
   key: string
   value: string
+  question: string[]
+  group: string
   colour: string
+  type: string
 }
 
-const keys = PromptsList.map((prompt: Prompt) => prompt.key)
+const keys = PromptsList.map((prompt: PromptBase) => prompt.key)
 const isMobile2 = window.innerWidth <= 768
 const ITEMS_PER_PAGE = isMobile2 ? 20 : 60
 
@@ -678,15 +688,75 @@ const pages = computed(() => {
   return pagesArray
 })
 
-function handleHashtagClick(key: string) {
-  const clickedPrompt = PromptsList.find(prompt => prompt.key === key)
-  if (clickedPrompt)
-    prompt.value = clickedPrompt.value
+const clickedPrompt = ref<PromptBase | null>(null)
+
+async function handleHashtagClick(key: string) {
+  showSwiper.value = false
+  const foundPrompt = PromptsList.find(prompt => prompt.key === key)
+  if (foundPrompt) {
+    // const randomQuestionIndex = getRandomNumber(0, foundPrompt.question.length - 1)
+    // prompt.value = foundPrompt.question[randomQuestionIndex]
+    clickedPrompt.value = foundPrompt
+
+    // Call fetchUpdateChatRoomPrompt with the new prompt value and roomId
+    try {
+      const { message } = (await fetchUpdateChatRoomPrompt(
+        foundPrompt.value, // Use "value" field for fetchUpdateChatRoomPrompt
+        +uuid,
+      )) as { status: string; message: string }
+      ms.success(message)
+      window.dispatchEvent(
+        new CustomEvent('prompt-updated', { detail: prompt.value }),
+      ) // Update this line
+      chatStore.updateChatRoomPrompt(+uuid, foundPrompt.value) // Use foundPrompt.value here
+    }
+    catch (error: any) {
+      ms.error(error.message)
+    }
+  }
+}
+
+function handleQuestionClick(question: string) {
+  prompt.value = question
+  handleSubmit()
+}
+
+defineExpose({
+  handleQuestionClick,
+})
+
+async function resetQuestions() {
+  showSwiper.value = true
+
+  // Call fetchUpdateChatRoomPrompt with a blank value and roomId
+  try {
+    const { message } = (await fetchUpdateChatRoomPrompt(
+      '', // Blank value
+      +uuid,
+    )) as { status: string; message: string }
+    ms.success(message)
+    window.dispatchEvent(
+      new CustomEvent('prompt-updated', { detail: '' }),
+    )
+    chatStore.updateChatRoomPrompt(+uuid, '') // Blank value
+  }
+  catch (error: any) {
+    ms.error(error.message)
+  }
 }
 
 function getColourForKey(key: string) {
   const prompt = PromptsList.find(prompt => prompt.key === key)
   return prompt ? prompt.colour : '#72BCD4' // Fallback color if not found
+}
+
+function getTypeForKey(key: string) {
+  const prompt = PromptsList.find(prompt => prompt.key === key)
+  return prompt ? prompt.type : 'free' // Fallback type if not found
+}
+
+function isProKey(key: string) {
+  return getTypeForKey(key) === 'pro'
 }
 
 const button = ref<HTMLElement | null>(null)
@@ -699,6 +769,10 @@ onMounted(() => {
 function goToPage(url: string) {
   window.open(url, '_blank')
 }
+
+const displayedQuestions = computed(() => {
+  return clickedPrompt.value ? clickedPrompt.value.question : []
+})
 </script>
 
 <template>
@@ -706,8 +780,9 @@ function goToPage(url: string) {
     <HeaderComponent
       v-if="isMobile"
       :using-context="usingContext"
-      @export="handleExport"
-      @toggle-using-context="toggleUsingContext"
+      :show-prompt="showPrompt"
+      @export="handleExport" @toggle-using-context="toggleUsingContext"
+      @toggle-show-prompt="showPrompt = true"
     />
     <main class="flex-1 overflow-hidden">
       <div
@@ -745,7 +820,29 @@ function goToPage(url: string) {
             </div>
             <br>
             <div style="text-align: center;">
+              <div
+                v-if="clickedPrompt && clickedPrompt.value && !showSwiper"
+                class="speech-bubble"
+                :style="`font-size: ${isMobile ? '12px' : '14px'};`"
+                @click="showPrompt = true"
+              >
+                <b>Роль ассистента:</b>
+                {{ clickedPrompt.value }}
+              </div>
+              <div>
+                <span v-for="(question, index) in displayedQuestions" :key="index">
+                  <div
+                    v-if="!showSwiper"
+                    :style="`display: inline-block; background-color: #808080; border: 1px solid #808080; border-radius: 10px; padding: ${isMobile ? '3px 6px' : '5px 10px'}; margin: ${isMobile ? '2px' : '5px'}; cursor: pointer; color: white; font-size: ${isMobile ? '12px' : '14px'}; line-height: ${isMobile ? '1.2' : '1.5'}; opacity: 1;`"
+                    @click="handleQuestionClick(question)"
+                  >
+                    {{ question }}
+                  </div>
+
+                </span>
+              </div>
               <swiper
+                v-if="showSwiper"
                 class="swiper-container-custom grey-bullets"
                 slides-per-view="1"
                 :pagination="{ clickable: true }"
@@ -759,15 +856,21 @@ function goToPage(url: string) {
                     <div
                       v-for="(key, index) in page"
                       :key="index"
-                      :style="`display: inline-block; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 10px; padding: 5px 10px; margin: 5px; cursor: pointer; color: black; font-size: ${isMobile ? '12px' : '14px'}; opacity: 1;`"
-                      @click="handleHashtagClick(key)"
+                      :style="`display: inline-flex; align-items: center; background-color: ${getColourForKey(key)}; border: 1px solid ${getColourForKey(key)}; border-radius: 5px; padding: 5px 10px; margin: 5px; cursor: pointer; color: black; font-size: ${isMobile ? '12px' : '14px'}; opacity: 1;`"
+                      @click="accountType === 'free' && isProKey(key) ? handleRecharge() : handleHashtagClick(key)"
                     >
+                      <span
+                        v-if="isProKey(key)"
+                        style="background-color: #FBBF24; border-radius: 3px; padding: 2px 4px; margin-right: 7px;"
+                      >
+                        pro
+                      </span>
                       {{ key }}
                     </div>
                   </div>
                 </swiper-slide>
               </swiper>
-              <div style="display: flex; justify-content: center; width: 100%;">
+              <div v-if="showSwiper" style="display: flex; justify-content: center; width: 100%;">
                 <div
                   ref="button"
                   class="button"
@@ -777,6 +880,16 @@ function goToPage(url: string) {
                   <SvgIcon icon="ri:reactjs-fill" width="30" style="margin-right: 10px;" />
                   <span>Советы по использованию</span>
                 </div>
+              </div>
+              <div v-if="!showSwiper" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <div v-if="clickedPrompt && clickedPrompt.value" style="margin-bottom: 10px; margin-top: 50px;">
+                  Попробуйте один из готовых вариантов запроса для роли
+                  <b>{{ clickedPrompt.key }}</b>
+                  или введите свой уникальный запрос. Экспериментируйте!
+                </div>
+                <NButton type="default" @click="resetQuestions">
+                  Сбросить выбранный режим
+                </NButton>
               </div>
             </div>
           </template>
@@ -835,6 +948,11 @@ function goToPage(url: string) {
           <HoverButton v-if="!isMobile" @click="handleExport">
             <span class="text-xl text-[#4f555e] dark:text-white">
               <SvgIcon icon="ri:download-2-line" />
+            </span>
+          </HoverButton>
+          <HoverButton v-if="!isMobile" @click="showPrompt = true">
+            <span class="text-xl text-[#4f555e] dark:text-white">
+              <IconPrompt class="w-[20px] m-auto" />
             </span>
           </HoverButton>
           <HoverButton v-if="!isMobile" @click="toggleUsingContext">
@@ -902,6 +1020,7 @@ function goToPage(url: string) {
         </div>
       </div>
     </footer>
+    <Prompt v-if="showPrompt" v-model:roomId="uuid" v-model:visible="showPrompt" />
   </div>
   <div
     v-show="showCountdownModal"
@@ -920,7 +1039,7 @@ function goToPage(url: string) {
         Оформить подписку
       </button>
       <br><br>
-      <b>Бесплатно:</b> каждые 8 часов баланс базовой модели увеличивается до одного бесплатного запроса, чтобы вы могли продолжать пользоваться сервисом.
+      <b>Бесплатно:</b> каждые 8 часов баланс базовой модели увеличивается до трех бесплатных запросов, чтобы вы могли продолжать пользоваться сервисом.
       <br><br>
       <a href="https://www.about.aibuddy.ru/about-5"><span style="color: rgb(59 130 246); text-decoration: underline;">Почему мы ограничиваем бесплатное использование?</span></a>
     </div>
@@ -935,7 +1054,7 @@ function goToPage(url: string) {
       <h2 class="text-xl font-bold mb-4 dark:text-black">
         Поддержите проект
       </h2>
-      <a href="https://www.about.aibuddy.ru/about-5"><span style="color: rgb(59 130 246); text-decoration: underline;">Нам нужна ваша поддержка</span></a>, чтобы продолжать развиваться и не использовать рекламу. Выберите один из способов и получите вознаграждение.
+      <a href="https://www.about.aibuddy.ru/about-5"><span style="color: rgb(59 130 246); text-decoration: underline;">Нам нужна ваша поддержка</span></a>, чтобы продолжать развиваться и не использовать рекламу. Выберите один из способов и получите pro-доступ.
       <div><br></div>
       <!-- Tab buttons -->
       <div class="flex mb-4">
@@ -993,7 +1112,7 @@ function goToPage(url: string) {
         </button>
         <div class="text-black">
           <br>
-          <b>Бесплатно:</b> каждые 8 часов баланс базовой модели увеличивается до одного бесплатного запроса, чтобы вы могли продолжать пользоваться сервисом.
+          <b>Бесплатно:</b> каждые 8 часов баланс базовой модели увеличивается до трех бесплатных запросов, чтобы вы могли продолжать пользоваться сервисом.
         </div>
       </div>
 
@@ -1093,5 +1212,19 @@ function goToPage(url: string) {
 
 .grey-bullets .swiper-pagination-bullet-active {
   background-color: rgb(59 130 246); /* Adjust the active bullet color to your preference */
+}
+
+.speech-bubble {
+  cursor: pointer;
+  position: relative;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: justify;
+  color: #333;
+  max-width: 90%;
+  display: inline-block;
 }
 </style>

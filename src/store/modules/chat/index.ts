@@ -24,6 +24,7 @@ export const useChatStore = defineStore('chat-store', {
   },
 
   actions: {
+
     async syncHistory(callback: () => void) {
       const rooms = (await fetchGetChatRooms()).data
       let uuid = this.active
@@ -46,6 +47,14 @@ export const useChatStore = defineStore('chat-store', {
       else {
         this.active = uuid
         this.reloadRoute(uuid)
+      }
+    },
+
+    updateChatRoomPrompt(uuid: number, prompt: string) {
+      const index = this.history.findIndex(item => item.uuid === uuid)
+      if (index !== -1) {
+        this.history[index].prompt = prompt
+        this.recordState()
       }
     },
 

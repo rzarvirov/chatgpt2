@@ -8,7 +8,7 @@ import { auth } from './middleware/auth'
 import { clearConfigCache, getCacheConfig, getOriginConfig } from './storage/config'
 import type { ChatOptions, Config, MailConfig, SiteConfig, UserInfo } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteAllChatRooms, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, getUserProBalance, insertChat, renameChatRoom, updateChat, updateConfig, updateUserBalance, updateUserInfo, updateUserProBalance, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteAllChatRooms, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRoom, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, getUserProBalance, insertChat, renameChatRoom, updateChat, updateConfig, updateRoomPrompt, updateUserBalance, updateUserInfo, updateUserProBalance, verifyUser } from './storage/mongo'
 import { sendTestMail, sendVerifyMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isEmail, isNotEmptyString } from './utils/is'
@@ -87,6 +87,7 @@ router.get('/chatrooms', auth, async (req, res) => {
         uuid: r.roomId,
         title: r.title,
         isEdit: false,
+        prompt: r.prompt,
       })
     })
     res.send({ status: 'Success', message: null, data: result })
@@ -120,6 +121,22 @@ router.post('/room-rename', auth, async (req, res) => {
   catch (error) {
     console.error(error)
     res.send({ status: 'Fail', message: 'Rename error', data: null })
+  }
+})
+
+router.post('/room-prompt', auth, async (req, res) => {
+  try {
+    const userId = req.headers.userId as string
+    const { prompt, roomId } = req.body as { prompt: string; roomId: number }
+    const success = await updateRoomPrompt(userId, roomId, prompt)
+    if (success)
+      res.send({ status: 'Success', message: 'Роль ассистента обновлена', data: null })
+    else
+      res.send({ status: 'Success', message: 'Роль ассистента обновлена', data: null })
+  }
+  catch (error) {
+    console.error(error)
+    res.send({ status: 'Fail', message: 'Ошибка переименования роли', data: null })
   }
 })
 
@@ -267,7 +284,11 @@ router.post('/chat-process', [auth], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
-    const { roomId, uuid, regenerate, prompt, options = {}, systemMessage, model } = req.body as RequestProps
+    let { roomId, uuid, regenerate, prompt, options = {}, systemMessage, model } = req.body as RequestProps
+    const userId = req.headers.userId as string
+    const room = await getChatRoom(userId, roomId)
+    if (room != null && isNotEmptyString(room.prompt))
+      systemMessage = room.prompt
     const message = regenerate
       ? await getChat(roomId, uuid)
       : await insertChat(uuid, prompt, roomId, options as ChatOptions)
@@ -276,7 +297,19 @@ router.post('/chat-process', [auth], async (req, res) => {
       message: prompt,
       lastContext: options,
       process: (chat: ChatMessage) => {
-        res.write(firstChunk ? JSON.stringify(chat) : `\n${JSON.stringify(chat)}`)
+        const chuck = {
+          id: chat.id,
+          conversationId: chat.conversationId,
+          text: chat.text,
+          detail: {
+            choices: [
+              {
+                finish_reason: chat.detail.choices[0].finish_reason,
+              },
+            ],
+          },
+        }
+        res.write(firstChunk ? JSON.stringify(chuck) : `\n${JSON.stringify(chuck)}`)
         firstChunk = false
       },
       systemMessage,

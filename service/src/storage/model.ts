@@ -38,11 +38,13 @@ class ChatRoom {
   roomId: number
   userId: string
   title: string
+  prompt: string
   status: Status = Status.Normal
 
   constructor(userId: string, title: string, roomId: number) { // updated constructor signature
     this.userId = userId
     this.title = title
+    this.prompt = undefined
     this.roomId = roomId
   }
 }
