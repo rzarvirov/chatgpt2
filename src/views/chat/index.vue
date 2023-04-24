@@ -833,7 +833,7 @@ const displayedQuestions = computed(() => {
                 <span v-for="(question, index) in displayedQuestions" :key="index">
                   <div
                     v-if="!showSwiper"
-                    :style="`display: inline-block; background-color: #808080; border: 1px solid #808080; border-radius: 10px; padding: ${isMobile ? '3px 6px' : '5px 10px'}; margin: ${isMobile ? '2px' : '5px'}; cursor: pointer; color: white; font-size: ${isMobile ? '12px' : '14px'}; line-height: ${isMobile ? '1.2' : '1.5'}; opacity: 1;`"
+                    :style="`display: inline-block; background-color: #808080; border: 1px solid #808080; border-radius: 10px; padding: ${isMobile ? '3px 6px' : '5px 10px'}; margin: ${isMobile ? '4px' : '5px'}; cursor: pointer; color: white; font-size: ${isMobile ? '12px' : '14px'}; line-height: ${isMobile ? '1.2' : '1.5'}; opacity: 1;`"
                     @click="handleQuestionClick(question)"
                   >
                     {{ question }}
