@@ -284,7 +284,7 @@ router.post('/chat-process', [auth], async (req, res) => {
   res.setHeader('Content-type', 'application/octet-stream')
 
   try {
-    let { roomId, uuid, regenerate, prompt, options = {}, systemMessage, model } = req.body as RequestProps
+    let { roomId, uuid, regenerate, prompt, options = {}, systemMessage, model, temperature, top_p } = req.body as RequestProps
     const userId = req.headers.userId as string
     const room = await getChatRoom(userId, roomId)
     if (room != null && isNotEmptyString(room.prompt))
@@ -314,6 +314,8 @@ router.post('/chat-process', [auth], async (req, res) => {
       },
       systemMessage,
       model,
+      temperature,
+      top_p,
     })
     if (result.status === 'Success')
       await updateChat(message._id, result.data.text, result.data.id)

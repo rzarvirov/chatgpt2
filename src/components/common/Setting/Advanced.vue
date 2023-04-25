@@ -16,8 +16,8 @@ const ms = useMessage()
 
 const systemMessage = ref(settingStore.systemMessage ?? '')
 
-const temperature = ref(0.5)
-const top_p = ref(0.8)
+const temperature = ref(settingStore.temperature ?? 0.8)
+const top_p = ref(settingStore.top_p ?? 1)
 
 function updateSettings(options: Partial<SettingsState>) {
   settingStore.updateSetting(options)
@@ -61,10 +61,10 @@ onMounted(async () => {
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[120px]">{{ $t('setting.temperature') }} </span>
         <div class="flex-1">
-          <NSlider v-model:value="temperature" :max="1" :min="0" :step="0.1" :disabled="accountType === 'free'" />
+          <NSlider v-model:value="temperature" :max="2" :min="0" :step="0.1" :disabled="accountType === 'free'" />
         </div>
         <span>{{ temperature }}</span>
-        <NButton size="tiny" text type="primary" :disabled="accountType === 'free'" @click="updateSettings({ })">
+        <NButton size="tiny" text type="primary" :disabled="accountType === 'free'" @click="updateSettings({ temperature })">
           {{ $t('common.save') }}
         </NButton>
       </div>
@@ -74,7 +74,7 @@ onMounted(async () => {
           <NSlider v-model:value="top_p" :max="1" :min="0" :step="0.1" :disabled="accountType === 'free'" />
         </div>
         <span>{{ top_p }}</span>
-        <NButton size="tiny" text type="primary" :disabled="accountType === 'free'" @click="updateSettings({ })">
+        <NButton size="tiny" text type="primary" :disabled="accountType === 'free'" @click="updateSettings({ top_p })">
           {{ $t('common.save') }}
         </NButton>
       </div>

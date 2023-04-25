@@ -37,7 +37,7 @@ export function fetchChatAPIProcess<T = any>(
 
   return post<T>({
     url: '/chat-process',
-    data: { roomId: params.roomId, uuid: params.uuid, regenerate: params.regenerate || false, prompt: params.prompt, options: params.options, systemMessage: settingStore.systemMessage, model: params.model },
+    data: { roomId: params.roomId, uuid: params.uuid, regenerate: params.regenerate || false, prompt: params.prompt, options: params.options, systemMessage: settingStore.systemMessage, model: params.model, temperature: settingStore.temperature, top_p: settingStore.top_p },
     signal: params.signal,
     onDownloadProgress: params.onDownloadProgress,
   })

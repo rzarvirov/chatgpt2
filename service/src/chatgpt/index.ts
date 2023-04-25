@@ -88,7 +88,7 @@ export async function initApi() {
 }
 
 async function chatReplyProcess(chatOptions: RequestOptions) {
-  const { message, lastContext, process, systemMessage, model } = chatOptions
+  const { message, lastContext, process, systemMessage, model, temperature, top_p } = chatOptions
   try {
     let options: SendMessageOptions = { timeoutMs }
 
@@ -100,6 +100,8 @@ async function chatReplyProcess(chatOptions: RequestOptions) {
           options.completionParams = {}
 
         options.completionParams.model = model
+        options.completionParams.temperature = temperature
+        options.completionParams.top_p = top_p
       }
     }
 
