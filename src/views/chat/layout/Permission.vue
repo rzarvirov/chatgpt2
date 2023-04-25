@@ -7,6 +7,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchGoogleLogin, fetchLogin, fetchRegister, fetchVerify } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
+
 const props = defineProps<Props>()
 
 interface Props {
@@ -230,7 +231,7 @@ async function googleAuthCallback(response: any) {
 </script>
 
 <template>
-  <NModal :show="visible" style="width: 90%; max-width: 640px;">
+  <NModal :show="visible" style="width: 95%; max-width: 640px;">
     <div class="p-10 bg-white rounded dark:bg-slate-800">
       <div v-if="!showLoginForm && !showRegisterForm" class="space-y-4">
         <header class="space-y-2">

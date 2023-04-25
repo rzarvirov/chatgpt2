@@ -128,9 +128,6 @@ onMounted(async () => {
         <div class="w-[200px]">
           <NInput v-model:value="name" placeholder="" />
         </div>
-        <a href="https://boosty.to/aibuddy/about" target="_blank" class="ml-4 px-2 py-1 text-white rounded no-underline" :class="accountType !== 'free' ? 'bg-yellow-500' : 'bg-blue-500'">
-          {{ accountType }}
-        </a>
       </div>
 
       <div class="flex items-center space-x-4">

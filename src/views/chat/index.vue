@@ -252,7 +252,7 @@ async function onConversation() {
     const fetchChatAPIOnce = async () => {
       let localSelectedModel = selectedModel.value
 
-      if ((accountType.value === 'ultra' && probalance.value < 900) || (accountType.value === 'pro' && probalance.value < 20))
+      if ((accountType.value === 'unlimited' && probalance.value < 900) || (accountType.value === 'pro' && probalance.value < 20))
         localSelectedModel = 'gpt-3.5-turbo'
 
       await fetchChatAPIProcess<Chat.ConversationResponse>({
@@ -393,7 +393,8 @@ async function onRegenerate(index: number) {
     const fetchChatAPIOnce = async () => {
       let localSelectedModel = selectedModel.value
 
-      if ((accountType.value === 'ultra' && probalance.value < 900) || (accountType.value === 'pro' && probalance.value < 20))
+      if ((accountType.value === 'unlimited' && probalance.value < 900) || (accountType.value !== 'free' && accountType.value !== 'unlimited' && probalance.value < 15))
+
         localSelectedModel = 'gpt-3.5-turbo'
       await fetchChatAPIProcess<Chat.ConversationResponse>({
         roomId: +uuid,
@@ -998,7 +999,7 @@ const displayedQuestions = computed(() => {
             <div v-else>
               <div class="circle-container">
                 <div
-                  v-if="(selectedModel === 'gpt-3.5-turbo' && accountType !== 'free' && accountType !== 'ultra') || (selectedModel === 'gpt-3.5-turbo' && balance < 10 && accountType === 'free')"
+                  v-if="(selectedModel === 'gpt-3.5-turbo' && accountType !== 'free' && accountType !== 'unlimited') || (selectedModel === 'gpt-3.5-turbo' && balance < 10 && accountType === 'free')"
                   class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-blue-500 text-white"
                   style="cursor: pointer;"
                   @click="handleRecharge"
@@ -1007,7 +1008,7 @@ const displayedQuestions = computed(() => {
                 </div>
 
                 <div
-                  v-else-if="(selectedModel === 'gpt-4' && accountType !== 'ultra')"
+                  v-else-if="(selectedModel === 'gpt-4' && accountType !== 'unlimited')"
                   class="blue-circle flex items-center justify-center w-8 h-8 rounded-full bg-yellow-500 text-white"
                   style="cursor: pointer;"
                   @click="handleRecharge"
