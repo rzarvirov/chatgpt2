@@ -7,6 +7,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchGoogleLogin, fetchLogin, fetchRegister, fetchVerify, fetchYandexLogin } from '@/api'
 import { useAuthStore } from '@/store'
 import SentencesList from '@/assets/sentences.json'
+import { createRandomString } from '@/utils/functions'
 
 const props = defineProps<Props>()
 
@@ -216,7 +217,7 @@ async function googleAuthCallback(response: any) {
     loading.value = true
     const result = await fetchGoogleLogin(credential) // Get the result from the server
     await authStore.setToken(result.data.token) // Set the JWT token from the server
-    ms.success('success')
+    ms.success('Авторизация пройдена')
     window.location.reload()
   }
   catch (error: any) {
@@ -241,7 +242,7 @@ async function yandexAuthCallback(code: string) {
     loading.value = true
     const result = await fetchYandexLogin(code) // Get the result from the server
     await authStore.setToken(result.data.token) // Set the JWT token from the server
-    ms.success('success')
+    ms.success('Авторизация пройдена')
 
     // Remove the code parameter from the URL
     const cleanUrl = window.location.origin + window.location.pathname
@@ -261,6 +262,20 @@ async function yandexAuthCallback(code: string) {
   finally {
     loading.value = false
   }
+}
+
+function createState() {
+  const state = createRandomString(32)
+  sessionStorage.setItem('mailru_auth_state', state)
+  return state
+}
+
+async function mailruAuth() {
+  const redirectUri2 = encodeURIComponent(`${window.location.origin}`)
+  const clientId2 = 'f23c1393c22e46fe9e821e2d91fdbb59'
+  const state = createState()
+  const authUrl = `https://oauth.mail.ru/login?response_type=code&client_id=${clientId2}&redirect_uri=${redirectUri2}&state=${state}`
+  window.location.href = authUrl
 }
 
 onMounted(() => {
@@ -319,7 +334,6 @@ onMounted(() => {
               </svg>
             </button>
           </div>
-          <div />
           <div>или создайте аккаунт / войдите</div>
           <div class="flex flex-row items-center justify-center space-x-4">
             <NButton type="primary" class="px-4 py-2" @click="showRegister">
