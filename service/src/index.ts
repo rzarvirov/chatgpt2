@@ -1,4 +1,6 @@
+/* eslint-disable no-console */
 import express from 'express'
+import axios from 'axios'
 import jwt from 'jsonwebtoken'
 import { OAuth2Client } from 'google-auth-library'
 import type { RequestProps } from './types'
@@ -8,7 +10,7 @@ import { auth } from './middleware/auth'
 import { clearConfigCache, getCacheConfig, getOriginConfig } from './storage/config'
 import type { ChatOptions, Config, MailConfig, SiteConfig, UserInfo } from './storage/model'
 import { Status } from './storage/model'
-import { clearChat, createChatRoom, createUser, deleteAllChatRooms, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRoom, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, getUserProBalance, insertChat, renameChatRoom, updateChat, updateConfig, updateRoomPrompt, updateUserBalance, updateUserInfo, updateUserProBalance, verifyUser } from './storage/mongo'
+import { clearChat, createChatRoom, createUser, deleteAllChatRooms, deleteChat, deleteChatRoom, existsChatRoom, getChat, getChatRoom, getChatRooms, getChats, getUser, getUserAccountType, getUserBalance, getUserById, getUserEmail, getUserProBalance, insertChat, renameChatRoom, updateChat, updateConfig, updateRoomPrompt, updateUserBalance, updateUserInfo, updateUserProBalance, verifyUser } from './storage/mongo'
 import { sendTestMail, sendVerifyMail } from './utils/mail'
 import { checkUserVerify, getUserVerifyUrl, md5 } from './utils/security'
 import { isEmail, isNotEmptyString } from './utils/is'
@@ -16,6 +18,9 @@ import { rootAuth } from './middleware/rootAuth'
 
 const googleClientId = '474493346119-5o0f10gmqbr1ecdj8is1igk74jp65422.apps.googleusercontent.com'
 const googleClient = new OAuth2Client(googleClientId)
+
+const yandexClientId = 'd83af6e2fe524b329046b7725b740b64'
+const yandexClientSecret = '21fa90adb902467f94076e5b552727ea'
 
 const app = express()
 const router = express.Router()
@@ -40,6 +45,16 @@ router.get('/accounttype', auth, async (req, res) => {
 })
 
 // got account type
+
+// get email
+router.get('/email', auth, async (req, res) => {
+  const userId = req.headers.userId.toString()
+  const email = await getUserEmail(userId)
+
+  res.send({ status: 'Success', message: null, data: { email } })
+})
+
+// got email
 
 // get balance
 router.get('/balance', auth, async (req, res) => {
@@ -573,6 +588,76 @@ router.post('/google-login', async (req, res) => {
 })
 
 // End of Google Auth
+
+// Yandex Auth
+
+// /service/src/index.ts
+// Yandex Auth
+router.post('/yandex-login', async (req, res) => {
+  try {
+    const { code } = req.body as { code: string }
+
+    if (!code)
+      throw new Error('Authorization code is empty')
+
+    console.log('Received authorization code:', code) // Log the received authorization code
+
+    // Exchange the authorization code for an access token
+    const requestBody = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      client_id: yandexClientId,
+      client_secret: yandexClientSecret,
+    })
+
+    const tokenResponse = await axios.post('https://oauth.yandex.com/token', requestBody, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }).catch((error) => {
+      console.error('Error while exchanging code for access token:', error.response.data)
+      throw new Error('Failed to exchange authorization code for access token')
+    })
+
+    const accessToken = tokenResponse.data.access_token
+
+    // Fetch Yandex user profile
+    const profileResponse = await axios.get('https://login.yandex.ru/info', {
+      headers: {
+        Authorization: `OAuth ${accessToken}`,
+      },
+    }).catch((error) => {
+      console.error('Error while fetching Yandex user profile:', error.response.data)
+      throw new Error('Failed to fetch Yandex user profile')
+    })
+
+    const yandexEmail = profileResponse.data.default_email
+
+    let user = await getUser(yandexEmail)
+
+    if (user === null) {
+      // Register & verify new user
+      await createUser(yandexEmail, '') // Empty password for Yandex users
+      await verifyUser(yandexEmail)
+      user = await getUser(yandexEmail)
+    }
+
+    const token = jwt.sign({
+      name: user.name ? user.name : user.email,
+      avatar: user.avatar,
+      description: user.description,
+      userId: user._id,
+      root: yandexEmail.toLowerCase() === process.env.ROOT_USER,
+    }, process.env.AUTH_SECRET_KEY)
+
+    res.send({ status: 'Success', message: 'Welcome!', data: { token } })
+  }
+  catch (error) {
+    res.send({ status: 'Fail', message: error.message, data: null })
+  }
+})
+
+// End of Yandex Auth
 
 app.use('', router)
 app.use('/api', router)

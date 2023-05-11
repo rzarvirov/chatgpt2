@@ -96,6 +96,18 @@ export function fetchGetUserAccountType<T = any>() {
   })
 }
 
+export function fetchGetUserEmail<T = any>() {
+  const authStore = useAuthStoreWithout()
+  const token = authStore.token
+
+  return get<T>({
+    url: '/email',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+}
+
 // Client-side function to fetch the user's balance
 export function fetchGetUserBalance<T = any>() {
   const authStore = useAuthStoreWithout()
@@ -231,6 +243,13 @@ export function fetchGoogleLogin<T = any>(idToken: string) {
   return post<T>({
     url: '/google-login',
     data: { idToken },
+  })
+}
+
+export function fetchYandexLogin<T = any>(code: string) {
+  return post<T>({
+    url: '/yandex-login',
+    data: { code },
   })
 }
 

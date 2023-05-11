@@ -214,3 +214,8 @@ export async function getUserAccountType(userId: string) {
   const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { accounttype: 1 } })
   return user ? user.accounttype : null
 }
+
+export async function getUserEmail(userId: string) {
+  const user = await userCol.findOne({ _id: new ObjectId(userId) }, { projection: { email: 1 } })
+  return user ? user.email : null
+}

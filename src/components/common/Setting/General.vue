@@ -7,12 +7,13 @@ import { useAppStore, useUserStore } from '@/store'
 import type { UserInfo } from '@/store/modules/user/helper'
 import { getCurrentDate } from '@/utils/functions'
 import { useBasicLayout } from '@/hooks/useBasicLayout'
-import { fetchClearAllChat, fetchGetUserAccountType } from '@/api'
+import { fetchClearAllChat, fetchGetUserAccountType, fetchGetUserEmail } from '@/api'
 import { t } from '@/locales'
 import { useAuthStoreWithout } from '@/store/modules/auth'
 
 const authStore = useAuthStoreWithout()
 const accountType = ref('')
+const email = ref('')
 const appStore = useAppStore()
 const userStore = useUserStore()
 const { isMobile } = useBasicLayout()
@@ -114,9 +115,21 @@ async function fetchAccountType() {
   }
 }
 
+async function fetchEmail() {
+  try {
+    const response = await fetchGetUserEmail()
+    email.value = response.data.email
+  }
+  catch (error) {
+    console.error('Error fetching user account type:', error)
+  }
+}
+
 onMounted(async () => {
-  if (authStore.session == null || !authStore.session.auth || authStore.token)
+  if (authStore.session == null || !authStore.session.auth || authStore.token) {
     await fetchAccountType()
+    await fetchEmail()
+  }
 })
 </script>
 
@@ -124,18 +137,27 @@ onMounted(async () => {
   <div class="p-4 space-y-5 min-h-[200px]">
     <div class="space-y-6">
       <div class="flex items-center space-x-4">
+        <span class="flex-shrink-0 w-[100px]">E-Mail</span>
+        <div class="w-[200px]">
+          <NInput v-model:value="email" placeholder="" disabled />
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.name') }}</span>
         <div class="w-[200px]">
           <NInput v-model:value="name" placeholder="" />
         </div>
       </div>
 
-      <div class="flex items-center space-x-4">
+      <!--
+        <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.description') }}</span>
         <div class="flex-1">
           <NInput v-model:value="description" placeholder="" />
         </div>
       </div>
+      -->
       <div class="flex items-center space-x-4">
         <span class="flex-shrink-0 w-[100px]">{{ $t('setting.avatarLink') }}</span>
         <div class="flex-1">
