@@ -230,7 +230,7 @@ async function googleAuthCallback(response: any) {
 }
 
 async function yandexAuth() {
-  const redirectUri = encodeURIComponent(`${window.location.origin}/yandex-callback`)
+  const redirectUri = encodeURIComponent(`${window.location.origin}`)
   const clientId = 'd83af6e2fe524b329046b7725b740b64'
   const authUrl = `https://oauth.yandex.com/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}`
   window.location.href = authUrl

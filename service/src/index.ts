@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import express from 'express'
 import axios from 'axios'
 import jwt from 'jsonwebtoken'
@@ -590,17 +589,12 @@ router.post('/google-login', async (req, res) => {
 // End of Google Auth
 
 // Yandex Auth
-
-// /service/src/index.ts
-// Yandex Auth
 router.post('/yandex-login', async (req, res) => {
   try {
     const { code } = req.body as { code: string }
 
     if (!code)
       throw new Error('Authorization code is empty')
-
-    console.log('Received authorization code:', code) // Log the received authorization code
 
     // Exchange the authorization code for an access token
     const requestBody = new URLSearchParams({
